@@ -15,23 +15,91 @@
 
 \section{Nền tảng Web}
 
-% TODO: Nội dung.
+Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập nhưng dùng chung phong cách thiết kế và quy ước kỹ thuật: \textbf{ứng dụng web cho người dùng cuối} (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và \textbf{trang quản trị} (admin -- dành cho quản trị viên). Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
+
+Webapp được xây dựng trên \textbf{Next.js 15} (theo mô hình Pages Router) cùng \textbf{React 19} và \textbf{TypeScript}, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ (Server-Side Rendering -- SSR) đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
 
 \subsection{Tổ chức mã nguồn}
 
-% TODO: Nội dung.
+Mã nguồn được tổ chức theo nguyên tắc \textit{tách bạch mối quan tâm} (separation of concerns) và \textit{thiết kế nguyên tử} (Atomic Design), với mục tiêu để mỗi tính năng có thể phát triển độc lập, dễ kiểm thử và dễ bảo trì. Toàn bộ mã nguồn nằm dưới thư mục \texttt{src/}, được phân chia thành các nhóm chính như Bảng~\ref{tab:webapp-structure}.
+
+\begin{table}[H]
+\centering
+\caption{Cấu trúc thư mục mã nguồn của ứng dụng web}
+\label{tab:webapp-structure}
+\begin{tabular}{|L{0.30\textwidth}|L{0.60\textwidth}|}
+\hline
+\textbf{Thư mục} & \textbf{Vai trò} \\
+\hline
+\texttt{pages/} & Lớp định tuyến (Pages Router). Mỗi tệp là một ``vỏ mỏng'' chỉ lắp ghép dữ liệu vào template và gắn bố cục trang. \\
+\hline
+\texttt{components/} & Cây giao diện theo Atomic Design: \texttt{atoms} (nguyên tử shadcn), \texttt{molecules}, \texttt{organisms}, \texttt{templates} và \texttt{layouts}. \\
+\hline
+\texttt{api/services/} & Các module gọi API theo từng nghiệp vụ (tin đăng, môi giới, thanh toán, tin tức, thông báo, AI\ldots). \\
+\hline
+\texttt{hooks/} & Các React Hook tùy biến đóng gói logic nghiệp vụ và truy vấn dữ liệu. \\
+\hline
+\texttt{contexts/}, \texttt{store/} & Quản lý trạng thái dùng chung (xác thực, ngôn ngữ, danh sách so sánh\ldots) qua React Context và Zustand. \\
+\hline
+\texttt{configs/}, \texttt{constants/} & Cấu hình thư viện (axios, biến môi trường) và hằng số toàn cục. \\
+\hline
+\texttt{messages/}, \texttt{utils/}, \texttt{styles/} & Bộ từ điển đa ngôn ngữ, các hàm tiện ích thuần và mã định kiểu giao diện. \\
+\hline
+\end{tabular}
+\end{table}
+
+Cây giao diện tuân thủ nghiêm ngặt thứ tự phân lớp \texttt{atoms $\to$ molecules $\to$ organisms $\to$ templates $\to$ pages}, trong đó lớp dưới không bao giờ được phép nhập (import) từ lớp trên. Cụ thể, \textbf{atoms} là các nguyên tử giao diện cơ bản (nút bấm, ô nhập liệu, hộp thoại\ldots) được chuẩn hóa theo shadcn/ui; \textbf{molecules} ghép các nguyên tử thành các khối nhỏ như trường biểu mẫu, thẻ lọc; \textbf{organisms} là các khối tính năng hiểu biết về dữ liệu và quy tắc nghiệp vụ (thẻ tin đăng, hộp thoại đăng nhập, widget trợ lý AI\ldots); \textbf{templates} là bố cục đầy đủ của một họ trang; còn \textbf{pages} chỉ đóng vai trò lắp ráp. Mỗi thư mục thành phần đều cung cấp một tệp \texttt{index} làm điểm xuất khẩu tập trung (barrel export), giúp việc nhập khẩu nhất quán và che giấu cấu trúc nội bộ.
+
+Song song với cây giao diện, logic được tách theo \textit{nghiệp vụ}: mỗi miền dữ liệu có một module dịch vụ (\texttt{*.service.ts}) chịu trách nhiệm gọi API và một nhóm hook (\texttt{use*}) bao bọc dịch vụ đó. Nhờ vậy, logic nghiệp vụ nằm ở hook và context, việc lấy dữ liệu nằm ở tầng dịch vụ, còn component chỉ lo phần hiển thị. Cách phân tách này giúp giảm thiểu sự phụ thuộc chéo và cho phép nhiều thành viên cùng phát triển các tính năng khác nhau mà ít xảy ra xung đột.
+
+% TODO (Phát): chèn Hình -- Sơ đồ tổ chức mã nguồn webapp (ch32-source-org.png), minh họa các lớp atoms -> molecules -> organisms -> templates -> pages và quan hệ services/hooks.
 
 \subsection{Cơ chế kết nối và tích hợp}
 
-% TODO: Nội dung.
+Ứng dụng web không tự chứa dữ liệu mà kết nối tới nhiều dịch vụ phía sau thông qua các kênh giao tiếp được chuẩn hóa:
+
+\begin{itemize}
+\item \textbf{Giao tiếp HTTP với Backend chính.} Mọi yêu cầu REST đi qua một thể hiện \texttt{axios} duy nhất được cấu hình tập trung tại \texttt{src/configs/axios}. Thể hiện này gắn sẵn URL gốc của Backend (biến môi trường \texttt{URL\_API\_BASE}), tiêu đề mặc định và bộ chặn (interceptor) xử lý xác thực. Toàn bộ phản hồi được chuẩn hóa về một kiểu \texttt{ApiResponse} thống nhất để các tầng phía trên xử lý nhất quán.
+
+\item \textbf{Xác thực bằng JWT và cơ chế làm mới token.} Bộ chặn yêu cầu tự động đính kèm \textit{access token} vào tiêu đề \texttt{Authorization}. Khi token sắp hết hạn hoặc máy chủ trả về lỗi 401, hệ thống tự động gọi \textit{refresh token} để lấy token mới rồi phát lại yêu cầu ban đầu một cách trong suốt với người dùng. Cơ chế này còn khử trùng lặp (deduplication) để nhiều yêu cầu đồng thời chỉ kích hoạt đúng một lần làm mới, tránh tình trạng đua tranh (race condition).
+
+\item \textbf{Cổng chặn truy cập (middleware).} Tệp \texttt{src/middleware.ts} đóng vai trò cổng kiểm soát: nó cho phép một danh sách các tuyến công khai (trang chủ, danh sách tin, chi tiết tin, tin tức, bản đồ\ldots) và chặn các tuyến cá nhân khi người dùng chưa đăng nhập. Khi đó, người dùng được chuyển hướng kèm tham số \texttt{returnUrl} để sau khi đăng nhập có thể quay lại đúng trang đang truy cập.
+
+\item \textbf{Bộ nhớ đệm dữ liệu máy chủ.} Toàn bộ trạng thái lấy từ máy chủ được quản lý bởi \textbf{TanStack Query}, giúp tự động lưu đệm, làm mới nền và đồng bộ dữ liệu giữa các thành phần. Một số dữ liệu thống kê ổn định theo ngày (ví dụ thống kê tin theo tỉnh thành) còn được lưu bền vào \texttt{localStorage} để tồn tại qua các lần tải lại trang.
+
+\item \textbf{Kết nối dịch vụ AI bằng luồng SSE.} Trợ lý hội thoại AI kết nối tới một dịch vụ AI riêng (biến môi trường \texttt{URL\_API\_AI}) và nhận câu trả lời theo thời gian thực qua kỹ thuật \textit{Server-Sent Events} (sử dụng thư viện \texttt{fetch-event-source}). Nhờ đó nội dung trả lời hiện dần theo từng đoạn, kèm theo trạng thái công cụ mà AI đang thực thi, và người dùng có thể hủy luồng đang chạy.
+
+\item \textbf{Thông báo thời gian thực qua WebSocket.} Các thông báo (tin được duyệt, có người quan tâm\ldots) được đẩy theo thời gian thực qua giao thức \textbf{STOMP trên SockJS}, kết hợp với cơ chế hỏi vòng (polling) dự phòng khi mất kết nối.
+
+\item \textbf{Tích hợp dịch vụ bên thứ ba.} Bản đồ tin đăng tích hợp Google Maps; luồng thanh toán điều hướng sang cổng thanh toán rồi nhận lại kết quả qua một trang callback công khai để cổng có thể chuyển hướng về.
+\end{itemize}
 
 \subsection{Hỗ trợ đa ngôn ngữ}
 
-% TODO: Nội dung.
+Ứng dụng hỗ trợ song ngữ \textbf{tiếng Việt} (mặc định) và \textbf{tiếng Anh}, được triển khai bằng thư viện \textbf{next-intl}. Mọi chuỗi hiển thị cho người dùng -- nhãn, nút bấm, thông báo, thông điệp lỗi, văn bản trạng thái rỗng -- đều không được viết cứng trong mã mà phải lấy qua các hàm \texttt{useTranslations} (phía client) hoặc \texttt{getTranslations} (phía server), tham chiếu tới hai bộ từ điển \texttt{messages/vi.json} và \texttt{messages/en.json}.
+
+Một số điểm kỹ thuật đáng chú ý trong cơ chế đa ngôn ngữ:
+
+\begin{itemize}
+\item \textbf{Tải từ điển theo nhu cầu.} Vì phần lớn người dùng sử dụng tiếng Việt, bộ từ điển \texttt{vi.json} được đóng gói sẵn cùng ứng dụng; bộ \texttt{en.json} chỉ được tải động khi người dùng thực sự chuyển sang tiếng Anh, giúp giảm kích thước gói tải ban đầu.
+\item \textbf{Bảo đảm đồng bộ khóa dịch.} Một kịch bản kiểm tra (\texttt{check-i18n-keys.js}) được chạy tự động trong bước \texttt{pre-commit} để đối chiếu sự tương đồng khóa giữa hai tệp ngôn ngữ; nếu thiếu khóa ở một ngôn ngữ, thao tác commit sẽ bị chặn.
+\item \textbf{Dùng định dạng ICU.} Các chuỗi có tham số sử dụng placeholder kiểu ICU (\texttt{\{name\}}, \texttt{\{count, plural, \ldots\}}) thay vì nối chuỗi thủ công, bảo đảm đúng ngữ pháp khi trật tự từ khác nhau giữa các ngôn ngữ.
+\item \textbf{Quản lý trạng thái ngôn ngữ.} Việc chuyển ngôn ngữ được điều phối qua một context riêng (\texttt{SwitchLanguageProvider}), ghi nhớ lựa chọn của người dùng và cung cấp bộ từ điển phù hợp cho toàn bộ cây thành phần.
+\end{itemize}
+
+% TODO (Phát): chèn Hình -- Ảnh chụp giao diện ở hai ngôn ngữ Việt/Anh (ch32-i18n.png).
 
 \subsection{Ưu điểm}
 
-% TODO: Nội dung.
+Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm rõ rệt cho nền tảng web:
+
+\begin{itemize}
+\item \textbf{Dễ bảo trì và mở rộng.} Kiến trúc Atomic Design phân lớp rõ ràng cùng việc tách logic theo nghiệp vụ giúp định vị và sửa đổi mã nhanh chóng; thêm một tính năng mới thường chỉ cần bổ sung một template, một dịch vụ và một nhóm hook tương ứng mà không ảnh hưởng phần còn lại.
+\item \textbf{An toàn kiểu dữ liệu.} Việc dùng TypeScript trên toàn dự án, giới hạn kiểu \texttt{any} chỉ trong tầng định nghĩa dữ liệu truyền tải, giúp phát hiện sớm lỗi ngay khi biên dịch.
+\item \textbf{Hiệu năng và trải nghiệm tốt.} Kết hợp SSR cho các trang trọng yếu về SEO, tải động (lazy loading) các thành phần nặng như bản đồ và biểu đồ, cùng cơ chế lưu đệm của TanStack Query giúp trang hiển thị nhanh và mượt.
+\item \textbf{Nhất quán về giao diện.} Hệ thống thiết kế tập trung (typography, khoảng cách, màu sắc theo token ngữ nghĩa) cùng các quy tắc lint riêng bảo đảm giao diện đồng nhất giữa các trang và giữa các thành viên phát triển.
+\item \textbf{Thuận lợi cho cộng tác nhóm.} Quy ước thư mục, barrel export và các cổng kiểm soát chất lượng (lint, kiểm tra kiểu, kiểm tra khóa đa ngôn ngữ) tạo nền tảng để nhiều người cùng làm việc trên cùng mã nguồn mà vẫn giữ được chất lượng ổn định.
+\end{itemize}
 
 \section{Hệ thống Backend}
 

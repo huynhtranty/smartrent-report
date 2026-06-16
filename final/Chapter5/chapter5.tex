@@ -3,7 +3,53 @@
 
 \section{Hệ thống dành cho Người thuê}
 
-% TODO: Nội dung (phần này còn để trống trong file Báo Cáo Cuối Kỳ).
+Hệ thống dành cho người thuê được hiện thực dưới dạng một ứng dụng web đáp ứng (responsive), phục vụ toàn bộ hành trình của người tìm trọ: từ khám phá, tìm kiếm, xem chi tiết, so sánh, lưu tin cho tới liên hệ trực tiếp với chủ trọ/môi giới. Phần này trình bày các kết quả chính đã đạt được trên ứng dụng web. Các tính năng AI tích hợp trong ứng dụng (trợ lý hội thoại, gợi ý cá nhân hóa\ldots) được trình bày chi tiết ở phần kết quả triển khai các tính năng AI; ở đây chỉ mô tả phần tích hợp và trải nghiệm phía giao diện.
+
+\subsection{Trang chủ và khám phá tin đăng}
+
+Trang chủ đóng vai trò điểm vào, tổng hợp nhiều khối nội dung giúp người dùng nhanh chóng định hướng: thanh tìm kiếm với bộ lọc nhanh theo địa điểm, loại hình và khoảng giá; khối thống kê tin đăng theo các tỉnh thành tiêu biểu (Hà Nội, Hồ Chí Minh, Đà Nẵng\ldots); khối các loại hình cho thuê phổ biến; các nhóm tin nổi bật phân theo hạng VIP; khối tin gợi ý cá nhân hóa cho người dùng đã đăng nhập; và khối tin tức mới nhất. Các số liệu thống kê được lưu đệm theo ngày để giảm tải cho máy chủ và bảo đảm trang chủ hiển thị tức thì.
+
+\subsection{Tìm kiếm và lọc tin đăng}
+
+Trang danh sách tin đăng cung cấp khả năng tìm kiếm và lọc đa tiêu chí, gồm: khoảng giá, diện tích, loại hình (danh mục), vị trí (tỉnh/quận/phường), số phòng ngủ -- phòng tắm, tiện ích, các loại chi phí (điện, nước, internet, phí dịch vụ), hướng nhà và sắp xếp theo nhiều tiêu chí. Toàn bộ điều kiện lọc được đồng bộ vào tham số trên thanh địa chỉ (URL), nhờ đó người dùng có thể chia sẻ hoặc lưu lại một kết quả tìm kiếm cụ thể, và trạng thái lọc được khôi phục khi mở lại đường dẫn. Kết quả được phân trang và hỗ trợ bố cục hai cột (danh sách kèm bộ lọc bên cạnh) trên màn hình lớn.
+
+% TODO (Phát): chèn Hình -- Ảnh chụp trang tìm kiếm và bộ lọc tin đăng (ch51-search.png).
+
+\subsection{Trang chi tiết tin đăng}
+
+Trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu SEO và tốc độ hiển thị lần đầu. Trang trình bày đầy đủ thông tin của một tin đăng: thư viện ảnh/video, tiêu đề và giá, danh sách tiện ích, mô tả chi tiết, biểu đồ lịch sử giá, bản đồ vị trí, và thẻ liên hệ chủ trọ/môi giới với chức năng hiện số điện thoại (có ghi nhận lượt bấm) cùng liên kết nhắn tin nhanh. Ở cuối trang còn có khối tin tương tự và khối tin vừa xem để gợi mở lựa chọn cho người dùng. Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự được tải động kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
+
+% TODO (Phát): chèn Hình -- Ảnh chụp trang chi tiết tin đăng (ch51-detail.png).
+
+\subsection{Bản đồ tin đăng}
+
+Bên cạnh chế độ danh sách, người dùng có thể duyệt tin trên bản đồ (tích hợp Google Maps). Hệ thống định vị người dùng (hoặc dùng vị trí mặc định), gom nhóm các điểm tin gần nhau (marker clustering) để hiển thị gọn gàng, và đồng bộ danh sách tin trong khung nhìn hiện tại với một bảng bên cạnh. Khi người dùng di chuyển hoặc thu phóng bản đồ, hệ thống chỉ tải bổ sung tin cho vùng mới và lưu đệm các vùng đã tải để tránh gọi lại API không cần thiết, giúp thao tác trên bản đồ mượt mà.
+
+\subsection{So sánh tin đăng}
+
+Người dùng có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng (giá, diện tích, số phòng, tiện ích, địa chỉ, các loại chi phí, hạng tin\ldots). Danh sách so sánh được lưu tạm trong phiên làm việc của trình duyệt, hiển thị dưới dạng bảng đối chiếu trực quan giúp người dùng ra quyết định nhanh hơn.
+
+\subsection{Lưu tin và theo dõi người đăng}
+
+Đối với người dùng đã đăng nhập, hệ thống cho phép \textit{lưu tin yêu thích} và quản lý chúng trong một trang riêng có phân trang. Ngoài ra, người dùng có thể \textit{theo dõi} các chủ trọ/môi giới và xem bảng tin tổng hợp các tin đăng từ những người mình theo dõi, với giao diện chia thành hai thẻ ``danh sách người theo dõi'' và ``bảng tin''. Đây là các tính năng tạo nên trải nghiệm cá nhân hóa và khuyến khích người dùng quay lại.
+
+\subsection{Trợ lý hội thoại AI trên giao diện}
+
+Ứng dụng tích hợp một widget trợ lý AI dạng nút nổi, có thể mở rộng thành cửa sổ hội thoại trên màn hình lớn hoặc toàn màn hình trên thiết bị di động. Về phía giao diện, widget nhận câu trả lời theo luồng thời gian thực (hiển thị dần từng đoạn kèm trạng thái xử lý), cho phép người dùng bấm vào các tin đăng do AI gợi ý để mở ngay hộp thoại chi tiết, ghi nhớ hội thoại trong phiên và hỗ trợ hủy luồng đang chạy. Năng lực xử lý ngôn ngữ và tìm kiếm phía sau của trợ lý được trình bày ở phần kết quả AI.
+
+\subsection{Đăng nhập và xác thực}
+
+Hệ thống cung cấp hai phương thức đăng nhập thuận tiện, không mật khẩu: \textit{liên kết ma thuật} (magic link) gửi qua email và \textit{đăng nhập bằng Google} (OAuth). Hộp thoại đăng nhập được thiết kế để bật lên ngay tại chỗ khi người dùng truy cập một chức năng yêu cầu xác thực, và sau khi đăng nhập thành công sẽ đưa người dùng trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Phiên đăng nhập được duy trì an toàn bằng cặp access/refresh token và tự động làm mới.
+
+\subsection{Tin tức và thông báo}
+
+Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên mục, tìm kiếm theo từ khóa, bài nổi bật, khối ``xem nhiều nhất'' và trang chi tiết bài viết (kết xuất SSR). Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thông báo thời gian thực} qua WebSocket (kèm hỏi vòng dự phòng) về các sự kiện liên quan như tin được duyệt hay có tương tác, cùng chỉ báo số thông báo chưa đọc.
+
+\subsection{Trải nghiệm đa thiết bị và đa ngôn ngữ}
+
+Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu, trạng thái rỗng có hướng dẫn rõ ràng và chuyển đổi đơn vị tiền tệ theo ngôn ngữ góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
+
+% TODO (Phát): chèn Hình -- Ảnh chụp giao diện webapp trên máy tính và di động (ch51-responsive.png).
 
 \section{Hệ thống dành cho Quản trị viên}
 

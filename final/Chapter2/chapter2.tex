@@ -3,27 +3,54 @@
 
 \section{Một số hệ thống và công nghệ tương tự}
 
-% TODO: Nội dung (phần này còn để trống trong file Báo Cáo Cuối Kỳ).
+Trước khi đề xuất giải pháp, nhóm tiến hành khảo sát một số nền tảng tiêu biểu trong lĩnh vực rao vặt và tìm kiếm bất động sản cho thuê, bao gồm ba nền tảng phổ biến tại Việt Nam (Batdongsan.com.vn, Phongtro123, Nhà Tốt) và một nền tảng quốc tế đại diện cho hướng ứng dụng dữ liệu -- công nghệ ở mức cao (Zillow). Việc khảo sát nhằm nhận diện các tính năng đã được thị trường chấp nhận, đồng thời chỉ ra những hạn chế còn tồn tại để làm cơ sở cho định hướng của đề tài.
 
 \subsection{Batdongsan.com.vn}
 
-% TODO: Nội dung.
+Batdongsan.com.vn~\cite{Batdongsan} là một trong những nền tảng rao vặt bất động sản lớn và lâu đời nhất tại Việt Nam, cung cấp tin đăng cho cả nhu cầu mua bán lẫn cho thuê trên phạm vi toàn quốc. Điểm mạnh của nền tảng là kho tin đăng lớn, công cụ tìm kiếm và lọc theo nhiều tiêu chí (khu vực, khoảng giá, diện tích, loại hình), cùng mô hình kinh doanh dựa trên các gói tin VIP và đẩy tin giúp người đăng tăng khả năng tiếp cận. Tuy nhiên, nền tảng thiên về phục vụ môi giới chuyên nghiệp và phân khúc mua bán; trải nghiệm cho người thuê ở phân khúc nhà trọ, phòng trọ giá rẻ chưa phải là trọng tâm, và chất lượng tin đăng phụ thuộc nhiều vào người đăng.
 
 \subsection{Phongtro123}
 
-% TODO: Nội dung.
+Phongtro123~\cite{Phongtro123} là nền tảng tập trung chuyên biệt vào phân khúc \textit{phòng trọ, nhà trọ} và các loại hình cho thuê giá rẻ, hướng tới đối tượng sinh viên và người lao động. Giao diện đơn giản, dễ sử dụng, cho phép lọc nhanh theo khu vực và mức giá, phù hợp với nhu cầu tìm trọ phổ thông. Bù lại, nền tảng chủ yếu dừng ở vai trò bảng tin rao vặt: thông tin tin đăng còn sơ sài, thiếu các công cụ hỗ trợ ra quyết định như so sánh, định giá tham khảo, bản đồ trực quan hay gợi ý cá nhân hóa, và việc kiểm soát chất lượng/độ tin cậy của tin đăng còn hạn chế.
 
-\subsection{NhaTot}
+\subsection{Nhà Tốt}
 
-% TODO: Nội dung.
+Nhà Tốt~\cite{NhaTot} (chuyên mục bất động sản của nền tảng rao vặt Chợ Tốt) cung cấp tin đăng cho thuê và mua bán theo mô hình rao vặt giữa người dùng với người dùng. Nhờ thừa hưởng lượng người dùng lớn của Chợ Tốt, nền tảng có lưu lượng truy cập cao và đa dạng loại hình. Nền tảng có hỗ trợ bản đồ và một số tiện ích tìm kiếm, song giống các nền tảng nội địa khác, mức độ ứng dụng trí tuệ nhân tạo để định giá, gợi ý hay hỗ trợ hội thoại vẫn còn mờ nhạt, và trải nghiệm còn nặng tính rao vặt thủ công.
 
 \subsection{Zillow}
 
-% TODO: Nội dung.
+Zillow~\cite{Zillow} là nền tảng bất động sản hàng đầu tại Hoa Kỳ, nổi bật với việc ứng dụng dữ liệu và công nghệ ở mức cao. Tính năng tiêu biểu là \textit{Zestimate} -- mô hình ước tính giá trị bất động sản tự động dựa trên dữ liệu thị trường, cùng với bản đồ giàu thông tin, dữ liệu khu vực chi tiết và trải nghiệm người dùng được trau chuốt. Zillow cho thấy tiềm năng to lớn của việc tích hợp dữ liệu và AI vào lĩnh vực bất động sản. Tuy vậy, nền tảng được thiết kế cho thị trường Hoa Kỳ với đặc thù dữ liệu, pháp lý và hành vi người dùng khác biệt, do đó không trực tiếp phù hợp với thị trường thuê trọ tại Việt Nam.
 
 \section{So sánh và đánh giá các hệ thống hiện có}
 
-% TODO: Nội dung.
+Bảng~\ref{tab:compare-platforms} tổng hợp một số tiêu chí so sánh giữa các nền tảng đã khảo sát.
+
+\begin{table}[H]
+\centering
+\caption{So sánh các nền tảng tìm kiếm bất động sản cho thuê hiện có}
+\label{tab:compare-platforms}
+\begin{tabular}{|L{0.24\textwidth}|C{0.13\textwidth}|C{0.13\textwidth}|C{0.11\textwidth}|C{0.12\textwidth}|}
+\hline
+\textbf{Tiêu chí} & \textbf{Batdong\-san} & \textbf{Phong\-tro123} & \textbf{Nhà Tốt} & \textbf{Zillow} \\
+\hline
+Tập trung nhà trọ giá rẻ & Trung bình & Cao & Trung bình & Thấp \\
+\hline
+Tìm kiếm \& lọc đa tiêu chí & Cao & Trung bình & Trung bình & Cao \\
+\hline
+Bản đồ trực quan & Có & Hạn chế & Có & Cao \\
+\hline
+Định giá bằng AI & Không & Không & Không & Có \\
+\hline
+Gợi ý cá nhân hóa & Hạn chế & Không & Hạn chế & Có \\
+\hline
+Trợ lý hội thoại AI & Không & Không & Không & Hạn chế \\
+\hline
+Phù hợp thị trường Việt Nam & Cao & Cao & Cao & Thấp \\
+\hline
+\end{tabular}
+\end{table}
+
+Qua so sánh có thể thấy: các nền tảng nội địa (Batdongsan.com.vn, Phongtro123, Nhà Tốt) phù hợp với thị trường và thói quen người dùng Việt Nam nhưng hầu như chưa khai thác trí tuệ nhân tạo để nâng cao trải nghiệm tìm kiếm và ra quyết định; trong khi đó, nền tảng quốc tế Zillow thể hiện rõ giá trị của việc tích hợp dữ liệu và AI nhưng lại không được thiết kế cho bối cảnh Việt Nam. Đây chính là khoảng trống mà đề tài hướng tới: kết hợp trải nghiệm phù hợp với người thuê trọ tại Việt Nam với các năng lực AI hiện đại.
 
 \section{Khoảng trống và cơ hội ứng dụng AI trong lĩnh vực cho thuê nhà trọ}
 
