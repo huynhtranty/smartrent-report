@@ -1,0 +1,42 @@
+flowchart TB
+    root(["☕ com.smartrent"])
+    root --> L1 & L2 & L3 & L4 & L5
+
+    subgraph L1["🌐 Presentation"]
+        direction TB
+        controller["controller (54)<br/><small>REST /v1</small>"] ~~~ dto["dto<br/><small>request 82<br/>response 137</small>"]
+    end
+    subgraph L2["🧠 Business"]
+        direction TB
+        service["service (40)<br/><small>interface + impl</small>"] ~~~ mapper["mapper (14)<br/><small>MapStruct</small>"]
+    end
+    subgraph L3["🔌 Data — infra"]
+        direction TB
+        repo["repository (51)<br/><small>Spring Data JPA</small>"] ~~~ conn["connector (5)"] ~~~ stor["storage · S3"]
+    end
+    subgraph L4["⚙️ config"]
+        direction TB
+        sec["security · JWT"] ~~~ cache["cache · Redis"] ~~~ cb["circuitbreaker"] ~~~ misc["otp · WebSocket"]
+    end
+    subgraph L5["🧰 Support"]
+        direction TB
+        enums["enums (31)"] ~~~ exc["exception"] ~~~ cron["cronjob (4)"] ~~~ val["validator · util"]
+    end
+
+    classDef root fill:#1e293b,stroke:#0f172a,color:#f8fafc,stroke-width:2px
+    classDef pres fill:#bfdbfe,stroke:#2563eb,color:#1e3a8a
+    classDef biz fill:#fde68a,stroke:#d97706,color:#78350f
+    classDef data fill:#a7f3d0,stroke:#059669,color:#064e3b
+    classDef cfg fill:#ddd6fe,stroke:#7c3aed,color:#4c1d95
+    classDef sup fill:#e2e8f0,stroke:#64748b,color:#334155
+    class root root
+    class controller,dto pres
+    class service,mapper biz
+    class repo,conn,stor data
+    class sec,cache,cb,misc cfg
+    class enums,exc,cron,val sup
+    style L1 fill:#eff6ff,stroke:#bfdbfe
+    style L2 fill:#fffbeb,stroke:#fde68a
+    style L3 fill:#ecfdf5,stroke:#a7f3d0
+    style L4 fill:#f5f3ff,stroke:#ddd6fe
+    style L5 fill:#f8fafc,stroke:#cbd5e1

@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant C as 🖥️ Client (FE)
+    participant F as 🛡️ Security Filter (JWT)
+    participant Ctrl as 🌐 Controller
+    participant S as 🧠 Service (Impl)
+    participant M as 🔄 Mapper
+    participant R as 🔌 Repository (JPA)
+    participant DB as 🗄️ MySQL
+    participant Ca as ⚡ Redis
+    C->>F: HTTP + Bearer token
+    Note over F: CustomJwtDecoder xác thực
+    F->>Ctrl: request hợp lệ
+    Ctrl->>Ctrl: validate DTO (@Valid)
+    Ctrl->>S: gọi service
+    S->>Ca: kiểm tra cache
+    alt cache miss
+        S->>R: query
+        R->>DB: SQL
+        DB-->>R: rows (Entity)
+        R-->>S: Entity
+        S->>Ca: ghi cache
+    end
+    S->>M: Entity → Response DTO
+    M-->>S: DTO
+    S-->>Ctrl: DTO
+    Ctrl-->>C: ApiResponse JSON

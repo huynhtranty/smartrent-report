@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant C as 🖥️ Component
+    participant H as 🪝 Hook (useListings)
+    participant Q as ⚡ TanStack Query
+    participant S as 🔌 Service
+    participant AX as 🛡️ Axios + Interceptors
+    participant API as ☁️ Backend API
+    C->>H: useCreateDraft() / useQuery
+    H->>Q: useMutation / useQuery(queryKey)
+    Q->>S: ListingService.createDraft(data)
+    S->>AX: apiRequest(PATHS.xxx, payload)
+    Note over AX: gắn accessToken
+    AX->>API: HTTP request
+    API-->>AX: response / 401
+    alt 401 hết hạn token
+        AX->>API: refreshToken (dedup)
+        API-->>AX: token mới → retry
+    end
+    AX-->>S: ApiResponse<T>
+    S-->>Q: data (typed)
+    Q-->>H: data · isLoading · error
+    H->>Q: onSuccess → invalidateQueries
+    H-->>C: re-render

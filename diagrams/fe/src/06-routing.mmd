@@ -1,0 +1,27 @@
+flowchart LR
+    root(["🌐 /"])
+    root --> home["🏠 index<br/><small>trang chủ</small>"]
+    root --> auth["🔐 auth/<br/><small>callback · magic-link</small>"]
+    root --> compare["⚖️ compare/"]
+    root --> following["👥 following/"]
+    root --> detail["📋 listing-detail/[...slug]"]
+    root --> maps["🗺️ maps/"]
+    root --> news["📰 news/ · news/[slug]"]
+    root --> payment["💳 payment/<br/><small>result · status</small>"]
+    root --> props["🏢 properties/"]
+    root --> saved["⭐ saved-listings/"]
+    root --> seller["🧑‍💼 seller/"]
+    seller --> s1["dashboard · account · listings"]
+    seller --> s2["create-post · update-post · drafts"]
+    seller --> s3["customers · transactions"]
+    root --> snet["🌐 sellernet/"]
+    snet --> n1["guides · membership · personal"]
+
+    classDef root fill:#1e293b,stroke:#0f172a,color:#f8fafc,stroke-width:2px
+    classDef pub fill:#e0f2fe,stroke:#0ea5e9,color:#0c4a6e
+    classDef sell fill:#fef3c7,stroke:#f59e0b,color:#78350f
+    classDef sub fill:#fffbeb,stroke:#fcd34d,color:#92400e
+    class root root
+    class home,auth,compare,following,detail,maps,news,payment,props,saved pub
+    class seller,snet sell
+    class s1,s2,s3,n1 sub
