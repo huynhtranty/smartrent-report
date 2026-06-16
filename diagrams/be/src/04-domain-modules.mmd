@@ -1,0 +1,43 @@
+flowchart TB
+    subgraph Core["🏢 Nghiệp vụ cốt lõi"]
+        L["listing<br/><small>tin đăng · draft · verify · saved</small>"]
+        Cat["category · address · geocoding"]
+        Search["discovery<br/><small>search · recommendation</small>"]
+        Pricing["pricing · quota · viptier"]
+    end
+    subgraph User["🔐 Người dùng & xác thực"]
+        Auth["authentication<br/><small>JWT · magic-link · OAuth2</small>"]
+        U["user · role · broker · follow"]
+        Otp["otp · sms"]
+    end
+    subgraph Money["💳 Thanh toán & gói"]
+        Pay["payment<br/><small>ZaloPay / SePay</small>"]
+        Mem["membership · transaction"]
+    end
+    subgraph Comm["💬 Tương tác & nội dung"]
+        N["notification · push<br/><small>WebSocket</small>"]
+        Email["email · communication · support"]
+        Content["content · news"]
+        AI["ai · predictor<br/><small>SmartRent AI</small>"]
+    end
+    subgraph Ops["📊 Vận hành"]
+        Admin["admin · dashboard · analytics"]
+        Mod["moderation · report · takedown · repost"]
+        Track["recentlyviewed · interestlevel<br/>phoneclickdetail"]
+    end
+
+    classDef core fill:#bfdbfe,stroke:#2563eb,color:#1e3a8a,stroke-width:1.5px
+    classDef usr fill:#fecaca,stroke:#dc2626,color:#7f1d1d,stroke-width:1.5px
+    classDef money fill:#bbf7d0,stroke:#16a34a,color:#14532d,stroke-width:1.5px
+    classDef comm fill:#fde68a,stroke:#d97706,color:#78350f,stroke-width:1.5px
+    classDef ops fill:#ddd6fe,stroke:#7c3aed,color:#4c1d95,stroke-width:1.5px
+    class L,Cat,Search,Pricing core
+    class Auth,U,Otp usr
+    class Pay,Mem money
+    class N,Email,Content,AI comm
+    class Admin,Mod,Track ops
+    style Core fill:#eff6ff,stroke:#bfdbfe
+    style User fill:#fef2f2,stroke:#fecaca
+    style Money fill:#f0fdf4,stroke:#bbf7d0
+    style Comm fill:#fffbeb,stroke:#fde68a
+    style Ops fill:#f5f3ff,stroke:#ddd6fe

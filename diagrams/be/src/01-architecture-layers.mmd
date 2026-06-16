@@ -1,0 +1,67 @@
+flowchart TB
+    Client(["📱 FE / Mobile / Admin<br/><small>REST + WebSocket</small>"])
+    subgraph API["🌐 API Layer — controller (54)"]
+        Ctrl["@RestController /v1/*<br/><small>Listing · Auth · Payment · Ai · News</small>"]
+    end
+    subgraph Sec["🛡️ Cross-cutting"]
+        Security["security<br/><small>OAuth2 + JWT</small>"]
+        CB["Resilience4j<br/><small>Circuit Breaker + Retry</small>"]
+        Cache["Redis Cache"]
+    end
+    subgraph Svc["🧠 Service Layer — service (40 domain)"]
+        SvcI["Interface + Impl<br/><small>business logic</small>"]
+    end
+    subgraph Map["🔄 Mapper (14) — MapStruct"]
+        Mapper["Entity ⇄ DTO"]
+    end
+    subgraph DTO["📦 dto"]
+        Req["request (82)"]
+        Res["response (137)"]
+    end
+    subgraph Infra["🔌 infra"]
+        Repo["repository (51)<br/><small>Spring Data JPA</small>"]
+        Conn["connector<br/><small>OpenFeign / WebClient</small>"]
+        Storage["storage<br/><small>AWS S3</small>"]
+    end
+    DB[("🗄️ MySQL<br/><small>Flyway migrations</small>")]
+    Ext(["🌍 Google · Brevo · Zalo<br/>ZaloPay/SePay · SmartRent AI"])
+
+    Client --> Ctrl
+    Ctrl --> Security
+    Ctrl --> SvcI
+    SvcI --> Mapper
+    Ctrl --> Req
+    Ctrl --> Res
+    SvcI --> Repo
+    SvcI --> Conn
+    SvcI --> Storage
+    SvcI -.-> Cache
+    Conn -.-> CB
+    Repo --> DB
+    Conn --> Ext
+    Storage --> Ext
+
+    classDef client fill:#e0e7ff,stroke:#6366f1,color:#1e1b4b,stroke-width:1.5px
+    classDef api fill:#bfdbfe,stroke:#2563eb,color:#1e3a8a,stroke-width:1.5px
+    classDef sec fill:#fecaca,stroke:#dc2626,color:#7f1d1d,stroke-width:1.5px
+    classDef svc fill:#fef3c7,stroke:#f59e0b,color:#78350f,stroke-width:1.5px
+    classDef map fill:#fde68a,stroke:#d97706,color:#78350f
+    classDef dto fill:#e0f2fe,stroke:#0ea5e9,color:#0c4a6e
+    classDef infra fill:#a7f3d0,stroke:#059669,color:#064e3b,stroke-width:1.5px
+    classDef db fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px
+    classDef ext fill:#ffe4e6,stroke:#f43f5e,color:#881337,stroke-width:1.5px
+    class Client client
+    class Ctrl api
+    class Security,CB,Cache sec
+    class SvcI svc
+    class Mapper map
+    class Req,Res dto
+    class Repo,Conn,Storage infra
+    class DB db
+    class Ext ext
+    style API fill:#eff6ff,stroke:#bfdbfe
+    style Sec fill:#fef2f2,stroke:#fecaca
+    style Svc fill:#fffbeb,stroke:#fde68a
+    style Map fill:#fffbeb,stroke:#fde68a
+    style DTO fill:#f0f9ff,stroke:#bae6fd
+    style Infra fill:#ecfdf5,stroke:#a7f3d0
