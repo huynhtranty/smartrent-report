@@ -135,7 +135,7 @@ Hình~\ref{fig:be-architecture} mô tả kiến trúc phân lớp của Backend.
 \label{fig:be-architecture}
 \end{figure}
 
-Tuy là một monolith nhưng hệ thống không cô lập: nó kết nối tới nhiều dịch vụ bên ngoài thông qua tầng \texttt{connector} (OpenFeign/WebClient) và \texttt{storage}, như tóm tắt ở Hình~\ref{fig:be-integrations} -- gồm MySQL, Redis, lưu trữ đối tượng (S3), đăng nhập và định vị qua Google, gửi email (Brevo), gửi OTP qua Zalo, cổng thanh toán (ZaloPay/SePay) và dịch vụ AI riêng.
+Tuy là một monolith nhưng hệ thống không cô lập: nó kết nối tới nhiều dịch vụ bên ngoài thông qua tầng \texttt{connector} (OpenFeign/WebClient) và \texttt{storage}, như tóm tắt ở Hình~\ref{fig:be-integrations} -- gồm MySQL, Redis, lưu trữ đối tượng (S3), đăng nhập và định vị qua Google, gửi email (Brevo), cổng thanh toán (ZaloPay/SePay) và dịch vụ AI riêng.
 
 \begin{figure}[H]
 \centering
@@ -157,7 +157,7 @@ Phần nghiệp vụ được chia thành khoảng 40 module dịch vụ, mỗi 
 
 \subsection{Tổ chức phân tầng bên trong module}
 
-Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng nhất quán, phản ánh qua cấu trúc gói \texttt{com.smartrent} ở Hình~\ref{fig:be-packages}. Tầng \texttt{controller} chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu (\texttt{@Valid}); tầng \texttt{service} (tách giao diện và phần hiện thực \texttt{impl}) chứa logic nghiệp vụ; \texttt{mapper} (MapStruct) chuyển đổi giữa thực thể và DTO; còn \texttt{infra/repository} dùng Spring Data JPA để truy xuất dữ liệu. Các đối tượng truyền tải được tách thành \texttt{dto/request} và \texttt{dto/response}, trong khi cấu hình hệ thống (bảo mật, cache, circuit breaker, OTP, WebSocket) nằm trong gói \texttt{config}. Bảng~\ref{tab:backend-structure} liệt kê chi tiết vai trò của từng gói chính trong mã nguồn Backend.
+Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng nhất quán, phản ánh qua cấu trúc gói \texttt{com.smartrent} ở Hình~\ref{fig:be-packages}. Tầng \texttt{controller} chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu (\texttt{@Valid}); tầng \texttt{service} (tách giao diện và phần hiện thực \texttt{impl}) chứa logic nghiệp vụ; \texttt{mapper} (MapStruct) chuyển đổi giữa thực thể và DTO; còn \texttt{infra/repository} dùng Spring Data JPA để truy xuất dữ liệu. Các đối tượng truyền tải được tách thành \texttt{dto/request} và \texttt{dto/response}, trong khi cấu hình hệ thống (bảo mật, cache, circuit breaker, WebSocket) nằm trong gói \texttt{config}. Bảng~\ref{tab:backend-structure} liệt kê chi tiết vai trò của từng gói chính trong mã nguồn Backend.
 
 \begin{table}[H]
 \centering
@@ -177,7 +177,7 @@ Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng 
 \hline
 \texttt{infra/} & Hạ tầng truy xuất dữ liệu và tích hợp: \texttt{repository} (51 -- Spring Data JPA), \texttt{connector} (gọi dịch vụ ngoài qua OpenFeign/WebClient), \texttt{storage} (S3), \texttt{client}. \\
 \hline
-\texttt{config/} & Cấu hình hệ thống: \texttt{security} (OAuth2 + JWT), \texttt{cache} (Redis), \texttt{circuitbreaker} (Resilience4j), \texttt{otp}, WebSocket, S3 và cổng thanh toán. \\
+\texttt{config/} & Cấu hình hệ thống: \texttt{security} (OAuth2 + JWT), \texttt{cache} (Redis), \texttt{circuitbreaker} (Resilience4j), WebSocket, S3 và cổng thanh toán. \\
 \hline
 \texttt{enums/}, \texttt{constants/} & 31 kiểu liệt kê và các hằng số nghiệp vụ dùng chung. \\
 \hline
