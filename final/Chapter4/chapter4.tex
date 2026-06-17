@@ -264,7 +264,22 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \subsection{Giao diện người thuê}
 
-% TODO: Nội dung.
+Giao diện dành cho người thuê được thiết kế theo định hướng \textit{ưu tiên thiết bị di động} (mobile-first) và đáp ứng (responsive) trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một \textbf{hệ thống thiết kế} (design system) thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS (CSS custom properties) trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ \textbf{sáng/tối} (light/dark) chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
+
+Về \textbf{kiểu chữ}, ứng dụng dùng bộ phông hỗ trợ tốt cả tiếng Việt lẫn tiếng Anh (Be~Vietnam~Pro làm phông chính, Inter và Plus~Jakarta~Sans cho tiêu đề), tải qua cơ chế tối ưu phông của Next.js để tránh hiện tượng nhấp nháy khi tải. Các thành phần giao diện được xây trên nền \textbf{shadcn/ui} kết hợp Tailwind CSS v4, bảo đảm khả năng truy cập (accessibility) và tính nhất quán của nút bấm, biểu mẫu, hộp thoại, thẻ thông tin\ldots
+
+Bố cục chung của khu vực người thuê được gói trong một \textit{layout} dùng lại cho hầu hết các trang, gồm: \textbf{thanh điều hướng trên cùng} (header) chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; \textbf{phần nội dung} ở giữa; \textbf{chân trang} (footer) với các liên kết phụ trợ; và một \textbf{thanh nổi so sánh} hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
+
+Một số nguyên tắc thiết kế giao diện được áp dụng xuyên suốt khu vực người thuê:
+
+\begin{itemize}
+\item \textbf{Phản hồi trạng thái rõ ràng.} Mỗi thao tác bất đồng bộ đều có trạng thái tương ứng: khung chờ dạng \textit{skeleton} khi đang tải dữ liệu, chỉ báo tiến trình khi chuyển trang, thông báo lỗi thân thiện và \textit{trạng thái rỗng} có hướng dẫn khi không có kết quả.
+\item \textbf{Tải động thành phần nặng.} Các khối tốn tài nguyên như bản đồ, biểu đồ lịch sử giá và danh sách tin tương tự được tải động (lazy loading) kèm khung chờ, giúp nội dung chính hiển thị nhanh mà không bị chặn.
+\item \textbf{Bố cục thích ứng.} Trên màn hình lớn, trang danh sách tin dùng bố cục hai cột (bộ lọc cạnh kết quả); trên thiết bị di động, bộ lọc thu gọn vào hộp thoại trượt để tiết kiệm không gian.
+\item \textbf{Đa ngôn ngữ và bản địa hóa.} Mọi nhãn, thông báo và định dạng (tiền tệ, ngày tháng) đều đi qua lớp đa ngôn ngữ Việt~--~Anh, cho phép chuyển đổi tức thời mà không cần tải lại trang.
+\end{itemize}
+
+Các màn hình chính của người thuê -- trang chủ, danh sách/tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, trang theo dõi người đăng và tin tức -- đều tuân theo cùng bộ nguyên tắc trên; kết quả hiện thực cụ thể của từng màn hình được trình bày ở Chương~\ref{Chapter5} (phần kết quả giao diện dành cho người thuê).
 
 \subsection{Giao diện chủ trọ}
 
