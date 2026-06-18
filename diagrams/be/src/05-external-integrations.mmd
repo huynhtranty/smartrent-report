@@ -1,20 +1,19 @@
 flowchart LR
-    FE(["🖥️ FE / Admin"]) -->|REST + WebSocket| BE
-    BE["☕ SmartRent Backend<br/><small>Spring Boot</small>"]
-    BE --> DB[("🗄️ MySQL<br/><small>Flyway</small>")]
-    BE --> Redis[("⚡ Redis<br/><small>cache · token · OTP</small>")]
-    BE --> S3["🪣 AWS S3<br/><small>media</small>"]
-    BE --> Google["🔵 Google<br/><small>OAuth2 · Geocoding</small>"]
-    BE --> Brevo["✉️ Brevo<br/><small>email</small>"]
-    BE --> Zalo["📱 Zalo<br/><small>OTP · ZNS</small>"]
-    BE --> Pay["💳 ZaloPay / SePay<br/><small>thanh toán</small>"]
-    BE --> AI["🤖 SmartRent AI"]
+ FE(["FE / Admin"]) -->|REST + WebSocket| BE
+ BE["SmartRent Backend<br/><small>Spring Boot</small>"]
+ BE --> DB[("MySQL<br/><small>Flyway</small>")]
+ BE --> Redis[("Redis<br/><small>cache · token · OTP</small>")]
+ BE --> S3["AWS S3<br/><small>media</small>"]
+ BE --> Google["Google<br/><small>OAuth2 · Geocoding</small>"]
+ BE --> Brevo["Brevo<br/><small>email</small>"]
+ BE --> Pay["ZaloPay / SePay<br/><small>thanh toán</small>"]
+ BE --> AI["SmartRent AI"]
 
-    classDef fe fill:#e0e7ff,stroke:#6366f1,color:#1e1b4b,stroke-width:1.5px
-    classDef be fill:#1e293b,stroke:#0f172a,color:#f8fafc,stroke-width:2px
-    classDef store fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px
-    classDef ext fill:#ffe4e6,stroke:#f43f5e,color:#881337,stroke-width:1.5px
-    class FE fe
-    class BE be
-    class DB,Redis,S3 store
-    class Google,Brevo,Zalo,Pay,AI ext
+ classDef fe fill:#e0e7ff,stroke:#6366f1,color:#1e1b4b,stroke-width:1.5px
+ classDef be fill:#1e293b,stroke:#0f172a,color:#f8fafc,stroke-width:2px
+ classDef store fill:#f1f5f9,stroke:#475569,color:#0f172a,stroke-width:1.5px
+ classDef ext fill:#ffe4e6,stroke:#f43f5e,color:#881337,stroke-width:1.5px
+ class FE fe
+ class BE be
+ class DB,Redis,S3 store
+ class Google,Brevo,Pay,AI ext

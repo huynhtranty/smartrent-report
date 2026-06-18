@@ -35,7 +35,7 @@ Mỗi phần: `src/` = nguồn `.mmd` (sửa ở đây) · `pdf/` = vector cho L
 | `02-package-structure` | Cây package `com.smartrent` |
 | `03-request-flow` | Luồng xử lý 1 request: JWT → Controller → Service → Repo → DB (+ Redis cache) |
 | `04-domain-modules` | 40 nhóm domain service (listing, auth, payment, ai…) |
-| `05-external-integrations` | Tích hợp ngoài: MySQL, Redis, S3, Google, Brevo, Twilio, ZaloPay, AI |
+| `05-external-integrations` | Tích hợp ngoài: MySQL, Redis, S3, Google, Brevo, ZaloPay/SePay, AI |
 
 ## Render lại (sau khi sửa `.mmd`)
 

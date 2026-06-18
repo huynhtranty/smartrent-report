@@ -15,9 +15,9 @@
 
 \section{Thiết kế nền tảng Web}
 
-Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập nhưng dùng chung phong cách thiết kế và quy ước kỹ thuật: \textbf{ứng dụng web cho người dùng cuối} (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và \textbf{trang quản trị} (admin -- dành cho quản trị viên). Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
+Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập: ứng dụng web cho người dùng cuối (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và trang quản trị (admin -- dành cho quản trị viên). Mỗi ứng dụng có cơ sở mã, phong cách thiết kế và quy ước kỹ thuật riêng, phù hợp với nhóm người dùng mà nó phục vụ. Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
 
-Webapp được xây dựng trên \textbf{Next.js 15} (theo mô hình Pages Router) cùng \textbf{React 19} và \textbf{TypeScript}, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ (Server-Side Rendering -- SSR) đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
+Webapp được xây dựng trên Next.js 15 (theo mô hình Pages Router) cùng React 19 và TypeScript, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ (Server-Side Rendering -- SSR) đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
 
 \subsection{Tổ chức mã nguồn}
 
@@ -48,7 +48,7 @@ Mã nguồn được tổ chức theo nguyên tắc \textit{tách bạch mối q
 \end{tabular}
 \end{table}
 
-Cây giao diện tuân thủ nghiêm ngặt thứ tự phân lớp \texttt{atoms $\to$ molecules $\to$ organisms $\to$ templates $\to$ pages}, trong đó lớp dưới không bao giờ được phép nhập (import) từ lớp trên. Cụ thể, \textbf{atoms} là các nguyên tử giao diện cơ bản (nút bấm, ô nhập liệu, hộp thoại\ldots) được chuẩn hóa theo shadcn/ui; \textbf{molecules} ghép các nguyên tử thành các khối nhỏ như trường biểu mẫu, thẻ lọc; \textbf{organisms} là các khối tính năng hiểu biết về dữ liệu và quy tắc nghiệp vụ (thẻ tin đăng, hộp thoại đăng nhập, widget trợ lý AI\ldots); \textbf{templates} là bố cục đầy đủ của một họ trang; còn \textbf{pages} chỉ đóng vai trò lắp ráp. Mỗi thư mục thành phần đều cung cấp một tệp \texttt{index} làm điểm xuất khẩu tập trung (barrel export), giúp việc nhập khẩu nhất quán và che giấu cấu trúc nội bộ.
+Cây giao diện tuân thủ nghiêm ngặt thứ tự phân lớp \texttt{atoms $\to$ molecules $\to$ organisms $\to$ templates $\to$ pages}, trong đó lớp dưới không bao giờ được phép nhập (import) từ lớp trên. Cụ thể, \texttt{atoms} là các nguyên tử giao diện cơ bản (nút bấm, ô nhập liệu, hộp thoại\ldots) được chuẩn hóa theo shadcn/ui; \texttt{molecules} ghép các nguyên tử thành các khối nhỏ như trường biểu mẫu, thẻ lọc; \texttt{organisms} là các khối tính năng hiểu biết về dữ liệu và quy tắc nghiệp vụ (thẻ tin đăng, hộp thoại đăng nhập, widget trợ lý AI\ldots); \texttt{templates} là bố cục đầy đủ của một họ trang; còn \texttt{pages} chỉ đóng vai trò lắp ráp. Mỗi thư mục thành phần đều cung cấp một tệp \texttt{index} làm điểm xuất khẩu tập trung (barrel export), giúp việc nhập khẩu nhất quán và che giấu cấu trúc nội bộ.
 
 Song song với cây giao diện, logic được tách theo \textit{nghiệp vụ}: mỗi miền dữ liệu có một module dịch vụ (\texttt{*.service.ts}) chịu trách nhiệm gọi API và một nhóm hook (\texttt{use*}) bao bọc dịch vụ đó. Nhờ vậy, logic nghiệp vụ nằm ở hook và context, việc lấy dữ liệu nằm ở tầng dịch vụ, còn component chỉ lo phần hiển thị. Cách phân tách này giúp giảm thiểu sự phụ thuộc chéo và cho phép nhiều thành viên cùng phát triển các tính năng khác nhau mà ít xảy ra xung đột.
 
@@ -72,11 +72,11 @@ Hình~\ref{fig:webapp-source-org} tổng hợp cách tổ chức mã nguồn web
 
 \item \textbf{Cổng chặn truy cập (middleware).} Tệp \texttt{src/middleware.ts} đóng vai trò cổng kiểm soát: nó cho phép một danh sách các tuyến công khai (trang chủ, danh sách tin, chi tiết tin, tin tức, bản đồ\ldots) và chặn các tuyến cá nhân khi người dùng chưa đăng nhập. Khi đó, người dùng được chuyển hướng kèm tham số \texttt{returnUrl} để sau khi đăng nhập có thể quay lại đúng trang đang truy cập.
 
-\item \textbf{Bộ nhớ đệm dữ liệu máy chủ.} Toàn bộ trạng thái lấy từ máy chủ được quản lý bởi \textbf{TanStack Query}, giúp tự động lưu đệm, làm mới nền và đồng bộ dữ liệu giữa các thành phần. Một số dữ liệu thống kê ổn định theo ngày (ví dụ thống kê tin theo tỉnh thành) còn được lưu bền vào \texttt{localStorage} để tồn tại qua các lần tải lại trang.
+\item \textbf{Bộ nhớ đệm dữ liệu máy chủ.} Toàn bộ trạng thái lấy từ máy chủ được quản lý bởi TanStack Query, giúp tự động lưu đệm, làm mới nền và đồng bộ dữ liệu giữa các thành phần. Một số dữ liệu thống kê ổn định theo ngày (ví dụ thống kê tin theo tỉnh thành) còn được lưu bền vào \texttt{localStorage} để tồn tại qua các lần tải lại trang.
 
 \item \textbf{Kết nối dịch vụ AI bằng luồng SSE.} Trợ lý hội thoại AI kết nối tới một dịch vụ AI riêng (biến môi trường \texttt{URL\_API\_AI}) và nhận câu trả lời theo thời gian thực qua kỹ thuật \textit{Server-Sent Events} (sử dụng thư viện \texttt{fetch-event-source}). Nhờ đó nội dung trả lời hiện dần theo từng đoạn, kèm theo trạng thái công cụ mà AI đang thực thi, và người dùng có thể hủy luồng đang chạy.
 
-\item \textbf{Thông báo thời gian thực qua WebSocket.} Các thông báo (tin được duyệt, có người quan tâm\ldots) được đẩy theo thời gian thực qua giao thức \textbf{STOMP trên SockJS}, kết hợp với cơ chế hỏi vòng (polling) dự phòng khi mất kết nối.
+\item \textbf{Thông báo thời gian thực qua WebSocket.} Các thông báo (tin được duyệt, có người quan tâm\ldots) được đẩy theo thời gian thực qua giao thức STOMP trên SockJS, kết hợp với cơ chế hỏi vòng (polling) dự phòng khi mất kết nối.
 
 \item \textbf{Tích hợp dịch vụ bên thứ ba.} Bản đồ tin đăng tích hợp Google Maps; luồng thanh toán điều hướng sang cổng thanh toán rồi nhận lại kết quả qua một trang callback công khai để cổng có thể chuyển hướng về.
 \end{itemize}
@@ -92,7 +92,7 @@ Hình~\ref{fig:webapp-data-flow} minh họa luồng dữ liệu điển hình kh
 
 \subsection{Hỗ trợ đa ngôn ngữ}
 
-Ứng dụng hỗ trợ song ngữ \textbf{tiếng Việt} (mặc định) và \textbf{tiếng Anh}, được triển khai bằng thư viện \textbf{next-intl}. Mọi chuỗi hiển thị cho người dùng -- nhãn, nút bấm, thông báo, thông điệp lỗi, văn bản trạng thái rỗng -- đều không được viết cứng trong mã mà phải lấy qua các hàm \texttt{useTranslations} (phía client) hoặc \texttt{getTranslations} (phía server), tham chiếu tới hai bộ từ điển \texttt{messages/vi.json} và \texttt{messages/en.json}.
+Ứng dụng hỗ trợ song ngữ tiếng Việt (mặc định) và tiếng Anh, được triển khai bằng thư viện next-intl. Mọi chuỗi hiển thị cho người dùng -- nhãn, nút bấm, thông báo, thông điệp lỗi, văn bản trạng thái rỗng -- đều không được viết cứng trong mã mà phải lấy qua các hàm \texttt{useTranslations} (phía client) hoặc \texttt{getTranslations} (phía server), tham chiếu tới hai bộ từ điển \texttt{messages/vi.json} và \texttt{messages/en.json}.
 
 Một số điểm kỹ thuật đáng chú ý trong cơ chế đa ngôn ngữ:
 
@@ -122,7 +122,7 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm r
 % Ghi chú: phần §3.3 do Ty + Tường phụ trách. Các sơ đồ và đoạn giải thích dưới đây
 % được soạn sẵn (nháp) kèm hình minh họa; Ty + Tường rà soát, chỉnh và bổ sung nội dung.
 
-Backend của hệ thống được xây dựng trên \textbf{Spring Boot 3.4} (Java) và đóng gói thành một khối triển khai duy nhất theo mô hình \textbf{Modular Monolith}: toàn bộ nghiệp vụ chạy trong cùng một tiến trình nhưng được chia thành nhiều module theo miền nghiệp vụ, với ranh giới được giữ rõ ràng ở mức gói (package) và tầng dịch vụ. Cách tiếp cận này vẫn giữ được sự đơn giản khi vận hành và gỡ lỗi của một monolith, đồng thời đạt mức tách bạch đủ tốt để nhiều thành viên cùng phát triển song song.
+Backend của hệ thống được xây dựng trên Spring Boot 3.4 (Java) và đóng gói thành một khối triển khai duy nhất theo mô hình Modular Monolith: toàn bộ nghiệp vụ chạy trong cùng một tiến trình nhưng được chia thành nhiều module theo miền nghiệp vụ, với ranh giới được giữ rõ ràng ở mức gói (package) và tầng dịch vụ. Cách tiếp cận này vẫn giữ được sự đơn giản khi vận hành và gỡ lỗi của một monolith, đồng thời đạt mức tách bạch đủ tốt để nhiều thành viên cùng phát triển song song.
 
 \subsection{Kiến trúc Modular Monolith}
 
@@ -264,11 +264,11 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \subsection{Giao diện người thuê}
 
-Giao diện dành cho người thuê được thiết kế theo định hướng \textit{ưu tiên thiết bị di động} (mobile-first) và đáp ứng (responsive) trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một \textbf{hệ thống thiết kế} (design system) thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS (CSS custom properties) trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ \textbf{sáng/tối} (light/dark) chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
+Giao diện dành cho người thuê được thiết kế theo định hướng \textit{ưu tiên thiết bị di động} (mobile-first) và đáp ứng (responsive) trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một hệ thống thiết kế (design system) thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS (CSS custom properties) trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ sáng/tối (light/dark) chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
 
-Về \textbf{kiểu chữ}, ứng dụng dùng bộ phông hỗ trợ tốt cả tiếng Việt lẫn tiếng Anh (Be~Vietnam~Pro làm phông chính, Inter và Plus~Jakarta~Sans cho tiêu đề), tải qua cơ chế tối ưu phông của Next.js để tránh hiện tượng nhấp nháy khi tải. Các thành phần giao diện được xây trên nền \textbf{shadcn/ui} kết hợp Tailwind CSS v4, bảo đảm khả năng truy cập (accessibility) và tính nhất quán của nút bấm, biểu mẫu, hộp thoại, thẻ thông tin\ldots
+Về kiểu chữ, ứng dụng dùng bộ phông hỗ trợ tốt cả tiếng Việt lẫn tiếng Anh (Be~Vietnam~Pro làm phông chính, Inter và Plus~Jakarta~Sans cho tiêu đề), tải qua cơ chế tối ưu phông của Next.js để tránh hiện tượng nhấp nháy khi tải. Các thành phần giao diện được xây trên nền shadcn/ui kết hợp Tailwind CSS v4, bảo đảm khả năng truy cập (accessibility) và tính nhất quán của nút bấm, biểu mẫu, hộp thoại, thẻ thông tin\ldots
 
-Bố cục chung của khu vực người thuê được gói trong một \textit{layout} dùng lại cho hầu hết các trang, gồm: \textbf{thanh điều hướng trên cùng} (header) chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; \textbf{phần nội dung} ở giữa; \textbf{chân trang} (footer) với các liên kết phụ trợ; và một \textbf{thanh nổi so sánh} hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
+Bố cục chung của khu vực người thuê được gói trong một \textit{layout} dùng lại cho hầu hết các trang, gồm: thanh điều hướng trên cùng (header) chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang (footer) với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
 
 Một số nguyên tắc thiết kế giao diện được áp dụng xuyên suốt khu vực người thuê:
 
