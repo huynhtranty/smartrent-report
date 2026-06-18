@@ -1,54 +1,54 @@
 flowchart TB
-    subgraph Routing["🧭 Routing Layer — src/pages"]
-        Pages["Pages Router<br/><small>_app · index · seller/* · listing-detail/*</small>"]
-    end
-    subgraph UI["🎨 UI Layer — components · Atomic Design"]
-        direction LR
-        Templates["templates/ (28)"] --> Organisms["organisms/ (29)"] --> Molecules["molecules/ (106)"] --> Atoms["atoms/ (71)<br/><small>Radix + Tailwind</small>"]
-    end
-    subgraph Logic["🧠 Logic Layer"]
-        direction LR
-        Hooks["hooks/ (36)<br/><small>useListings · useAuth · useAI</small>"]
-        Contexts["contexts/ (10)<br/><small>auth · theme · i18n</small>"]
-        Store["store/<br/><small>Zustand</small>"]
-    end
-    subgraph Data["🔌 Data Access — src/api"]
-        Services["services/ (30)"]
-        Types["types/ (33)"]
-    end
-    subgraph Infra["⚙️ Infrastructure — configs · utils"]
-        Axios["configs/axios<br/><small>interceptors · refresh-token</small>"]
-        Utils["utils/ (20)"]
-        I18n["messages/<br/><small>vi · en</small>"]
-    end
-    Backend(["☁️ Backend REST API"])
+ subgraph Routing["Routing Layer — src/pages"]
+ Pages["Pages Router<br/><small>_app · index · seller/* · listing-detail/*</small>"]
+ end
+ subgraph UI["UI Layer — components · Atomic Design"]
+ direction LR
+ Templates["templates/ (28)"] --> Organisms["organisms/ (29)"] --> Molecules["molecules/ (106)"] --> Atoms["atoms/ (71)<br/><small>Radix + Tailwind</small>"]
+ end
+ subgraph Logic["Logic Layer"]
+ direction LR
+ Hooks["hooks/ (36)<br/><small>useListings · useAuth · useAI</small>"]
+ Contexts["contexts/ (10)<br/><small>auth · theme · i18n</small>"]
+ Store["store/<br/><small>Zustand</small>"]
+ end
+ subgraph Data["Data Access — src/api"]
+ Services["services/ (30)"]
+ Types["types/ (33)"]
+ end
+ subgraph Infra["Infrastructure — configs · utils"]
+ Axios["configs/axios<br/><small>interceptors · refresh-token</small>"]
+ Utils["utils/ (20)"]
+ I18n["messages/<br/><small>vi · en</small>"]
+ end
+ Backend(["Backend REST API"])
 
-    Pages --> Templates
-    Organisms -.-> Hooks
-    Templates -.-> Hooks
-    Hooks --> Services
-    Hooks <--> Store
-    Pages -.-> Contexts
-    Services --> Types
-    Services --> Axios
-    Axios --> Backend
-    Hooks -.-> Utils
-    UI -.-> I18n
+ Pages --> Templates
+ Organisms -.-> Hooks
+ Templates -.-> Hooks
+ Hooks --> Services
+ Hooks <--> Store
+ Pages -.-> Contexts
+ Services --> Types
+ Services --> Axios
+ Axios --> Backend
+ Hooks -.-> Utils
+ UI -.-> I18n
 
-    classDef routing fill:#e0e7ff,stroke:#6366f1,stroke-width:1.5px,color:#1e1b4b
-    classDef ui fill:#d1fae5,stroke:#10b981,stroke-width:1.5px,color:#064e3b
-    classDef logic fill:#fef3c7,stroke:#f59e0b,stroke-width:1.5px,color:#78350f
-    classDef data fill:#e0f2fe,stroke:#0ea5e9,stroke-width:1.5px,color:#0c4a6e
-    classDef infra fill:#ede9fe,stroke:#8b5cf6,stroke-width:1.5px,color:#4c1d95
-    classDef ext fill:#ffe4e6,stroke:#f43f5e,stroke-width:1.5px,color:#881337
-    class Pages routing
-    class Templates,Organisms,Molecules,Atoms ui
-    class Hooks,Contexts,Store logic
-    class Services,Types data
-    class Axios,Utils,I18n infra
-    class Backend ext
-    style Routing fill:#eef2ff,stroke:#c7d2fe
-    style UI fill:#ecfdf5,stroke:#a7f3d0
-    style Logic fill:#fffbeb,stroke:#fde68a
-    style Data fill:#f0f9ff,stroke:#bae6fd
-    style Infra fill:#f5f3ff,stroke:#ddd6fe
+ classDef routing fill:#e0e7ff,stroke:#6366f1,stroke-width:1.5px,color:#1e1b4b
+ classDef ui fill:#d1fae5,stroke:#10b981,stroke-width:1.5px,color:#064e3b
+ classDef logic fill:#fef3c7,stroke:#f59e0b,stroke-width:1.5px,color:#78350f
+ classDef data fill:#e0f2fe,stroke:#0ea5e9,stroke-width:1.5px,color:#0c4a6e
+ classDef infra fill:#ede9fe,stroke:#8b5cf6,stroke-width:1.5px,color:#4c1d95
+ classDef ext fill:#ffe4e6,stroke:#f43f5e,stroke-width:1.5px,color:#881337
+ class Pages routing
+ class Templates,Organisms,Molecules,Atoms ui
+ class Hooks,Contexts,Store logic
+ class Services,Types data
+ class Axios,Utils,I18n infra
+ class Backend ext
+ style Routing fill:#eef2ff,stroke:#c7d2fe
+ style UI fill:#ecfdf5,stroke:#a7f3d0
+ style Logic fill:#fffbeb,stroke:#fde68a
+ style Data fill:#f0f9ff,stroke:#bae6fd
+ style Infra fill:#f5f3ff,stroke:#ddd6fe
