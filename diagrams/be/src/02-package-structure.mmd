@@ -22,21 +22,3 @@ flowchart TB
  direction TB
  enums["enums (31)"] ~~~ exc["exception"] ~~~ cron["cronjob (4)"] ~~~ val["validator · util"]
  end
-
- classDef root fill:#1e293b,stroke:#0f172a,color:#f8fafc,stroke-width:2px
- classDef pres fill:#bfdbfe,stroke:#2563eb,color:#1e3a8a
- classDef biz fill:#fde68a,stroke:#d97706,color:#78350f
- classDef data fill:#a7f3d0,stroke:#059669,color:#064e3b
- classDef cfg fill:#ddd6fe,stroke:#7c3aed,color:#4c1d95
- classDef sup fill:#e2e8f0,stroke:#64748b,color:#334155
- class root root
- class controller,dto pres
- class service,mapper biz
- class repo,conn,stor data
- class sec,cache,cb,misc cfg
- class enums,exc,cron,val sup
- style L1 fill:#eff6ff,stroke:#bfdbfe
- style L2 fill:#fffbeb,stroke:#fde68a
- style L3 fill:#ecfdf5,stroke:#a7f3d0
- style L4 fill:#f5f3ff,stroke:#ddd6fe
- style L5 fill:#f8fafc,stroke:#cbd5e1
