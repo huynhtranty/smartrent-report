@@ -21,8 +21,11 @@ Mục tiêu: báo cáo học thuật **sạch, nhất quán, tự nhiên** — k
 - **Cấm** in đậm rải rác giữa câu để nhấn mạnh thuật ngữ, tên công nghệ, tên thư viện (Next.js, React, TanStack Query, shadcn/ui…). Để **chữ thường**.
 - Cần làm nổi thuật ngữ/khái niệm thì dùng `\textit{...}`; tên file/định danh mã/biến thì dùng `\texttt{...}`. Không dùng `\textbf` cho hai việc này.
 
-### 2. Sơ đồ — nhìn tự nhiên
-- Không icon (xem mục 0). Giữ màu sắc/khung phân nhóm vừa phải; ưu tiên rõ ràng hơn trang trí.
+### 2. Sơ đồ — nhìn tự nhiên, một màu thống nhất
+- Không icon (xem mục 0).
+- **Chỉ dùng một màu** cho toàn bộ sơ đồ; **không** tô màu bừa bãi (mỗi node một màu đỏ/xanh/vàng/tím). Một tông màu (indigo) áp dụng nhất quán cho **mọi** sơ đồ fe lẫn be.
+- **Không** đặt màu trong file `.mmd`: không viết `classDef` / `class` / `style ... fill/stroke`. Để node thừa hưởng màu chung khai báo tập trung ở `diagrams/mermaid.config.json` (`themeVariables`). Muốn đổi màu thì sửa đúng một chỗ là config này, rồi render lại — không sửa từng sơ đồ.
+- Đường nối/mũi tên để màu xám trung tính; ưu tiên rõ ràng hơn trang trí.
 
 ### 3. Nội dung phải khớp hệ thống thật
 - **Không** thêm tích hợp không tồn tại. Hệ thống **không** dùng kênh nhắn tin SMS/Zalo (ZNS) để thông báo — đừng vẽ/viết các node "otp · sms", "Zalo OTP/ZNS". Cổng thanh toán **ZaloPay/SePay** thì **giữ** (là nghiệp vụ thật).
