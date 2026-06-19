@@ -103,7 +103,17 @@ Một số điểm kỹ thuật đáng chú ý trong cơ chế đa ngôn ngữ:
 \item \textbf{Quản lý trạng thái ngôn ngữ.} Việc chuyển ngôn ngữ được điều phối qua một context riêng (\texttt{SwitchLanguageProvider}), ghi nhớ lựa chọn của người dùng và cung cấp bộ từ điển phù hợp cho toàn bộ cây thành phần.
 \end{itemize}
 
-% TODO (Phát): chèn Hình -- Ảnh chụp giao diện ở hai ngôn ngữ Việt/Anh (ch32-i18n.png).
+Hình~\ref{fig:webapp-i18n} minh họa cùng một trang chủ được hiển thị ở hai ngôn ngữ: tiếng Việt (mặc định) và tiếng Anh. Người dùng có thể chuyển đổi tức thời thông qua bộ chọn ngôn ngữ trên thanh điều hướng mà không cần tải lại trang; toàn bộ nhãn, nút bấm và nội dung tĩnh đều được thay thế theo bộ từ điển tương ứng.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.88\textwidth]{giao-dien-ngon-ngu-viet}\\[4pt]
+{\small (a) Giao diện tiếng Việt}\\[10pt]
+\includegraphics[width=0.88\textwidth]{giao-dien-ngon-ngu-anh}\\[4pt]
+{\small (b) Giao diện tiếng Anh}
+\caption{Giao diện trang chủ hiển thị ở hai ngôn ngữ tiếng Việt và tiếng Anh}
+\label{fig:webapp-i18n}
+\end{figure}
 
 \subsection{Ưu điểm}
 
@@ -264,7 +274,7 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \subsection{Giao diện người thuê}
 
-Giao diện dành cho người thuê được thiết kế theo định hướng \textit{ưu tiên thiết bị di động} (mobile-first) và đáp ứng (responsive) trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một hệ thống thiết kế (design system) thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS (CSS custom properties) trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ sáng/tối (light/dark) chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
+Giao diện dành cho người thuê được thiết kế đáp ứng (responsive) trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một hệ thống thiết kế (design system) thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS (CSS custom properties) trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ sáng/tối (light/dark) chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
 
 Về kiểu chữ, ứng dụng dùng bộ phông hỗ trợ tốt cả tiếng Việt lẫn tiếng Anh (Be~Vietnam~Pro làm phông chính, Inter và Plus~Jakarta~Sans cho tiêu đề), tải qua cơ chế tối ưu phông của Next.js để tránh hiện tượng nhấp nháy khi tải. Các thành phần giao diện được xây trên nền shadcn/ui kết hợp Tailwind CSS v4, bảo đảm khả năng truy cập (accessibility) và tính nhất quán của nút bấm, biểu mẫu, hộp thoại, thẻ thông tin\ldots
 
