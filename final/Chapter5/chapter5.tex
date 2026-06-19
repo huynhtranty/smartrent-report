@@ -335,7 +335,33 @@ Khi bấm vào một điểm đánh dấu, hệ thống hiển thị một thẻ
 
 \subsection{So sánh tin đăng}
 
-Người dùng có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng (giá, diện tích, số phòng, tiện ích, địa chỉ, các loại chi phí, hạng tin\ldots). Danh sách so sánh được lưu tạm trong phiên làm việc của trình duyệt, hiển thị dưới dạng bảng đối chiếu trực quan giúp người dùng ra quyết định nhanh hơn.
+Người dùng có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng (giá, diện tích, số phòng, tiện ích, địa chỉ, các loại chi phí, hạng tin\ldots). Việc chọn tin được thực hiện ngay trên mỗi thẻ tin bằng một nút bật/tắt ở góc: khi chưa chọn nút hiển thị biểu tượng dấu cộng, khi đã thêm vào danh sách so sánh nút chuyển sang biểu tượng dấu tích (Hình~\ref{fig:compare-card}). Danh sách so sánh được lưu tạm trong phiên làm việc của trình duyệt (\texttt{sessionStorage}) nên vẫn được giữ khi người dùng chuyển qua lại giữa các trang trong cùng phiên.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\textwidth]{compare-card-inactive}\hspace{0.04\textwidth}%
+\includegraphics[width=0.30\textwidth]{compare-card-active}
+\caption{Nút thêm vào so sánh trên thẻ tin: trạng thái chưa chọn (trái) và đã chọn (phải)}
+\label{fig:compare-card}
+\end{figure}
+
+Khi đã chọn ít nhất một tin, một thanh nổi xuất hiện ở giữa cạnh dưới màn hình, cho biết số tin đang chọn và cung cấp lối tắt mở trang so sánh; thanh này cho phép xem nhanh, bỏ chọn từng tin hoặc xóa toàn bộ danh sách, và tự ẩn khi người dùng đã ở trang so sánh (Hình~\ref{fig:compare-tool}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{compare-tool}
+\caption{Thanh nổi hiển thị số tin đã chọn và lối tắt mở trang so sánh}
+\label{fig:compare-tool}
+\end{figure}
+
+Trang so sánh trình bày các tin đã chọn cạnh nhau dưới dạng bảng đối chiếu, nhóm theo từng cụm thuộc tính (thông tin cơ bản, chi tiết bất động sản, phòng và nội thất\ldots) và tự đánh dấu mức giá thấp nhất, giúp người dùng nhanh chóng nhận ra khác biệt giữa các lựa chọn để ra quyết định (Hình~\ref{fig:compare-page}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{compare-page}
+\caption{Trang so sánh dạng bảng đối chiếu các tin đã chọn}
+\label{fig:compare-page}
+\end{figure}
 
 \subsection{Lưu tin và theo dõi người đăng}
 
