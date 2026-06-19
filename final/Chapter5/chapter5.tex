@@ -194,13 +194,74 @@ Trang chủ đóng vai trò điểm vào, tổng hợp nhiều khối nội dung
 
 Trang danh sách tin đăng cung cấp khả năng tìm kiếm và lọc đa tiêu chí, gồm: khoảng giá, diện tích, loại hình (danh mục), vị trí (tỉnh/quận/phường), số phòng ngủ -- phòng tắm, tiện ích, các loại chi phí (điện, nước, internet, phí dịch vụ), hướng nhà và sắp xếp theo nhiều tiêu chí. Toàn bộ điều kiện lọc được đồng bộ vào tham số trên thanh địa chỉ (URL), nhờ đó người dùng có thể chia sẻ hoặc lưu lại một kết quả tìm kiếm cụ thể, và trạng thái lọc được khôi phục khi mở lại đường dẫn. Kết quả được phân trang và hỗ trợ bố cục hai cột (danh sách kèm bộ lọc bên cạnh) trên màn hình lớn.
 
-% TODO (Phát): chèn Hình -- Ảnh chụp trang tìm kiếm và bộ lọc tin đăng (ch51-search.png).
+Một đặc điểm của thiết kế là thanh lọc nhanh được dùng lại nhất quán ở cả trang chủ lẫn trang danh sách. Ngay tại khối tìm kiếm ở đầu trang chủ (Hình~\ref{fig:filter-homepage}), người dùng đã có thể chọn sơ bộ loại hình, khoảng giá, sắp xếp, lọc theo môi giới chuyên nghiệp và nhập từ khóa. Khi bấm \textit{Áp dụng}, toàn bộ điều kiện lọc hiện hành được tuần tự hóa (serialize) thành tham số trên URL và ứng dụng điều hướng sang trang danh sách \texttt{/properties} kèm theo các tham số đó. Việc truyền điều kiện qua URL -- thay vì qua một vùng nhớ tạm dùng chung -- giúp trang danh sách khởi tạo lại đúng trạng thái lọc mà người dùng đã chọn từ trang chủ, đồng thời đường dẫn kết quả vẫn chia sẻ và lưu lại được.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{bo-loc-homepage}
+\caption{Thanh lọc nhanh tại khối tìm kiếm trên trang chủ}
+\label{fig:filter-homepage}
+\end{figure}
+
+Để lọc chi tiết hơn, người dùng mở hộp thoại bộ lọc đầy đủ (Hình~\ref{fig:filter-dialog}). Hộp thoại áp dụng cơ chế \textit{bản nháp} (draft): các thay đổi chỉ được ghi nhận khi người dùng xác nhận \textit{Áp dụng}, cho phép thử nhiều tổ hợp tiêu chí trước khi thực hiện truy vấn. Các tiêu chí bao gồm: nhu cầu (thuê hoặc ở ghép), địa chỉ (tỉnh/thành -- quận/huyện -- phường/xã), loại nhà đất, khoảng giá, diện tích, số phòng ngủ, hướng nhà, các loại chi phí (giá điện, nước, internet, phí dịch vụ), tiện ích và tùy chọn chỉ hiển thị tin đã xác minh.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{bo-loc-dialog}
+\caption{Hộp thoại bộ lọc đầy đủ với các tiêu chí chi tiết}
+\label{fig:filter-dialog}
+\end{figure}
+
+Trên trang danh sách, ngoài thanh lọc phía trên, màn hình lớn còn hiển thị một cột bộ lọc nhanh bên phải với các mốc dựng sẵn theo khoảng giá, diện tích và số phòng ngủ (Hình~\ref{fig:filter-listing}), giúp thu hẹp kết quả chỉ bằng một thao tác. Mọi thay đổi bộ lọc -- dù từ thanh trên, cột bên hay hộp thoại -- đều được đồng bộ hai chiều với URL: thao tác lọc cập nhật tham số đường dẫn theo cơ chế \textit{định tuyến nông} (shallow routing) mà không tải lại toàn trang, và ngược lại, khi mở một đường dẫn có sẵn tham số thì bộ lọc được phục hồi tương ứng. Trên thiết bị di động, cột bộ lọc và các nút điều khiển được thu gọn vào trong hộp thoại toàn màn hình để tiết kiệm không gian.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{bo-loc-listing-va-trang-tim-kiem}
+\caption{Trang danh sách với thanh lọc phía trên và cột bộ lọc theo khoảng giá, diện tích, số phòng ngủ bên phải}
+\label{fig:filter-listing}
+\end{figure}
+
+Phía sau giao diện, các điều kiện lọc được gửi tới Backend qua một lời gọi tìm kiếm dạng POST; các tiêu chí dạng khoảng (giá, diện tích, số phòng ngủ) được rút gọn thành chuỗi \texttt{min..max} trước khi truyền. Kết quả trả về được phân trang và lưu đệm theo bộ điều kiện hiện hành, nhờ đó khi người dùng quay lại một bộ lọc đã dùng thì danh sách hiển thị tức thì mà không phải truy vấn lại từ đầu.
 
 \subsection{Trang chi tiết tin đăng}
 
 Trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu SEO và tốc độ hiển thị lần đầu. Trang trình bày đầy đủ thông tin của một tin đăng: thư viện ảnh/video, tiêu đề và giá, danh sách tiện ích, mô tả chi tiết, biểu đồ lịch sử giá, bản đồ vị trí, và thẻ liên hệ chủ trọ/môi giới với chức năng hiện số điện thoại (có ghi nhận lượt bấm) cùng liên kết nhắn tin nhanh. Ở cuối trang còn có khối tin tương tự và khối tin vừa xem để gợi mở lựa chọn cho người dùng. Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự được tải động kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
 
-% TODO (Phát): chèn Hình -- Ảnh chụp trang chi tiết tin đăng (ch51-detail.png).
+Khối đầu trang (Hình~\ref{fig:detail-top}) gồm thư viện ảnh/video có dải ảnh thu nhỏ và nút chuyển ảnh; bên cạnh tiêu đề là các nhãn tóm tắt loại bất động sản, hướng nhà và tình trạng nội thất, cùng nhãn \textit{ưu tiên} cho tin ở hạng cao. Khoảng giá được làm nổi ngay dưới tiêu đề, kèm địa chỉ rút gọn và địa chỉ đầy đủ. Một thanh hành động cung cấp các thao tác chia sẻ (sao chép đường dẫn), thêm vào danh sách so sánh, lưu tin yêu thích và báo cáo tin vi phạm. Thẻ liên hệ chủ trọ/môi giới được ghim (sticky) bên phải trên màn hình lớn, hiển thị thông tin người đăng cùng ba kênh liên hệ: \textit{chat qua Zalo}, \textit{gửi email} và nút \textit{hiện số} điện thoại. Số điện thoại được ẩn ban đầu: người dùng cần đăng nhập mới xem được, và mỗi lượt bấm hiện số được ghi nhận về máy chủ để phục vụ thống kê cho người đăng.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-anh-gia-dia-chi}
+\caption{Khối đầu trang chi tiết: thư viện ảnh, tiêu đề, các nhãn, khoảng giá, địa chỉ và thẻ liên hệ}
+\label{fig:detail-top}
+\end{figure}
+
+Tiếp theo là lưới thông số kỹ thuật của tin đăng (Hình~\ref{fig:detail-info}): diện tích, số phòng ngủ, phòng tắm, sức chứa, cùng các loại chi phí (giá điện, giá nước, giá internet, phí dịch vụ). Bên dưới là khối tiện ích hiển thị dưới dạng các thẻ có biểu tượng (phòng gym, gần bệnh viện, gần trường học, gần chợ/siêu thị\ldots) và phần thông tin mô tả chi tiết do người đăng cung cấp.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-thong-tin-khac}
+\caption{Lưới thông số, khối tiện ích và thông tin mô tả của tin đăng}
+\label{fig:detail-info}
+\end{figure}
+
+Một điểm nhấn của trang chi tiết là biểu đồ lịch sử giá (Hình~\ref{fig:detail-price-map}), giúp người thuê đánh giá xu hướng giá của tin đăng theo thời gian. Biểu đồ cho biết giá hiện tại, mức biến động theo tỷ lệ phần trăm và số lần thay đổi giá, có thể chuyển giữa các mốc thời gian một năm và hai năm; phía dưới tổng hợp giá thấp nhất, giá trung bình và giá cao nhất. Kế đó là bản đồ vị trí tích hợp Google Maps với điểm đánh dấu tin đăng và nút sao chép địa chỉ. Cả biểu đồ và bản đồ đều được tải động phía trình duyệt kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-lich-su-gia-ban-do}
+\caption{Biểu đồ lịch sử giá và bản đồ vị trí tin đăng}
+\label{fig:detail-price-map}
+\end{figure}
+
+Cuối trang là hai băng chuyền (carousel) gợi mở lựa chọn cho người dùng (Hình~\ref{fig:detail-similar}): khối \textit{bất động sản tương tự} lấy từ dịch vụ gợi ý theo tin đang xem, và khối \textit{tin đăng đã xem} dựng lại từ lịch sử duyệt tin được lưu cục bộ trên trình duyệt (và đồng bộ với máy chủ khi người dùng đã đăng nhập). Nhờ đó người dùng dễ dàng quay lại các tin quan tâm hoặc khám phá thêm các tin có đặc điểm gần giống.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{chi-tiet-tin-dang-bds-tuong-tu-da-xem-gan-day}
+\caption{Khối bất động sản tương tự và tin đăng đã xem ở cuối trang chi tiết}
+\label{fig:detail-similar}
+\end{figure}
 
 \subsection{Bản đồ tin đăng}
 
@@ -220,7 +281,19 @@ Người dùng có thể chọn tối đa ba tin đăng để so sánh song song
 
 \subsection{Đăng nhập và xác thực}
 
-Hệ thống cung cấp hai phương thức đăng nhập thuận tiện, không mật khẩu: \textit{liên kết ma thuật} (magic link) gửi qua email và \textit{đăng nhập bằng Google} (OAuth). Hộp thoại đăng nhập được thiết kế để bật lên ngay tại chỗ khi người dùng truy cập một chức năng yêu cầu xác thực, và sau khi đăng nhập thành công sẽ đưa người dùng trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Phiên đăng nhập được duy trì an toàn bằng cặp access/refresh token và tự động làm mới.
+Việc xác thực được thực hiện qua một hộp thoại bật lên ngay tại chỗ khi người dùng truy cập chức năng yêu cầu đăng nhập, thay vì chuyển sang trang riêng; sau khi đăng nhập thành công, người dùng được đưa trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Ứng dụng hỗ trợ ba cách đăng nhập (Hình~\ref{fig:auth}): bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email (\textit{magic link}), và bằng tài khoản Google (OAuth).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{dang-nhap-xac-thuc}\\[4pt]
+{\small (a) Hộp thoại đăng nhập}\\[10pt]
+\includegraphics[width=0.72\textwidth]{xac-thuc-dang-ky}\\[4pt]
+{\small (b) Hộp thoại đăng ký}
+\caption{Hộp thoại đăng nhập và đăng ký của ứng dụng}
+\label{fig:auth}
+\end{figure}
+
+Người dùng mới đăng ký bằng họ tên, email và mật khẩu (có ô xác nhận mật khẩu, kiểm tra hợp lệ ngay phía trình duyệt); sau đó tài khoản cần được kích hoạt bằng mã xác minh (OTP) gửi tới hộp thư. Chức năng quên mật khẩu cũng dựa trên mã xác minh gửi qua email để cấp quyền đặt lại mật khẩu mới; toàn bộ mã xác minh và liên kết đăng nhập đều gửi qua email. Phía máy chủ, mật khẩu được băm bằng BCrypt và phiên làm việc được cấp dưới dạng cặp JWT gồm access token và refresh token lưu trong cookie; khi access token hết hạn, bộ chặn của \texttt{axios} tự động gọi làm mới rồi phát lại yêu cầu một cách trong suốt với người dùng.
 
 \subsection{Tin tức và thông báo}
 
@@ -230,7 +303,38 @@ Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên
 
 Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu, trạng thái rỗng có hướng dẫn rõ ràng và chuyển đổi đơn vị tiền tệ theo ngôn ngữ góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
 
-% TODO (Phát): chèn Hình -- Ảnh chụp giao diện webapp trên máy tính và di động (ch51-responsive.png).
+Giao diện được thiết kế đáp ứng linh hoạt theo kích thước màn hình: trên màn hình lớn, các trang tận dụng bố cục nhiều cột -- trang danh sách đặt bộ lọc cạnh kết quả, trang chi tiết ghim thẻ liên hệ bên phải. Khi thu về kích thước điện thoại, bố cục tự xếp lại thành một cột: thanh điều hướng trên cùng được thu gọn thành nút trình đơn mở ra ngăn điều hướng dạng trượt (Hình~\ref{fig:responsive-home}); thanh tìm kiếm và các nút điều khiển trên trang danh sách dồn lại theo chiều dọc (Hình~\ref{fig:responsive-listing}); còn thẻ liên hệ trên trang chi tiết được đưa xuống dưới thư viện ảnh (Hình~\ref{fig:responsive-detail}). Nhờ đó, trải nghiệm vẫn liền mạch và đầy đủ chức năng trên mọi kích thước màn hình.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{homepage-desktop}\\[4pt]
+{\small (a) Trang chủ trên máy tính}\\[10pt]
+\includegraphics[height=7.2cm]{homepage-mobile}\hspace{0.8cm}
+\includegraphics[height=7.2cm]{homepage-mobile-navigation}\\[4pt]
+{\small (b) Trang chủ và (c) menu điều hướng thu gọn trên thiết bị di động}
+\caption{Trang chủ ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-home}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{listing-desktop}\\[4pt]
+{\small (a) Trang danh sách trên máy tính}\\[10pt]
+\includegraphics[height=7.6cm]{listing-mobile}\\[4pt]
+{\small (b) Trang danh sách trên thiết bị di động}
+\caption{Trang danh sách tin đăng ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-listing}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{detailpage-desktop}\\[4pt]
+{\small (a) Trang chi tiết trên máy tính}\\[10pt]
+\includegraphics[height=7.6cm]{detailpage-mobile}\\[4pt]
+{\small (b) Trang chi tiết trên thiết bị di động}
+\caption{Trang chi tiết tin đăng ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-detail}
+\end{figure}
 
 \section{Kết quả giao diện dành cho quản trị viên}
 
