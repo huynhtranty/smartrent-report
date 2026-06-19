@@ -281,7 +281,7 @@ Người dùng có thể chọn tối đa ba tin đăng để so sánh song song
 
 \subsection{Đăng nhập và xác thực}
 
-Việc xác thực được thực hiện qua một hộp thoại bật lên ngay tại chỗ khi người dùng truy cập chức năng yêu cầu đăng nhập, thay vì chuyển sang trang riêng; sau khi đăng nhập thành công, người dùng được đưa trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Ứng dụng hỗ trợ ba cách đăng nhập (Hình~\ref{fig:auth}): bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email (\textit{magic link}), và bằng tài khoản Google (OAuth).
+Việc xác thực được thực hiện qua một hộp thoại bật lên ngay tại chỗ khi người dùng truy cập chức năng yêu cầu đăng nhập, thay vì chuyển sang trang riêng; sau khi đăng nhập thành công, người dùng được đưa trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Ứng dụng hỗ trợ ba cách đăng nhập (Hình~\ref{fig:auth}): bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email (magic link), và bằng tài khoản Google (OAuth).
 
 \begin{figure}[H]
 \centering
@@ -301,7 +301,7 @@ Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên
 
 \subsection{Trải nghiệm đa thiết bị và đa ngôn ngữ}
 
-Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu, trạng thái rỗng có hướng dẫn rõ ràng và chuyển đổi đơn vị tiền tệ theo ngôn ngữ góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
+Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Việc chuyển đổi ngôn ngữ chỉ thay đổi nội dung chữ hiển thị (nhãn, thông báo, văn bản), còn giá tin đăng vẫn giữ nguyên đơn vị tiền đồng. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu và trạng thái rỗng có hướng dẫn rõ ràng góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
 
 Giao diện được thiết kế đáp ứng linh hoạt theo kích thước màn hình: trên màn hình lớn, các trang tận dụng bố cục nhiều cột -- trang danh sách đặt bộ lọc cạnh kết quả, trang chi tiết ghim thẻ liên hệ bên phải. Khi thu về kích thước điện thoại, bố cục tự xếp lại thành một cột: thanh điều hướng trên cùng được thu gọn thành nút trình đơn mở ra ngăn điều hướng dạng trượt (Hình~\ref{fig:responsive-home}); thanh tìm kiếm và các nút điều khiển trên trang danh sách dồn lại theo chiều dọc (Hình~\ref{fig:responsive-listing}); còn thẻ liên hệ trên trang chi tiết được đưa xuống dưới thư viện ảnh (Hình~\ref{fig:responsive-detail}). Nhờ đó, trải nghiệm vẫn liền mạch và đầy đủ chức năng trên mọi kích thước màn hình.
 
