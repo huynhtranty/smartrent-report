@@ -355,7 +355,39 @@ Người dùng có thể chọn tối đa ba tin đăng để so sánh song song
 \label{fig:saved-page}
 \end{figure}
 
-Ngoài ra, người dùng có thể \textit{theo dõi} các chủ trọ/môi giới và xem bảng tin tổng hợp các tin đăng từ những người mình theo dõi, với giao diện chia thành hai thẻ ``danh sách người theo dõi'' và ``bảng tin''. Đây là các tính năng tạo nên trải nghiệm cá nhân hóa và khuyến khích người dùng quay lại.
+Ngoài việc lưu tin, hệ thống còn cho phép người dùng đã đăng nhập \textit{theo dõi} các chủ trọ/môi giới để không bỏ lỡ tin đăng mới của họ. Nút theo dõi được đặt ngay tại nơi người dùng tiếp xúc với người bán: trên thẻ thông tin người bán ở trang chi tiết tin đăng (Hình~\ref{fig:follow-detail}) và trên trang hồ sơ tổng hợp tin đăng của người bán (Hình~\ref{fig:follow-profile}). Thao tác theo dõi/bỏ theo dõi được cập nhật lạc quan (optimistic update) nên giao diện phản hồi tức thì; nếu người dùng chưa đăng nhập, hệ thống mở hộp thoại đăng nhập rồi đưa họ trở lại đúng trang đang xem.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{follow-indetailpage}
+\caption{Nút theo dõi trên thẻ thông tin người bán ở trang chi tiết tin đăng}
+\label{fig:follow-detail}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-indetailUser}
+\caption{Nút theo dõi trên trang hồ sơ tổng hợp các tin đăng của người bán}
+\label{fig:follow-profile}
+\end{figure}
+
+Toàn bộ hoạt động theo dõi được quản lý tại trang \textit{Đang theo dõi}, chia thành hai thẻ. Thẻ \textit{Bảng tin} tổng hợp các tin đăng mới nhất từ tất cả những người đang theo dõi, kèm thanh bên cho phép lọc nhanh theo từng người (Hình~\ref{fig:follow-feed}). Thẻ \textit{Đang theo dõi} liệt kê những người dùng đang được theo dõi dưới dạng lưới thẻ, mỗi thẻ có nút bỏ theo dõi và lối tắt mở bảng tin của người đó (Hình~\ref{fig:follow-list}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-listing}
+\caption{Thẻ Bảng tin tổng hợp tin đăng mới từ những người đang theo dõi}
+\label{fig:follow-feed}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-listingUser}
+\caption{Thẻ Đang theo dõi liệt kê những người dùng đang được theo dõi}
+\label{fig:follow-list}
+\end{figure}
+
+Về phía hệ thống, quan hệ theo dõi được lưu như một đồ thị có hướng giữa các người dùng; các thao tác theo dõi và bỏ theo dõi đều có tính lũy đẳng (idempotent) nên việc lặp lại không gây sai lệch trạng thái. Khi một người được theo dõi đăng tin mới, hệ thống tự động phát thông báo trong ứng dụng đến toàn bộ người theo dõi của họ, khép kín vòng trải nghiệm cá nhân hóa và khuyến khích người dùng quay lại.
 
 \subsection{Trợ lý hội thoại AI trên giao diện}
 
