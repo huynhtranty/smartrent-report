@@ -500,7 +500,101 @@ Trang quản lý tin đăng liệt kê toàn bộ tin của chủ trọ, phân n
 
 \subsection{Đăng tin}
 
-Quy trình đăng tin được dẫn dắt theo nhiều bước rõ ràng: nhập thông tin bất động sản, tải hình ảnh, chọn gói và cấu hình hiển thị, xem lại đơn hàng và thanh toán. Giao diện hiển thị tiến trình theo từng bước và chỉ cho phép chuyển bước khi thông tin ở bước hiện tại hợp lệ, giúp chủ trọ tạo tin đầy đủ và chính xác trước khi xuất bản. Một số bước có sự hỗ trợ của AI (gợi ý nội dung tin đăng, định giá tham khảo) được trình bày ở phần kết quả triển khai các tính năng AI.
+Quy trình đăng tin được chia thành năm bước nối tiếp với thanh tiến trình hiển thị bước hiện tại; hệ thống chỉ cho phép chuyển sang bước sau khi dữ liệu ở bước hiện tại hợp lệ, giúp chủ trọ tạo tin đầy đủ và chính xác trước khi xuất bản (Hình~\ref{fig:post-steps}). Năm bước lần lượt là: nhập thông tin bất động sản, định giá tham khảo bằng AI, chọn gói và cấu hình hiển thị, tải hình ảnh và video, cuối cùng là xem lại đơn hàng và thanh toán.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{post-listing-steps}
+\caption{Thanh tiến trình năm bước của luồng đăng tin}
+\label{fig:post-steps}
+\end{figure}
+
+\textbf{Bước 1 -- Thông tin bất động sản.} Bước đầu tiên thu thập toàn bộ dữ liệu của tin đăng, được tổ chức thành ba nhóm. Nhóm \textit{Thông tin tin đăng} gồm nhu cầu (cho thuê hoặc bán), loại danh mục và địa chỉ bất động sản; địa chỉ được chọn theo tỉnh/thành và phường/xã, kèm bản đồ tương tác cho phép kéo điểm đánh dấu để định vị chính xác (Hình~\ref{fig:post-step1-1}). Nhóm \textit{Chi tiết bất động sản} nhập diện tích, giá, tình trạng nội thất, số phòng ngủ, phòng tắm, số người ở và danh sách tiện nghi (Hình~\ref{fig:post-step1-2}). Nhóm \textit{Chi phí dịch vụ \& Hướng nhà} và \textit{Tiêu đề \& Mô tả} khai báo giá điện, nước, internet, phí dịch vụ, hướng nhà, đồng thời cho phép sinh tiêu đề và mô tả tự động bằng AI theo văn phong tùy chọn (Hình~\ref{fig:post-step1-3}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{post-step1-1}
+\caption{Bước 1 -- nhóm thông tin tin đăng và bản đồ định vị bất động sản}
+\label{fig:post-step1-1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{post-step1-2}
+\caption{Bước 1 -- nhóm chi tiết bất động sản và danh sách tiện nghi}
+\label{fig:post-step1-2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{post-step1-3}
+\caption{Bước 1 -- chi phí dịch vụ, hướng nhà và sinh tiêu đề/mô tả tự động bằng AI}
+\label{fig:post-step1-3}
+\end{figure}
+
+\textbf{Bước 2 -- Định giá AI.} Dựa trên thông tin vừa nhập, hệ thống đưa ra khoảng giá tham khảo cho khu vực tương ứng gồm mức tối thiểu, trung bình và tối đa, giúp chủ trọ định giá tin đăng hợp lý (Hình~\ref{fig:post-step2}). Chi tiết cơ chế định giá được trình bày ở phần kết quả triển khai các tính năng AI.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{post-step2}
+\caption{Bước 2 -- khoảng giá đề xuất do AI ước tính theo khu vực}
+\label{fig:post-step2}
+\end{figure}
+
+\textbf{Bước 3 -- Gói và cấu hình hiển thị.} Chủ trọ chọn hạng tin (Tin thường hoặc các hạng VIP Bạc, VIP Vàng, VIP Kim cương với mức ưu tiên hiển thị tăng dần), thời hạn đăng và ngày bắt đầu; bảng tổng hợp cập nhật tức thời tổng chi phí đã gồm thuế (Hình~\ref{fig:post-step3}). Nếu đang sở hữu gói hội viên còn hạn mức, chủ trọ có thể chọn áp dụng quyền lợi (lượt đăng VIP miễn phí) cho tin này để được miễn hoặc giảm phí (Hình~\ref{fig:post-step3-benefit}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{post-step3}
+\caption{Bước 3 -- chọn hạng tin, thời hạn đăng và tổng chi phí}
+\label{fig:post-step3}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{post-step-3-benefit}
+\caption{Bước 3 -- áp dụng quyền lợi gói hội viên còn hạn mức cho tin đăng}
+\label{fig:post-step3-benefit}
+\end{figure}
+
+\textbf{Bước 4 -- Hình ảnh và video.} Bước này yêu cầu tải ảnh bìa bắt buộc và bộ ảnh minh họa theo số lượng tối thiểu của từng hạng tin, kèm tùy chọn tải video hoặc nhúng liên kết YouTube; giao diện cũng cung cấp hướng dẫn chụp ảnh để nâng chất lượng tin đăng (Hình~\ref{fig:post-step4-1} và Hình~\ref{fig:post-step4-2}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{post-step4-1}
+\caption{Bước 4 -- tải ảnh bìa và bộ ảnh minh họa của tin đăng}
+\label{fig:post-step4-1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\textwidth]{post-step4-2}
+\caption{Bước 4 -- tải video, nhúng liên kết YouTube và hướng dẫn chụp ảnh}
+\label{fig:post-step4-2}
+\end{figure}
+
+\textbf{Bước 5 -- Tóm tắt đơn hàng và thanh toán.} Trước khi xuất bản, hệ thống tổng hợp lại thông tin liên hệ, chi tiết gói đăng tin, chi tiết thanh toán và bản xem trước tin đăng đúng như cách hiển thị với người thuê (Hình~\ref{fig:post-step5-1} và Hình~\ref{fig:post-step5-2}). Khi tin có phát sinh chi phí (không áp dụng quyền lợi hội viên hoặc không đủ hạn mức), chủ trọ chọn cổng thanh toán SePay hoặc ZaloPay để hoàn tất; nếu chi phí bằng không nhờ quyền lợi gói, tin được xuất bản trực tiếp (Hình~\ref{fig:post-step5-payment}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{post-step-5}
+\caption{Bước 5 -- tóm tắt đơn hàng với thông tin liên hệ, gói và chi tiết thanh toán}
+\label{fig:post-step5-1}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{post-step-5-2}
+\caption{Bước 5 -- bản xem trước tin đăng trước khi xuất bản}
+\label{fig:post-step5-2}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{post-step-5-thanh-toan-ifnotchoosebenefit}
+\caption{Bước 5 -- chọn cổng thanh toán SePay hoặc ZaloPay khi tin phát sinh chi phí}
+\label{fig:post-step5-payment}
+\end{figure}
 
 \subsection{Quản lý tin nháp}
 
