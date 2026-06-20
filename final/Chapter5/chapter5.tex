@@ -243,6 +243,17 @@ Trên trang danh sách, ngoài thanh lọc phía trên, màn hình lớn còn hi
 
 Phía sau giao diện, các điều kiện lọc được gửi tới Backend qua một lời gọi tìm kiếm dạng POST; các tiêu chí dạng khoảng (giá, diện tích, số phòng ngủ) được rút gọn thành chuỗi \texttt{min..max} trước khi truyền. Kết quả trả về được phân trang và lưu đệm theo bộ điều kiện hiện hành, nhờ đó khi người dùng quay lại một bộ lọc đã dùng thì danh sách hiển thị tức thì mà không phải truy vấn lại từ đầu.
 
+Ngoài việc nhập từ khóa tự do, ô tìm kiếm còn chủ động đưa ra gợi ý ngay khi người dùng gõ (Hình~\ref{fig:search-context}). Các gợi ý được chia thành hai nhóm: nhóm gợi ý trực tiếp theo từ khóa, và nhóm \textit{gợi ý theo ngữ cảnh} -- những truy vấn dựng sẵn kết hợp nhiều tiêu chí như khu vực và khoảng giá (chẳng hạn ``Nhà trọ Hồ Chí Minh từ 1 triệu đến 5 triệu''). Mỗi gợi ý có thể chọn bằng chuột hoặc điều hướng bằng bàn phím (phím mũi tên để di chuyển, Enter để chọn, Esc để đóng); khi chọn, hệ thống chuyển ngay gợi ý đó thành bộ điều kiện lọc tương ứng và hiển thị danh sách kết quả.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{search-theo-ngu-canh}
+\caption{Ô tìm kiếm với nhóm gợi ý theo ngữ cảnh: các truy vấn dựng sẵn kết hợp khu vực và khoảng giá}
+\label{fig:search-context}
+\end{figure}
+
+Về mặt nghiệp vụ, gợi ý theo ngữ cảnh giúp rút ngắn quãng đường từ nhu cầu còn mơ hồ tới kết quả cụ thể. Người tìm trọ thường chỉ có ý định chung chung (tìm phòng giá vừa phải ở một thành phố) mà chưa biết diễn đạt nhu cầu đó thành tổ hợp tiêu chí lọc; thay vì để họ tự mò mẫm qua từng bộ lọc, hệ thống đề xuất sẵn những truy vấn phổ biến, vốn có thật trong dữ liệu, để chỉ với một thao tác là ra được danh sách phù hợp. Cách làm này vừa giảm số lần tìm kiếm trả về kết quả rỗng, vừa định hướng người dùng tới những khu vực và khoảng giá đang có nhiều tin, nhờ đó tăng khả năng họ tìm thấy tin ưng ý và gắn bó lâu hơn với hệ thống.
+
 \subsection{Trang chi tiết tin đăng}
 
 Trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu SEO và tốc độ hiển thị lần đầu. Trang trình bày đầy đủ thông tin của một tin đăng: thư viện ảnh/video, tiêu đề và giá, danh sách tiện ích, mô tả chi tiết, biểu đồ lịch sử giá, bản đồ vị trí, và thẻ liên hệ chủ trọ/môi giới với chức năng hiện số điện thoại (có ghi nhận lượt bấm) cùng liên kết nhắn tin nhanh. Ở cuối trang còn có khối tin tương tự và khối tin vừa xem để gợi mở lựa chọn cho người dùng. Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự được tải động kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
@@ -496,7 +507,16 @@ Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái
 
 \subsection{Quản lý tin đăng}
 
-Trang quản lý tin đăng liệt kê toàn bộ tin của chủ trọ, phân nhóm theo trạng thái (đang hiển thị, hết hạn, chờ duyệt\ldots) kèm bộ lọc và tải thêm theo trang. Từ đây, chủ trọ có thể chỉnh sửa, gia hạn hoặc thao tác nhanh trên từng tin để duy trì tính cập nhật của danh sách.
+Trang quản lý tin đăng là nơi chủ trọ theo dõi và điều hành toàn bộ tin của mình ở cùng một chỗ (Hình~\ref{fig:listing-management}). Các tin được phân nhóm theo trạng thái qua hàng thẻ ở đầu trang -- tất cả, đang hiển thị, sắp hết hạn, hết hạn, chờ duyệt và bị từ chối -- giúp chủ trọ nhanh chóng khoanh vùng nhóm tin cần xử lý (chẳng hạn lọc riêng các tin sắp hết hạn để gia hạn kịp thời). Bên dưới là thanh công cụ tìm kiếm theo từ khóa cùng các bộ lọc theo nhu cầu, loại bất động sản và tiêu chí sắp xếp, kèm một hộp thoại lọc nâng cao (khoảng giá, diện tích, số phòng\ldots); danh sách hỗ trợ phân trang trên máy tính và tự tải thêm khi cuộn trên thiết bị di động.
+
+Phía trên danh sách, một dải thông tin tóm tắt hạn mức quyền lợi của gói hội viên đang dùng -- tên gói, số ngày còn lại và số lượt đẩy tin miễn phí còn lại -- để chủ trọ biết mình còn bao nhiêu lượt trước khi thao tác. Mỗi tin hiển thị dưới dạng thẻ tóm tắt ảnh đại diện, tiêu đề, hạng tin và trạng thái xác thực, địa chỉ, giá thuê, diện tích cùng các mốc quản lý (mã tin, ngày đăng, ngày hết hạn). Ngay trên từng thẻ, chủ trọ thao tác trực tiếp mà không cần rời trang: chỉnh sửa nội dung, đẩy tin lên đầu danh sách, và qua menu mở rộng còn có sao chép liên kết, gỡ tin, xóa tin, cùng tùy chọn gia hạn hay đăng lại tùy theo trạng thái hiện tại của tin. Riêng với tin bị từ chối hoặc cần chỉnh sửa, nút sửa dẫn thẳng tới luồng chỉnh sửa kèm ngữ cảnh gửi duyệt lại, rút ngắn thao tác cho chủ trọ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{quan-ly-tin-dang}
+\caption{Trang quản lý tin đăng của chủ trọ: phân nhóm tin theo trạng thái, bộ lọc, dải hạn mức gói hội viên và các thao tác nhanh trên từng tin}
+\label{fig:listing-management}
+\end{figure}
 
 \subsection{Đăng tin}
 
