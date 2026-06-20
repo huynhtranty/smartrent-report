@@ -512,7 +512,43 @@ Hệ thống ghi nhận những người dùng đã quan tâm tới tin của ch
 
 \subsection{Gói hội viên}
 
-Chủ trọ có thể xem và đăng ký các gói hội viên với những quyền lợi khác nhau (số lượng và mức ưu tiên hiển thị của tin đăng, các tiện ích kèm theo\ldots). Trang gói hội viên trình bày danh sách gói, gói đang sử dụng cùng thời hạn còn lại, và cho phép nâng cấp; thông tin về quyền lợi và bảng giá cũng được công khai để người dùng tham khảo trước khi đăng ký.
+Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấp sẵn một lượng quyền lợi đăng tin để dùng dần trong thời hạn gói thay vì trả phí cho từng tin. Hệ thống cung cấp ba hạng gói -- \textit{Cơ bản} (BASIC), \textit{Tiêu chuẩn} (STANDARD) và \textit{Nâng cao} (ADVANCED) -- mỗi gói có thời hạn một tháng và được niêm yết theo hai mức: giá gốc và giá bán sau khi trừ tỷ lệ chiết khấu (Hình~\ref{fig:membership-plans}). Trang gói dịch vụ trình bày ba gói cạnh nhau kèm bảng quyền lợi để chủ trọ đối chiếu trước khi mua; hạng càng cao thì số lượng quyền lợi càng nhiều.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership}
+\caption{Trang gói dịch vụ so sánh ba hạng gói hội viên kèm giá và quyền lợi}
+\label{fig:membership-plans}
+\end{figure}
+
+Quyền lợi của mỗi gói thuộc hai nhóm chính: số lượt đăng tin VIP miễn phí theo từng hạng tin -- VIP Bạc, VIP Vàng và VIP Kim cương (tin ở hạng cao được ưu tiên hiển thị hơn) -- và số lượt \textit{đẩy tin} (boost) miễn phí để đưa tin lên đầu danh sách. Khi mua gói thành công, hệ thống cấp một lần toàn bộ quyền lợi dưới dạng hạn mức (số lượt được cấp, số lượt đã dùng) có hiệu lực đến hết thời hạn gói. Mỗi khi chủ trọ đăng một tin VIP hoặc đẩy một tin, hệ thống trừ dần vào đúng loại hạn mức tương ứng và đánh dấu quyền lợi là đã dùng hết khi hạn mức về không; nhờ đó chủ trọ có thể dùng quyền lợi gói ngay trong luồng đăng tin và quản lý tin mà không phát sinh thêm chi phí (Hình~\ref{fig:membership-boost}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{memembership-push-listing}
+\caption{Hạn mức quyền lợi của gói được áp dụng trực tiếp trong trang quản lý tin đăng (số lượt đẩy tin còn lại)}
+\label{fig:membership-boost}
+\end{figure}
+
+Bảng điều khiển của chủ trọ tổng hợp tình trạng gói đang dùng: tên và hạng gói, ngày hết hạn cùng số ngày còn lại, và mức tiêu thụ của từng loại quyền lợi (đã dùng trên tổng số được cấp) để chủ trọ theo dõi phần quyền lợi còn lại (Hình~\ref{fig:membership-dashboard}). Khi gói hết hạn, hệ thống tự chuyển trạng thái gói và các quyền lợi chưa dùng sang \textit{hết hạn} thông qua tác vụ định kỳ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership-dashboard}
+\caption{Bảng điều khiển hiển thị gói đang dùng, số ngày còn lại và mức tiêu thụ từng quyền lợi}
+\label{fig:membership-dashboard}
+\end{figure}
+
+Khi đang sở hữu một gói, chủ trọ có thể \textit{nâng cấp} lên hạng cao hơn (Hình~\ref{fig:membership-upgrade}). Hệ thống áp dụng cơ chế chiết khấu theo tỷ lệ thời gian còn lại của gói hiện tại: phần giá trị tương ứng với số ngày chưa dùng được trừ vào giá gói mới, nhưng chủ trọ luôn phải trả tối thiểu khoản chênh lệch giá giữa hai gói. Trang nâng cấp hiển thị rõ giá gói mới, mức chiết khấu, số tiền phải trả, đồng thời nêu cả phần quyền lợi còn lại của gói cũ sẽ mất và phần quyền lợi mới nhận được, giúp chủ trọ cân nhắc trước khi quyết định. Sau khi nâng cấp, gói cũ được đánh dấu \textit{đã nâng cấp} và hệ thống khởi tạo gói mới với hạn mức quyền lợi đầy đủ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership-upgrade}
+\caption{Trang nâng cấp gói với chiết khấu theo thời gian còn lại, quyền lợi sẽ mất và quyền lợi mới nhận}
+\label{fig:membership-upgrade}
+\end{figure}
+
+Mọi giao dịch mua và nâng cấp gói đều đi qua cổng thanh toán và được ghi nhận trong lịch sử giao dịch của chủ trọ.
 
 \subsection{Lịch sử giao dịch và số dư tài khoản}
 
