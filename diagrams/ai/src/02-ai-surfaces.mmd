@@ -1,20 +1,14 @@
 flowchart TB
- subgraph LLMA["Tác tử LLM (LLM agent + RAG + tool)"]
- Chatbot["Trợ lý hội thoại<br/><small>14 tool · Gemini 2.5 Flash</small>"]
- end
- subgraph MM["LLM đa phương thức"]
- VerifyS["Kiểm duyệt tin đăng<br/><small>ảnh + video + văn bản</small>"]
- end
- subgraph Hybrid["Lai ML + luật"]
- PriceTool["Ước tính giá (tool chat)<br/><small>XGBoost + luật dự phòng</small>"]
- PriceEp["Gợi ý giá (API)<br/><small>tác tử LLM + luật</small>"]
- end
- subgraph CML["Học máy cổ điển"]
- RecoS["Gợi ý phòng trọ<br/><small>CBF + CF + boost</small>"]
- end
- subgraph Single["LLM đơn lượt"]
- ComplS["Sinh văn bản<br/><small>completion thô</small>"]
- end
- subgraph Ext["Giao thức công cụ ngoài"]
- MCPS["MCP server<br/><small>FastMCP · stdio</small>"]
- end
+ Root["Dịch vụ AI<br/><small>sáu bề mặt · bốn nhóm mô hình</small>"]
+ Root --> A["Tác tử LLM<br/><small>RAG + công cụ</small>"]
+ Root --> B["LLM đa phương thức"]
+ Root --> C["Lai ML + luật"]
+ Root --> D["Học máy cổ điển"]
+ Root --> E["LLM đơn lượt"]
+ Root --> F["Giao thức công cụ ngoài"]
+ A --> A1["Trợ lý hội thoại<br/><small>14 tool · Gemini 2.5 Flash</small>"]
+ B --> B1["Kiểm duyệt tin đăng<br/><small>ảnh + video + văn bản</small>"]
+ C --> C1["Ước tính giá / gợi ý giá<br/><small>XGBoost · tác tử LLM · luật</small>"]
+ D --> D1["Gợi ý phòng trọ<br/><small>CBF + CF + boost</small>"]
+ E --> E1["Sinh văn bản<br/><small>completion thô</small>"]
+ F --> F1["MCP server<br/><small>FastMCP · stdio</small>"]
