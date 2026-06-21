@@ -234,23 +234,138 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \section{Thiết kế kiến trúc AI}
 
-% TODO: Nội dung (mục mới bổ sung theo cấu trúc báo cáo).
+Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt nhằm cô lập phần phụ thuộc nặng về học máy và mô hình ngôn ngữ khỏi khối Backend nghiệp vụ, đồng thời cho phép mở rộng quy mô (scale) hai phần một cách riêng rẽ.
 
-\subsection{Luồng xử lý AI Chatbot}
-
-% TODO: Nội dung.
-
-\subsection{Luồng gợi ý phòng trọ}
-
-% TODO: Nội dung.
-
-\subsection{Tích hợp API AI}
-
-% TODO: Nội dung.
+Các tác tử hội thoại được xây trên OpenAI Agents SDK; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường (Retrieval-Augmented Generation -- RAG) cho trợ lý hội thoại; LLM đa phương thức cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát (observability) và một lớp truy cập Backend dùng chung.
 
 \subsection{Kiến trúc tích hợp AI}
 
-% TODO: Nội dung.
+Mã nguồn dịch vụ AI được tổ chức theo nguyên tắc \textit{tách bạch mối quan tâm} với cùng một khuôn phân tầng \texttt{api $\to$ service $\to$ lõi xử lý $\to$ hạ tầng}, phản ánh qua cấu trúc thư mục \texttt{app/} ở Bảng~\ref{tab:ai-structure}. Tầng API chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu; tầng dịch vụ chứa logic của từng bề mặt AI; lõi tác tử (\texttt{agent}) điều phối vòng lặp gọi công cụ và truy hồi ngữ cảnh; còn tầng \texttt{ai} đóng gói việc dựng mô hình và tích hợp mô hình ngôn ngữ. Mọi truy cập tới dữ liệu thật của hệ thống đều đi qua một thân khách HTTP duy nhất (\texttt{backend\_client}) trỏ về Backend chính.
+
+\begin{table}[H]
+\centering
+\caption{Cấu trúc thư mục mã nguồn của dịch vụ AI (\texttt{app/})}
+\label{tab:ai-structure}
+\begin{tabular}{|L{0.26\textwidth}|L{0.64\textwidth}|}
+\hline
+\textbf{Thư mục} & \textbf{Vai trò} \\
+\hline
+\texttt{api/v1/} & Tầng API (router FastAPI): hội thoại (\texttt{chat}), sinh văn bản (\texttt{completion}), gợi ý giá (\texttt{price\_suggestion}), kiểm duyệt tin (\texttt{listing\_verification}), gợi ý (\texttt{recommendation}), phân tích truy vấn (\texttt{search}) và người dùng. \\
+\hline
+\texttt{service/} & Tầng dịch vụ: \texttt{chat}, \texttt{listing\_verification}, \texttt{price\_prediction}, \texttt{recommendation}, \texttt{user} -- mỗi tệp gói trọn logic một bề mặt AI. \\
+\hline
+\texttt{agent/} & Lõi tác tử: \texttt{orchestrator} (điều phối vòng lặp), \texttt{tools/} (14 công cụ \texttt{@function\_tool}), \texttt{rag/} (truy hồi theo từ khóa) và \texttt{tool\_context} (gom dữ liệu tin đăng trong một lượt). \\
+\hline
+\texttt{ai/} & Tích hợp mô hình: \texttt{llm/} (\texttt{agent\_factory} dựng mô hình qua LiteLLM, \texttt{gateway} cho quan sát, \texttt{gemini\_listing\_helper} đa phương thức), \texttt{house\_pricing/} (mô hình XGBoost), \texttt{mcp/} (máy chủ MCP). \\
+\hline
+\texttt{core/} & Hạ tầng dùng chung: \texttt{backend\_client} (gọi Backend qua \texttt{httpx}) và \texttt{config} (cấu hình qua \texttt{pydantic-settings}). \\
+\hline
+\texttt{dto/}, \texttt{entity/}, \texttt{repository/} & Đối tượng truyền tải (request/response), thực thể và truy xuất dữ liệu người dùng. \\
+\hline
+\end{tabular}
+\end{table}
+
+Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên: yêu cầu đi vào qua tầng API, được ủy thác xuống tầng dịch vụ, rồi tới lõi tác tử và tầng mô hình; ba dịch vụ bên ngoài (Vertex AI Gemini, Langfuse và Backend chính) nằm ở biên. Hình~\ref{fig:ai-surfaces} phân loại sáu bề mặt AI theo nhóm mô hình tính toán, làm rõ rằng không phải mọi tính năng đều dùng mô hình ngôn ngữ: gợi ý phòng trọ thuần học máy cổ điển, còn ước tính giá là mô hình lai.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/ai/pdf/01-architecture-layers}
+\caption{Kiến trúc phân lớp của dịch vụ AI (smartrent-ai)}
+\label{fig:ai-architecture}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../diagrams/ai/pdf/02-ai-surfaces}
+\caption{Sáu bề mặt AI gom theo nhóm mô hình tính toán}
+\label{fig:ai-surfaces}
+\end{figure}
+
+\subsection{Luồng xử lý AI Chatbot}
+
+Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận -- hành động (ReAct) \cite{ReActPaper}: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events -- SSE.
+
+Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối (\texttt{AgentOrchestrator}) cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn -- mã tỉnh/thành, mã quận/huyện, mã tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng -- từ bốn cơ sở tri thức dạng JSON; việc đối sánh dựa trên từ khóa, có chuẩn hóa loại bỏ dấu tiếng Việt và mở rộng từ đồng nghĩa, hoàn toàn ở bộ nhớ nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng, tách khỏi chỉ dẫn hệ thống để chỉ dẫn hệ thống giữ nguyên byte qua mọi yêu cầu, tận dụng được cơ chế lưu đệm tiền tố (prefix cache) của mô hình.
+
+Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho \texttt{Runner} của Agents SDK chạy vòng lặp gọi công cụ (tối đa 12 lượt). Trong mỗi lượt, mô hình có thể phát ra một hay nhiều lời gọi công cụ; các công cụ được thực thi và đẩy dữ liệu tin đăng thô vào \texttt{ToolContext} để bộ điều phối dựng phần kết quả trả về giao diện sau khi kết thúc. Trợ lý được trang bị 14 công cụ phủ các nhóm nghiệp vụ ở Bảng~\ref{tab:ai-tools}, từ tìm kiếm, xem chi tiết, so sánh, ước tính giá tới các thao tác cá nhân hóa như lưu tin, quản lý tin của chủ trọ và báo cáo tin vi phạm.
+
+\begin{table}[H]
+\centering
+\caption{Các công cụ của trợ lý hội thoại gom theo nhóm chức năng}
+\label{tab:ai-tools}
+\begin{tabular}{|L{0.30\textwidth}|L{0.60\textwidth}|}
+\hline
+\textbf{Nhóm} & \textbf{Công cụ} \\
+\hline
+Tìm kiếm và tra cứu & \texttt{search\_listings}, \texttt{get\_listing\_detail}, \texttt{compare\_listings}, \texttt{address\_translator} \\
+\hline
+Định giá và lịch sử giá & \texttt{get\_price\_estimate} (XGBoost), \texttt{get\_price\_history} \\
+\hline
+Cá nhân hóa & \texttt{get\_recommendations}, \texttt{get\_user\_info}, \texttt{save\_listing}, \texttt{bulk\_save\_listings} \\
+\hline
+Quản lý dành cho chủ trọ & \texttt{my\_listings\_status}, \texttt{update\_listing\_price} \\
+\hline
+Tương tác khác & \texttt{notifications\_inbox}, \texttt{report\_listing} \\
+\hline
+\end{tabular}
+\end{table}
+
+Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiện SSE phân loại theo trạng thái: \texttt{status} báo các pha xử lý (đang suy nghĩ, đang gọi công cụ, có kết quả công cụ) kèm nhãn tiếng Việt thân thiện; \texttt{text} truyền dần từng đoạn câu trả lời; \texttt{listings} đẩy danh sách tin đăng; và \texttt{done} khép lại luồng kèm dữ liệu siêu dữ liệu. Nhờ đó người dùng thấy trợ lý phản hồi liên tục thay vì chờ trong im lặng, và có thể hủy luồng đang chạy.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/ai/pdf/03-chat-flow}
+\caption{Luồng xử lý một lượt hội thoại có truyền luồng (SSE)}
+\label{fig:ai-chat-flow}
+\end{figure}
+
+\subsection{Luồng gợi ý phòng trọ}
+
+Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung (Content-Based Filtering -- CBF), lọc cộng tác (Collaborative Filtering -- CF) \cite{CFSurvey} và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
+
+Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Trước hết, mỗi tin đăng được biểu diễn thành một vector đặc trưng: giá, diện tích và số phòng ngủ được chuẩn hóa MinMax, kết hợp các đặc trưng phân loại one-hot cho loại bất động sản, loại tin và mã tỉnh. Từ lịch sử tương tác, hệ thống dựng một vector hồ sơ người dùng bằng trung bình có trọng số. Điểm CBF là độ tương đồng cosine giữa hồ sơ (hoặc tin mục tiêu) và ứng viên; điểm CF dựa trên mức đồng xuất hiện item-item trên toàn bộ tương tác. Hai điểm được trộn theo tỉ lệ $0{,}4$ CF và $0{,}6$ CBF khi có tín hiệu cộng tác. Cuối cùng, điểm được điều chỉnh bằng hệ số suy giảm theo khoảng cách địa lý (Haversine kết hợp suy giảm hàm mũ) rồi nhân thêm các boost theo hạng VIP và độ mới của tin trước khi xếp hạng và cắt lấy top phù hợp nhất.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../diagrams/ai/pdf/04-recommendation-flow}
+\caption{Quy trình tính điểm của bộ gợi ý lai (CBF + CF + boost)}
+\label{fig:ai-reco-flow}
+\end{figure}
+
+\subsection{Tích hợp API AI}
+
+Dịch vụ AI phục vụ ba nhóm bên gọi và kết nối tới ba dịch vụ phía sau, như tóm tắt ở Hình~\ref{fig:ai-integrations}. Về phía bên gọi: nền tảng web kết nối trực tiếp tới điểm cuối hội thoại truyền luồng để hiển thị trợ lý theo thời gian thực; Backend chính gọi các điểm cuối kiểm duyệt tin đăng, gợi ý giá và sinh mô tả (completion); ngoài ra một máy chủ theo giao thức Model Context Protocol -- MCP chạy như tiến trình riêng, cho phép các trợ lý AI bên ngoài truy vấn kho tin đăng qua kênh stdio. Về phía sau: mọi lời gọi mô hình đi tới Vertex AI Gemini qua LiteLLM; lớp quan sát ghi vết (trace) và quản lý prompt qua Langfuse; còn dữ liệu nghiệp vụ thật luôn được lấy từ Backend chính qua \texttt{httpx}, giữ Backend là nguồn dữ liệu duy nhất đáng tin.
+
+Bên cạnh trợ lý hội thoại, hai bề mặt LLM khác cũng do Backend gọi qua API. Kiểm duyệt tin đăng dùng khả năng đa phương thức của Gemini: ảnh và video của tin được tải về và phân tích cùng phần văn bản mô tả để phát hiện sai lệch (ví dụ ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa. Ước tính giá là một bề mặt lai: công cụ \texttt{get\_price\_estimate} trong trợ lý dùng mô hình XGBoost khi có sẵn artefact đã huấn luyện, còn lại lùi về ước tính theo luật dựa trên đơn giá mỗi mét vuông theo khu vực; điểm cuối gợi ý giá độc lập thì dùng một tác tử LLM truy vấn các tin tương tự để suy ra khoảng giá thị trường, kèm cơ chế dự phòng theo luật khi tác tử thất bại.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../diagrams/ai/pdf/05-external-integrations}
+\caption{Các bên gọi và dịch vụ bên ngoài của dịch vụ AI}
+\label{fig:ai-integrations}
+\end{figure}
+
+Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 14 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng (\texttt{agent\_factory.make\_model}) đọc cấu hình \texttt{LLM\_PROVIDER} lúc khởi động và trả về một \texttt{LitellmModel} tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema -- ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ -- nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/ai/pdf/06-provider-abstraction}
+\caption{Khả năng thay thế nhà cung cấp mô hình qua LiteLLM}
+\label{fig:ai-provider}
+\end{figure}
+
+\subsection{Ưu điểm}
+
+Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm cho phần AI của hệ thống:
+
+\begin{itemize}
+\item \textbf{Tách biệt và mở rộng độc lập.} Dịch vụ AI là một tiến trình riêng, cô lập phần phụ thuộc nặng về học máy khỏi Backend nghiệp vụ và cho phép mở rộng quy mô hai phần một cách riêng rẽ.
+\item \textbf{Không khóa nhà cung cấp.} Nhờ lớp trừu tượng LiteLLM và hàm xưởng dựng mô hình, việc đổi nhà cung cấp mô hình ngôn ngữ chỉ là thay đổi cấu hình; lõi tác tử và tầng công cụ không đổi.
+\item \textbf{Quan sát thống nhất.} Mọi lượt hội thoại, lời gọi mô hình, bước truy hồi RAG và lời gọi công cụ đều được ghi vết qua Langfuse, giúp theo dõi mức dùng token, phiên bản prompt và lỗi một cách nhất quán.
+\item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM đa phương thức cho kiểm duyệt và mô hình lai cho định giá -- cân bằng giữa độ chính xác, độ trễ và chi phí.
+\item \textbf{Chịu lỗi mềm.} Các bề mặt định giá và kiểm duyệt đều có đường lùi theo luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
+\item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một thân khách HTTP dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
+\end{itemize}
 
 \section{Thiết kế cơ sở dữ liệu}
 

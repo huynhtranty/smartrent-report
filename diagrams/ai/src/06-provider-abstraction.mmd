@@ -1,0 +1,25 @@
+flowchart TB
+ subgraph Core["Lõi ứng dụng (không phụ thuộc nhà cung cấp)"]
+ direction LR
+ Orch["AgentOrchestrator"]
+ Svc["Các service AI"]
+ ToolsC["tools/ (14)<br/><small>JSON Schema</small>"]
+ end
+ Factory["agent_factory.make_model<br/><small>chọn theo LLM_PROVIDER</small>"]
+ LiteLLM["LitellmModel<br/><small>Agents SDK</small>"]
+ subgraph Providers["Nhà cung cấp (chọn 1 lúc khởi động)"]
+ direction LR
+ Gem["Vertex AI Gemini<br/><small>service account</small>"]
+ Studio["Google AI Studio<br/><small>API key</small>"]
+ OpenAI["OpenAI"]
+ Other["Khác qua LiteLLM"]
+ end
+
+ Orch --> Factory
+ Svc --> Factory
+ ToolsC --> Factory
+ Factory --> LiteLLM
+ LiteLLM --> Gem
+ LiteLLM --> Studio
+ LiteLLM --> OpenAI
+ LiteLLM --> Other

@@ -1,0 +1,29 @@
+sequenceDiagram
+ autonumber
+ participant FE as Webapp (FE)
+ participant API as Chat API (/chat/stream)
+ participant Orch as AgentOrchestrator
+ participant RAG as RAG retriever
+ participant Run as Runner (Agents SDK)
+ participant LLM as Gemini (LiteLLM)
+ participant Tool as Tool (@function_tool)
+ participant BE as SmartRent Backend
+ FE->>API: POST messages (SSE)
+ API->>Orch: run_stream()
+ Orch->>Orch: cắt bớt lịch sử theo ngân sách token
+ Orch->>RAG: retrieve(query)
+ RAG-->>Orch: ngữ cảnh (mã địa điểm, tiện nghi, FAQ)
+ Orch->>Run: Runner.run_streamed(agent, input)
+ loop Vòng lặp tác tử (tối đa 12 lượt)
+ Run->>LLM: gửi hội thoại + tool
+ LLM-->>Run: function_call
+ Run->>Tool: thực thi tool
+ Tool->>BE: REST (httpx)
+ BE-->>Tool: dữ liệu tin đăng
+ Tool-->>Run: kết quả (status, listings)
+ Run->>LLM: trả kết quả tool
+ LLM-->>Run: văn bản (delta)
+ end
+ Run-->>Orch: text delta + tin đăng đã thu thập
+ Orch-->>API: sự kiện status · text · listings · done
+ API-->>FE: luồng SSE

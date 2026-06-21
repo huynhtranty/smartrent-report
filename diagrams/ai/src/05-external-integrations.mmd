@@ -1,0 +1,14 @@
+flowchart LR
+ subgraph Consumers["Bên gọi dịch vụ"]
+ direction TB
+ FE(["Webapp (FE)<br/><small>chat SSE</small>"])
+ BE(["SmartRent Backend<br/><small>kiểm duyệt · gợi ý giá · completion</small>"])
+ MCPc(["MCP client<br/><small>stdio</small>"])
+ end
+ AI["SmartRent AI<br/><small>FastAPI</small>"]
+ FE -->|REST + SSE| AI
+ BE -->|REST| AI
+ MCPc -->|MCP| AI
+ AI --> Vertex["Vertex AI Gemini<br/><small>qua LiteLLM</small>"]
+ AI --> Langfuse["Langfuse<br/><small>trace · prompt</small>"]
+ AI --> Backend["SmartRent Backend<br/><small>httpx · dữ liệu tin đăng</small>"]

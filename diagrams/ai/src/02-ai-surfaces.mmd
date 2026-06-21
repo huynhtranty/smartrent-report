@@ -1,0 +1,20 @@
+flowchart TB
+ subgraph LLMA["Tác tử LLM (LLM agent + RAG + tool)"]
+ Chatbot["Trợ lý hội thoại<br/><small>14 tool · Gemini 2.5 Flash</small>"]
+ end
+ subgraph MM["LLM đa phương thức"]
+ VerifyS["Kiểm duyệt tin đăng<br/><small>ảnh + video + văn bản</small>"]
+ end
+ subgraph Hybrid["Lai ML + luật"]
+ PriceTool["Ước tính giá (tool chat)<br/><small>XGBoost + luật dự phòng</small>"]
+ PriceEp["Gợi ý giá (API)<br/><small>tác tử LLM + luật</small>"]
+ end
+ subgraph CML["Học máy cổ điển"]
+ RecoS["Gợi ý phòng trọ<br/><small>CBF + CF + boost</small>"]
+ end
+ subgraph Single["LLM đơn lượt"]
+ ComplS["Sinh văn bản<br/><small>completion thô</small>"]
+ end
+ subgraph Ext["Giao thức công cụ ngoài"]
+ MCPS["MCP server<br/><small>FastMCP · stdio</small>"]
+ end
