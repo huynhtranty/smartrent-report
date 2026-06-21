@@ -1,0 +1,83 @@
+erDiagram
+ membership_packages ||--o{ membership_package_benefits : "co quyen loi"
+ users ||--o{ user_memberships : "so huu goi"
+ membership_packages ||--o{ user_memberships : "duoc mua"
+ user_memberships ||--o{ user_membership_benefits : "cap quyen loi"
+ membership_package_benefits ||--o{ user_membership_benefits : "dinh nghia"
+ users ||--o{ transactions : "thuc hien"
+ transactions ||--o{ transaction_audits : "lich su trang thai"
+ users ||--o{ push_schedule : "len lich"
+ listings ||--o{ push_schedule : "day tin"
+ transactions ||--o{ push_schedule : "thanh toan"
+ listings ||--o{ push_history : "lan day"
+ push_schedule ||--o{ push_history : "tu lich"
+ user_membership_benefits ||--o{ push_history : "tu quota"
+ transactions ||--o{ push_history : "tu thanh toan"
+
+ membership_packages {
+  bigint membership_id PK
+  varchar package_code UK
+  enum package_level
+  decimal sale_price
+ }
+ membership_package_benefits {
+  bigint benefit_id PK
+  bigint membership_id FK
+  enum benefit_type
+  int quantity_per_month
+ }
+ user_memberships {
+  bigint user_membership_id PK
+  varchar user_id FK
+  bigint membership_id FK
+  enum status
+  decimal total_paid
+ }
+ user_membership_benefits {
+  bigint user_benefit_id PK
+  bigint user_membership_id FK
+  bigint benefit_id FK
+  int total_quantity
+  int quantity_used
+ }
+ transactions {
+  varchar transaction_id PK
+  varchar user_id FK
+  enum transaction_type
+  decimal amount
+  enum status
+  enum payment_provider
+ }
+ transaction_audits {
+  bigint id PK
+  varchar transaction_id FK
+  enum new_status
+  varchar actor_type
+ }
+ push_schedule {
+  bigint schedule_id PK
+  varchar user_id FK
+  bigint listing_id FK
+  enum status
+  varchar transaction_id FK
+ }
+ push_history {
+  bigint push_id PK
+  bigint listing_id FK
+  enum push_source
+  enum status
+ }
+ vip_tier_details {
+  bigint tier_id PK
+  varchar tier_code UK
+  int tier_level
+ }
+ push_details {
+  bigint push_detail_id PK
+  varchar detail_code UK
+  decimal price_per_push
+ }
+ listing_duration_plans {
+  bigint plan_id PK
+  int duration_days UK
+ }

@@ -1,0 +1,62 @@
+erDiagram
+ users ||--o{ favorites : "yeu thich"
+ listings ||--o{ favorites : "duoc thich"
+ users ||--o{ saved_listings : "luu"
+ listings ||--o{ saved_listings : "duoc luu"
+ users ||--o{ views : "xem"
+ listings ||--o{ views : "luot xem"
+ users ||--o{ phone_clicks : "bam goi"
+ listings ||--o{ phone_clicks : "luot goi"
+ listings ||--o{ listing_click_daily : "thong ke ngay"
+ users ||--o{ user_follows : "theo doi"
+ search_query_impressions ||--o{ search_suggestion_clicks : "lan hien thi"
+
+ favorites {
+  varchar user_id PK,FK
+  bigint listing_id PK,FK
+ }
+ saved_listings {
+  varchar user_id PK,FK
+  bigint listing_id PK,FK
+ }
+ views {
+  bigint id PK
+  bigint listing_id FK
+  varchar user_id FK
+  varchar ip_address
+  boolean is_unique
+ }
+ phone_clicks {
+  bigint id PK
+  bigint listing_id FK
+  varchar user_id FK
+ }
+ listing_click_daily {
+  bigint id PK
+  bigint listing_id FK
+  date click_date
+  int click_count
+ }
+ user_follows {
+  bigint id PK
+  varchar follower_id
+  varchar following_id
+ }
+ notifications {
+  bigint id PK
+  varchar recipient_id
+  varchar recipient_type
+  varchar type
+  boolean is_read
+ }
+ search_query_impressions {
+  bigint id PK
+  varchar query_norm
+  int suggestion_count
+ }
+ search_suggestion_clicks {
+  bigint id PK
+  bigint impression_id
+  varchar suggestion_type
+  varchar suggestion_text
+ }

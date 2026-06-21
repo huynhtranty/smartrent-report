@@ -1,0 +1,49 @@
+erDiagram
+ listings ||--o{ listing_reports : "bi bao cao"
+ listing_reports ||--o{ listing_report_reasons : "gom"
+ report_reasons ||--o{ listing_report_reasons : "ly do"
+ admins ||--o{ listing_reports : "xu ly"
+ listings ||--o{ listing_moderation_events : "nhat ky"
+ listings ||--o{ listing_owner_actions : "yeu cau chu tin"
+ listings ||--|| listing_ai_moderation : "ket qua AI"
+
+ listing_reports {
+  bigint report_id PK
+  bigint listing_id FK
+  varchar reporter_phone
+  varchar reporter_email
+  enum category
+  enum status
+  varchar resolved_by FK
+ }
+ report_reasons {
+  bigint reason_id PK
+  varchar reason_text
+  enum category
+  boolean is_active
+ }
+ listing_report_reasons {
+  bigint report_id PK,FK
+  bigint reason_id PK,FK
+ }
+ listing_moderation_events {
+  bigint event_id PK
+  bigint listing_id FK
+  varchar from_status
+  varchar to_status
+  varchar action
+  varchar admin_id
+ }
+ listing_owner_actions {
+  bigint owner_action_id PK
+  bigint listing_id FK
+  varchar trigger_type
+  varchar required_action
+  varchar status
+ }
+ listing_ai_moderation {
+  bigint listing_id PK,FK
+  decimal ai_score
+  json ai_reason
+  varchar verification_status
+ }

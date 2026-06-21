@@ -369,19 +369,385 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 
 \section{Thiết kế cơ sở dữ liệu}
 
-% TODO: Nội dung.
+Cơ sở dữ liệu là trung tâm lưu trữ và bảo toàn tính nhất quán cho toàn bộ nghiệp vụ của hệ thống. Phần này trình bày lựa chọn công nghệ lưu trữ, các nguyên tắc thiết kế lược đồ (schema), sơ đồ thực thể -- quan hệ (Entity--Relationship -- ER) của hệ thống chính và mô tả chi tiết các bảng dữ liệu.
 
 \subsection{Giới thiệu tổng quan}
 
-% TODO: Nội dung.
+Hệ thống sử dụng MySQL 8.0 (storage engine InnoDB, bộ ký tự \texttt{utf8mb4}) làm cơ sở dữ liệu quan hệ chính -- nơi lưu trữ nguồn dữ liệu duy nhất đáng tin cậy (single source of truth) cho mọi nghiệp vụ. Bên cạnh đó, Redis đảm nhiệm vai trò bộ nhớ đệm và lưu trạng thái tạm thời như mã xác thực OTP, danh sách token bị vô hiệu hóa và bộ đệm thống kê, giúp giảm tải ghi cho cơ sở dữ liệu quan hệ.
+
+Lược đồ cơ sở dữ liệu được quản lý theo phương pháp \textit{di trú phiên bản} (migration) bằng công cụ Flyway: mỗi thay đổi cấu trúc là một tệp \texttt{V\{n\}\_\_\{mô tả\}.sql} bất biến, được áp dụng tuần tự và tự động khi ứng dụng khởi động. Tới thời điểm hiện tại, lược đồ đã trải qua 90 phiên bản di trú (từ \texttt{V1} đến \texttt{V90}), phản ánh quá trình tiến hóa liên tục của nghiệp vụ: thêm cột, đổi tên, mở rộng kiểu liệt kê (enum), tạo chỉ mục và tái cấu trúc bảng. Cách tiếp cận này bảo đảm lược đồ giữa các môi trường phát triển, kiểm thử và vận hành luôn đồng nhất và có thể truy vết.
+
+Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ (domain): (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi (telemetry). Một số nguyên tắc thiết kế được áp dụng xuyên suốt:
+
+\begin{itemize}
+\item \textbf{Chiến lược khóa chính phân tầng.} Các thực thể nhạy cảm hoặc cần định danh toàn cục như \texttt{users}, \texttt{admins} và \texttt{transactions} dùng khóa chính dạng chuỗi \texttt{VARCHAR(36)} (sinh theo cơ chế Snowflake/UUID), giúp tránh lộ quy mô dữ liệu và thuận tiện khi đồng bộ giữa các dịch vụ; trong khi các bảng có lượng bản ghi lớn (tin đăng, lượt xem, giao dịch quyền lợi\ldots) dùng khóa \texttt{BIGINT AUTO\_INCREMENT} để tối ưu kích thước chỉ mục và hiệu năng ghi. Các bảng danh mục tham chiếu (\texttt{roles}, \texttt{vip\_tier\_details}\ldots) dùng mã nghiệp vụ làm khóa.
+\item \textbf{Toàn vẹn tham chiếu.} Quan hệ giữa các bảng được ràng buộc bằng khóa ngoại (foreign key) với hành vi xóa phù hợp: \texttt{ON DELETE CASCADE} cho dữ liệu phụ thuộc chặt (ảnh, tiện ích, lịch sử giá của tin đăng) và \texttt{ON DELETE SET NULL} cho tham chiếu lỏng (giao dịch liên quan, người duyệt báo cáo) nhằm giữ lại dữ liệu lịch sử khi thực thể cha bị xóa.
+\item \textbf{Lưu vết và lịch sử.} Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm: \texttt{pricing\_histories} ghi lại mọi lần đổi giá, \texttt{transaction\_audits} ghi lại mọi lần đổi trạng thái giao dịch, và \texttt{listing\_moderation\_events} ghi lại toàn bộ luồng kiểm duyệt tin đăng.
+\item \textbf{Phi chuẩn hóa có chủ đích để tăng hiệu năng.} Một số cột được thêm vào để phục vụ tìm kiếm và thống kê nhanh: \texttt{listings} có \texttt{search\_text} (văn bản đã chuẩn hóa, bỏ dấu) và \texttt{phonetic\_title} (mã ngữ âm DoubleMetaphone) phục vụ chỉ mục toàn văn (FULLTEXT) của MySQL; bảng \texttt{listing\_click\_daily} gộp sẵn số lượt bấm theo ngày để dựng biểu đồ thống kê mà không phải quét bảng chi tiết.
+\item \textbf{Hỗ trợ chuyển đổi đơn vị hành chính.} Do cải cách đơn vị hành chính năm 2025 (chuyển từ cấu trúc ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cũ và mới cùng một bảng ánh xạ trung gian để chuyển đổi qua lại, bảo đảm dữ liệu địa chỉ cũ vẫn dùng được sau cải cách.
+\end{itemize}
 
 \subsection{Sơ đồ thiết kế cơ sở dữ liệu của hệ thống chính}
 
-% TODO: Nội dung.
+Vì số lượng bảng lớn, lược đồ được trình bày theo hai mức: trước hết là sơ đồ tổng thể thể hiện cách phân nhóm các bảng theo bảy domain và những liên kết chính giữa chúng (Hình~\ref{fig:db-overview}); sau đó là các sơ đồ ER chi tiết cho từng nhóm nghiệp vụ, làm rõ khóa chính, khóa ngoại và quan hệ giữa các bảng.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/db/pdf/01-overview}
+\caption{Sơ đồ tổng thể cơ sở dữ liệu gom theo bảy nhóm nghiệp vụ}
+\label{fig:db-overview}
+\end{figure}
+
+Như Hình~\ref{fig:db-overview} cho thấy, hai bảng \texttt{users} và \texttt{listings} đóng vai trò trung tâm của toàn bộ lược đồ: hầu hết các nhóm nghiệp vụ còn lại đều tham chiếu trực tiếp tới một trong hai bảng này. Người dùng (\texttt{users}) là chủ thể của tin đăng, giao dịch, gói thành viên và mọi tương tác; còn tin đăng (\texttt{listings}) là đối tượng của tìm kiếm, kiểm duyệt, tương tác và dịch vụ đẩy tin.
+
+\textbf{Nhóm người dùng và xác thực.} Hình~\ref{fig:db-er-user} mô tả các bảng quản lý tài khoản. Bảng \texttt{users} lưu thông tin người thuê, chủ trọ và môi giới (gồm cả các trường xác thực môi giới); bảng \texttt{admins} tách riêng cho tài khoản quản trị, gắn với danh mục vai trò \texttt{roles} qua bảng nối nhiều -- nhiều \texttt{admins\_roles} để thực thi phân quyền theo vai trò (Role-Based Access Control -- RBAC).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{../diagrams/db/pdf/02-er-user-auth}
+\caption{Sơ đồ ER nhóm người dùng và xác thực}
+\label{fig:db-er-user}
+\end{figure}
+
+\textbf{Nhóm tin đăng và nội dung cốt lõi.} Hình~\ref{fig:db-er-listing} đặt \texttt{listings} ở trung tâm: mỗi tin đăng thuộc về một người dùng, một danh mục (\texttt{categories}) và một địa chỉ (\texttt{addresses}); gắn với nhiều tiện ích qua bảng nối \texttt{listing\_amenities}; có nhiều tệp đa phương tiện (\texttt{media}, cùng hai bảng \texttt{images}/\texttt{videos} kế thừa từ thiết kế cũ) và toàn bộ lịch sử giá trong \texttt{pricing\_histories}. Quan hệ tự tham chiếu \texttt{parent\_listing\_id} phục vụ cơ chế tin bóng (shadow listing). Hai bảng \texttt{listing\_drafts} (bản nháp tự lưu) và \texttt{news} (tin tức/blog) cũng thuộc nhóm này.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/db/pdf/03-er-listing-core}
+\caption{Sơ đồ ER nhóm tin đăng và nội dung cốt lõi}
+\label{fig:db-er-listing}
+\end{figure}
+
+\textbf{Nhóm địa chỉ.} Hình~\ref{fig:db-er-address} thể hiện rõ thiết kế hỗ trợ chuyển đổi đơn vị hành chính. Bộ bảng mới (\texttt{provinces}, \texttt{wards}) lưu cấu trúc hai cấp; bộ bảng cũ (\texttt{legacy\_provinces}, \texttt{legacy\_districts}, \texttt{legacy\_wards}) lưu cấu trúc ba cấp trước cải cách; bảng \texttt{address\_mapping} làm cầu nối ánh xạ giữa hai bộ. Mỗi tin đăng trỏ tới một bản ghi \texttt{addresses} lưu đồng thời thành phần địa chỉ cũ và mới cùng tọa độ; bảng \texttt{address\_metadata} chuẩn hóa các thành phần địa chỉ theo quan hệ một -- một.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{../diagrams/db/pdf/04-er-address}
+\caption{Sơ đồ ER nhóm địa chỉ (hỗ trợ cấu trúc cũ và mới)}
+\label{fig:db-er-address}
+\end{figure}
+
+\textbf{Nhóm tương tác người dùng.} Hình~\ref{fig:db-er-interaction} gom các bảng ghi nhận hành vi: tin yêu thích (\texttt{favorites}), tin đã lưu (\texttt{saved\_listings}), lượt xem (\texttt{views}), lượt bấm xem số điện thoại (\texttt{phone\_clicks}) và bảng thống kê lượt bấm theo ngày (\texttt{listing\_click\_daily}); quan hệ theo dõi giữa người dùng (\texttt{user\_follows}); thông báo trong ứng dụng (\texttt{notifications}); và hai bảng đo lường gợi ý tìm kiếm (\texttt{search\_query\_impressions}, \texttt{search\_suggestion\_clicks}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/db/pdf/05-er-interaction}
+\caption{Sơ đồ ER nhóm tương tác người dùng và đo lường tìm kiếm}
+\label{fig:db-er-interaction}
+\end{figure}
+
+\textbf{Nhóm kiểm duyệt và báo cáo.} Hình~\ref{fig:db-er-moderation} mô tả quy trình bảo đảm chất lượng nội dung. Người dùng gửi báo cáo vi phạm (\texttt{listing\_reports}), mỗi báo cáo gắn với nhiều lý do từ danh mục \texttt{report\_reasons} qua bảng nối \texttt{listing\_report\_reasons} và do quản trị viên xử lý. Toàn bộ luồng kiểm duyệt được ghi vết trong \texttt{listing\_moderation\_events}; các yêu cầu mà chủ tin phải thực hiện nằm trong \texttt{listing\_owner\_actions}; còn kết quả kiểm duyệt bằng AI được lưu theo quan hệ một -- một trong \texttt{listing\_ai\_moderation}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{../diagrams/db/pdf/06-er-moderation}
+\caption{Sơ đồ ER nhóm kiểm duyệt và báo cáo}
+\label{fig:db-er-moderation}
+\end{figure}
+
+\textbf{Nhóm thanh toán và gói thành viên.} Hình~\ref{fig:db-er-payment} là nhóm phức tạp nhất về quan hệ. Danh mục gói thành viên (\texttt{membership\_packages}) và quyền lợi của gói (\texttt{membership\_package\_benefits}) là dữ liệu cấu hình; khi người dùng mua gói, hệ thống tạo bản ghi \texttt{user\_memberships} cùng các quyền lợi đã cấp trong \texttt{user\_membership\_benefits} (theo dõi hạn mức đã dùng). Mọi giao dịch tài chính tập trung ở \texttt{transactions} với nhật ký trạng thái \texttt{transaction\_audits}. Dịch vụ đẩy tin gồm bảng lịch đẩy (\texttt{push\_schedule}) và lịch sử đẩy (\texttt{push\_history}); ba bảng \texttt{vip\_tier\_details}, \texttt{push\_details}, \texttt{listing\_duration\_plans} là danh mục cấu hình giá.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/db/pdf/07-er-payment}
+\caption{Sơ đồ ER nhóm thanh toán và gói thành viên}
+\label{fig:db-er-payment}
+\end{figure}
 
 \subsection{Mô tả chi tiết các bảng}
 
-% TODO: Nội dung.
+Mục này tổng hợp vai trò của từng bảng theo nhóm nghiệp vụ, sau đó mô tả chi tiết cấu trúc cột của ba bảng trung tâm: \texttt{users}, \texttt{listings} và \texttt{transactions}.
+
+\subsubsection{Tổng hợp các bảng theo nhóm nghiệp vụ}
+
+Bảng~\ref{tab:db-user} đến Bảng~\ref{tab:db-payment} liệt kê toàn bộ các bảng còn hiệu lực trong lược đồ, kèm khóa chính và vai trò.
+
+\begin{table}[H]
+\centering
+\caption{Nhóm người dùng và xác thực}
+\label{tab:db-user}
+\begin{tabular}{|L{0.24\textwidth}|L{0.18\textwidth}|L{0.42\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{users} & \texttt{user\_id} & Tài khoản người dùng (người thuê, chủ trọ, môi giới), gồm thông tin liên hệ và trạng thái xác thực môi giới. \\
+\hline
+\texttt{admins} & \texttt{admin\_id} & Tài khoản quản trị viên hệ thống. \\
+\hline
+\texttt{roles} & \texttt{role\_id} & Danh mục vai trò quản trị (SA, UA, CM\ldots). \\
+\hline
+\texttt{admins\_roles} & \texttt{(admin\_id, role\_id)} & Bảng nối nhiều -- nhiều giữa quản trị viên và vai trò. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Nhóm tin đăng và nội dung cốt lõi}
+\label{tab:db-listing}
+\begin{tabular}{|L{0.24\textwidth}|L{0.18\textwidth}|L{0.42\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{listings} & \texttt{listing\_id} & Bản ghi tin đăng trung tâm (giá, diện tích, loại hình, hạng VIP, trạng thái kiểm duyệt\ldots). \\
+\hline
+\texttt{categories} & \texttt{category\_id} & Danh mục loại bất động sản. \\
+\hline
+\texttt{amenities} & \texttt{amenity\_id} & Danh mục tiện ích. \\
+\hline
+\texttt{listing\_amenities} & \texttt{(listing\_id, amenity\_id)} & Bảng nối tin đăng -- tiện ích. \\
+\hline
+\texttt{addresses} & \texttt{address\_id} & Địa chỉ của tin đăng (lưu cả cấu trúc cũ lẫn mới, kèm tọa độ). \\
+\hline
+\texttt{media} & \texttt{media\_id} & Quản lý đa phương tiện hợp nhất (ảnh, video) với luồng tải lên qua URL ký trước. \\
+\hline
+\texttt{images} & \texttt{id} & Ảnh tin đăng (thiết kế kế thừa). \\
+\hline
+\texttt{videos} & \texttt{id} & Video tin đăng (thiết kế kế thừa). \\
+\hline
+\texttt{pricing\_histories} & \texttt{id} & Lịch sử thay đổi giá theo từng tin đăng. \\
+\hline
+\texttt{listing\_drafts} & \texttt{draft\_id} & Bản nháp tin đăng được tự lưu trong quá trình soạn. \\
+\hline
+\texttt{news} & \texttt{news\_id} & Bài viết tin tức/blog do quản trị viên biên soạn. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Nhóm địa chỉ}
+\label{tab:db-address}
+\begin{tabular}{|L{0.24\textwidth}|L{0.18\textwidth}|L{0.42\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{provinces} & \texttt{province\_id} & Danh mục tỉnh/thành theo cấu trúc hai cấp (sau 2025). \\
+\hline
+\texttt{wards} & \texttt{ward\_id} & Danh mục phường/xã theo cấu trúc hai cấp. \\
+\hline
+\texttt{legacy\_provinces} & \texttt{legacy\_province\_id} & Danh mục tỉnh/thành theo cấu trúc ba cấp (trước 2025). \\
+\hline
+\texttt{legacy\_districts} & \texttt{legacy\_district\_id} & Danh mục quận/huyện cũ. \\
+\hline
+\texttt{legacy\_wards} & \texttt{legacy\_ward\_id} & Danh mục phường/xã cũ. \\
+\hline
+\texttt{address\_mapping} & \texttt{mapping\_id} & Bảng ánh xạ chuyển đổi địa chỉ cũ sang mới. \\
+\hline
+\texttt{address\_metadata} & \texttt{metadata\_id} & Thành phần địa chỉ đã chuẩn hóa (quan hệ một -- một với \texttt{addresses}). \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Nhóm tương tác người dùng và đo lường tìm kiếm}
+\label{tab:db-interaction}
+\begin{tabular}{|L{0.24\textwidth}|L{0.18\textwidth}|L{0.42\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{favorites} & \texttt{(user\_id, listing\_id)} & Tin đăng được người dùng yêu thích. \\
+\hline
+\texttt{saved\_listings} & \texttt{(user\_id, listing\_id)} & Tin đăng được người dùng lưu lại. \\
+\hline
+\texttt{views} & \texttt{id} & Nhật ký lượt xem tin đăng. \\
+\hline
+\texttt{phone\_clicks} & \texttt{id} & Nhật ký lượt bấm xem số điện thoại. \\
+\hline
+\texttt{listing\_click\_daily} & \texttt{id} & Số lượt bấm gộp theo ngày cho mỗi tin. \\
+\hline
+\texttt{user\_follows} & \texttt{id} & Quan hệ theo dõi giữa các người dùng. \\
+\hline
+\texttt{notifications} & \texttt{id} & Thông báo trong ứng dụng (người nhận đa hình). \\
+\hline
+\texttt{search\_query\_impressions} & \texttt{id} & Nhật ký mỗi lần gọi gợi ý tìm kiếm. \\
+\hline
+\texttt{search\_suggestion\_clicks} & \texttt{id} & Nhật ký lượt bấm vào gợi ý được trả về. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Nhóm kiểm duyệt và báo cáo}
+\label{tab:db-moderation}
+\begin{tabular}{|L{0.24\textwidth}|L{0.18\textwidth}|L{0.42\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{report\_reasons} & \texttt{reason\_id} & Danh mục lý do báo cáo định sẵn. \\
+\hline
+\texttt{listing\_reports} & \texttt{report\_id} & Báo cáo vi phạm tin đăng do người dùng gửi. \\
+\hline
+\texttt{listing\_report\_reasons} & \texttt{(report\_id, reason\_id)} & Bảng nối báo cáo -- lý do. \\
+\hline
+\texttt{listing\_moderation\_events} & \texttt{event\_id} & Nhật ký bất biến toàn bộ luồng kiểm duyệt. \\
+\hline
+\texttt{listing\_owner\_actions} & \texttt{owner\_action\_id} & Yêu cầu xử lý mà chủ tin phải thực hiện. \\
+\hline
+\texttt{listing\_ai\_moderation} & \texttt{listing\_id} & Kết quả kiểm duyệt bằng AI (một -- một với tin đăng). \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Nhóm thanh toán và gói thành viên}
+\label{tab:db-payment}
+\begin{tabular}{|L{0.26\textwidth}|L{0.18\textwidth}|L{0.40\textwidth}|}
+\hline
+\textbf{Bảng} & \textbf{Khóa chính} & \textbf{Vai trò} \\
+\hline
+\texttt{membership\_packages} & \texttt{membership\_id} & Danh mục gói thành viên. \\
+\hline
+\texttt{membership\_package\_benefits} & \texttt{benefit\_id} & Quyền lợi của từng gói thành viên. \\
+\hline
+\texttt{user\_memberships} & \texttt{user\_membership\_id} & Gói thành viên một người dùng đã mua. \\
+\hline
+\texttt{user\_membership\_benefits} & \texttt{user\_benefit\_id} & Hạn mức quyền lợi và mức tiêu thụ của người dùng. \\
+\hline
+\texttt{transactions} & \texttt{transaction\_id} & Mọi giao dịch tài chính (mua gói, phí đăng/đẩy tin, hoàn tiền\ldots). \\
+\hline
+\texttt{transaction\_audits} & \texttt{id} & Nhật ký thay đổi trạng thái giao dịch. \\
+\hline
+\texttt{vip\_tier\_details} & \texttt{tier\_id} & Danh mục giá và tính năng các hạng VIP. \\
+\hline
+\texttt{push\_details} & \texttt{push\_detail\_id} & Danh mục giá các gói đẩy tin. \\
+\hline
+\texttt{push\_schedule} & \texttt{schedule\_id} & Lịch đẩy tin tự động. \\
+\hline
+\texttt{push\_history} & \texttt{push\_id} & Lịch sử các lần đẩy tin đã thực hiện. \\
+\hline
+\texttt{listing\_duration\_plans} & \texttt{plan\_id} & Danh mục thời hạn hiển thị tin được phép. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Chi tiết bảng \texttt{users}}
+
+Bảng \texttt{users} (Bảng~\ref{tab:col-users}) lưu thông tin tài khoản cho cả ba vai trò người thuê, chủ trọ và môi giới. Khóa chính là chuỗi định danh, mật khẩu cho phép rỗng để hỗ trợ đăng nhập qua OAuth (Google). Khi một người dùng đăng ký làm môi giới, các trường nhóm \texttt{broker\_*} lưu trạng thái và liên kết tới giấy tờ đã tải lên trong bảng \texttt{media}.
+
+\begin{table}[H]
+\centering
+\caption{Cấu trúc một số cột chính của bảng \texttt{users}}
+\label{tab:col-users}
+\begin{tabular}{|L{0.30\textwidth}|L{0.20\textwidth}|L{0.34\textwidth}|}
+\hline
+\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+\hline
+\texttt{user\_id} & \texttt{VARCHAR(36)} & Khóa chính dạng chuỗi định danh. \\
+\hline
+\texttt{email} & \texttt{VARCHAR(255)} & Địa chỉ thư điện tử. \\
+\hline
+\texttt{phone\_code}, \texttt{phone\_number} & \texttt{VARCHAR} & Mã quốc gia và số điện thoại (duy nhất theo cặp). \\
+\hline
+\texttt{password} & \texttt{VARCHAR(255)} & Mật khẩu băm (có thể rỗng với tài khoản OAuth). \\
+\hline
+\texttt{first\_name}, \texttt{last\_name} & \texttt{VARCHAR(100)} & Họ và tên. \\
+\hline
+\texttt{is\_verified} & \texttt{BOOLEAN} & Trạng thái đã xác thực tài khoản. \\
+\hline
+\texttt{contact\_phone\_number} & \texttt{VARCHAR(10)} & Số liên hệ hiển thị công khai. \\
+\hline
+\texttt{avatar\_media\_id} & \texttt{BIGINT} & Khóa ngoại trỏ tới \texttt{media} (ảnh đại diện). \\
+\hline
+\texttt{is\_broker} & \texttt{BOOLEAN} & Đánh dấu tài khoản môi giới. \\
+\hline
+\texttt{broker\_verification\_status} & \texttt{VARCHAR(20)} & Trạng thái xác thực môi giới (\texttt{NONE}, đang chờ, đã duyệt\ldots). \\
+\hline
+\texttt{broker\_cccd\_front\_media\_id}\ldots & \texttt{BIGINT} & Các khóa ngoại trỏ tới giấy tờ môi giới trong \texttt{media}. \\
+\hline
+\texttt{created\_at}, \texttt{updated\_at} & \texttt{TIMESTAMP} & Thời điểm tạo và cập nhật. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Chi tiết bảng \texttt{listings}}
+
+Bảng \texttt{listings} (Bảng~\ref{tab:col-listings}) là thực thể trung tâm, tổng hợp thông tin một tin đăng và liên kết tới nhiều bảng khác qua các khóa ngoại. Đáng chú ý, kể từ phiên bản di trú tách biệt \textit{ý định giao dịch} khỏi danh mục, trường \texttt{listing\_type} biểu diễn mục đích (cho thuê, bán, ở ghép) còn \texttt{product\_type} biểu diễn loại hình bất động sản, giúp một danh mục có thể dùng chung cho nhiều ý định.
+
+\begin{table}[H]
+\centering
+\caption{Cấu trúc một số cột chính của bảng \texttt{listings}}
+\label{tab:col-listings}
+\begin{tabular}{|L{0.28\textwidth}|L{0.22\textwidth}|L{0.34\textwidth}|}
+\hline
+\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+\hline
+\texttt{listing\_id} & \texttt{BIGINT} & Khóa chính tự tăng. \\
+\hline
+\texttt{title} & \texttt{VARCHAR(500)} & Tiêu đề tin đăng. \\
+\hline
+\texttt{description} & \texttt{LONGTEXT} & Mô tả chi tiết. \\
+\hline
+\texttt{user\_id} & \texttt{VARCHAR(36)} & Khóa ngoại trỏ tới \texttt{users} (chủ tin). \\
+\hline
+\texttt{category\_id} & \texttt{BIGINT} & Khóa ngoại trỏ tới \texttt{categories}. \\
+\hline
+\texttt{address\_id} & \texttt{BIGINT} & Khóa ngoại trỏ tới \texttt{addresses}. \\
+\hline
+\texttt{listing\_type} & \texttt{ENUM} & Ý định: cho thuê, bán, ở ghép. \\
+\hline
+\texttt{product\_type} & \texttt{ENUM} & Loại hình: phòng trọ, căn hộ, nhà, văn phòng\ldots \\
+\hline
+\texttt{price}, \texttt{price\_unit} & \texttt{DECIMAL}, \texttt{ENUM} & Giá và đơn vị (tháng/ngày/năm). \\
+\hline
+\texttt{area}, \texttt{bedrooms}, \texttt{bathrooms} & \texttt{FLOAT}, \texttt{INT} & Diện tích, số phòng ngủ, phòng tắm. \\
+\hline
+\texttt{vip\_type} & \texttt{ENUM} & Hạng VIP (\texttt{NORMAL}, \texttt{SILVER}, \texttt{GOLD}, \texttt{DIAMOND}). \\
+\hline
+\texttt{moderation\_status} & \texttt{VARCHAR(30)} & Trạng thái kiểm duyệt. \\
+\hline
+\texttt{search\_text}, \texttt{phonetic\_title} & \texttt{VARCHAR} & Văn bản chuẩn hóa và mã ngữ âm phục vụ tìm kiếm. \\
+\hline
+\texttt{is\_draft} & \texttt{BOOLEAN} & Đánh dấu tin còn ở dạng nháp. \\
+\hline
+\texttt{parent\_listing\_id} & \texttt{BIGINT} & Khóa ngoại tự tham chiếu (tin bóng). \\
+\hline
+\texttt{transaction\_id} & \texttt{VARCHAR(36)} & Khóa ngoại trỏ tới giao dịch thanh toán liên quan. \\
+\hline
+\texttt{post\_date}, \texttt{expiry\_date} & \texttt{TIMESTAMP} & Thời điểm đăng và hết hạn. \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{Chi tiết bảng \texttt{transactions}}
+
+Bảng \texttt{transactions} (Bảng~\ref{tab:col-transactions}) ghi nhận toàn bộ giao dịch tài chính trong hệ thống. Thiết kế hỗ trợ nhiều loại giao dịch và nhiều cổng thanh toán; trường \texttt{idempotency\_key} bảo đảm một thao tác thanh toán không bị xử lý trùng, còn các cột ảnh chụp (snapshot) lưu lại thông tin tại thời điểm giao dịch để phục vụ đối soát về sau.
+
+\begin{table}[H]
+\centering
+\caption{Cấu trúc một số cột chính của bảng \texttt{transactions}}
+\label{tab:col-transactions}
+\begin{tabular}{|L{0.28\textwidth}|L{0.22\textwidth}|L{0.34\textwidth}|}
+\hline
+\textbf{Cột} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\
+\hline
+\texttt{transaction\_id} & \texttt{VARCHAR(36)} & Khóa chính dạng chuỗi định danh. \\
+\hline
+\texttt{user\_id} & \texttt{VARCHAR(36)} & Khóa ngoại trỏ tới \texttt{users}. \\
+\hline
+\texttt{transaction\_type} & \texttt{ENUM} & Loại giao dịch (mua/nâng cấp gói, phí đăng tin, phí đẩy tin, hoàn tiền\ldots). \\
+\hline
+\texttt{amount} & \texttt{DECIMAL(15,0)} & Số tiền giao dịch. \\
+\hline
+\texttt{reference\_type}, \texttt{reference\_id} & \texttt{ENUM}, \texttt{VARCHAR} & Loại và mã đối tượng được tham chiếu (gói, tin đăng, hóa đơn\ldots). \\
+\hline
+\texttt{status} & \texttt{ENUM} & Trạng thái (\texttt{PENDING}, \texttt{COMPLETED}, \texttt{FAILED}, \texttt{CANCELLED}, \texttt{REFUNDED}). \\
+\hline
+\texttt{payment\_provider} & \texttt{ENUM} & Cổng thanh toán (\texttt{SEPAY}, \texttt{PAYOS}, \texttt{VNPAY}, \texttt{ZALOPAY}\ldots). \\
+\hline
+\texttt{provider\_transaction\_id} & \texttt{VARCHAR(255)} & Mã giao dịch phía cổng thanh toán. \\
+\hline
+\texttt{idempotency\_key} & \texttt{VARCHAR(120)} & Khóa chống xử lý trùng (duy nhất). \\
+\hline
+\texttt{completed\_at}, \texttt{expired\_at} & \texttt{DATETIME} & Thời điểm hoàn tất và hết hạn. \\
+\hline
+\texttt{created\_at}, \texttt{updated\_at} & \texttt{TIMESTAMP} & Thời điểm tạo và cập nhật. \\
+\hline
+\end{tabular}
+\end{table}
 
 \section{Thiết kế giao diện}
 

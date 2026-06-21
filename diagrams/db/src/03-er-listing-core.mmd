@@ -1,0 +1,75 @@
+erDiagram
+ users ||--o{ listings : "so huu"
+ categories ||--o{ listings : "phan loai"
+ addresses ||--o{ listings : "dia chi"
+ listings ||--o{ listing_amenities : "co"
+ amenities ||--o{ listing_amenities : "thuoc"
+ listings ||--o{ media : "dinh kem"
+ listings ||--o{ images : "anh (cu)"
+ listings ||--o{ videos : "video (cu)"
+ listings ||--o{ pricing_histories : "lich su gia"
+ listings ||--o{ listings : "tin bong (shadow)"
+
+ listings {
+  bigint listing_id PK
+  varchar title
+  longtext description
+  varchar user_id FK
+  bigint category_id FK
+  bigint address_id FK
+  enum listing_type
+  enum product_type
+  decimal price
+  enum price_unit
+  float area
+  enum vip_type
+  boolean is_draft
+  varchar moderation_status
+  bigint parent_listing_id FK
+  varchar transaction_id FK
+ }
+ categories {
+  bigint category_id PK
+  varchar name
+  varchar slug
+  boolean is_active
+ }
+ amenities {
+  bigint amenity_id PK
+  varchar name
+  enum category
+ }
+ listing_amenities {
+  bigint listing_id PK,FK
+  bigint amenity_id PK,FK
+ }
+ media {
+  bigint media_id PK
+  bigint listing_id FK
+  varchar user_id FK
+  varchar media_type
+  varchar source_type
+  varchar url
+  boolean is_primary
+ }
+ pricing_histories {
+  bigint id PK
+  bigint listing_id FK
+  decimal new_price
+  enum change_type
+  boolean is_current
+ }
+ listing_drafts {
+  bigint draft_id PK
+  varchar user_id
+  varchar title
+  decimal price
+ }
+ news {
+  bigint news_id PK
+  varchar title
+  varchar slug
+  enum category
+  enum status
+  varchar author_id
+ }

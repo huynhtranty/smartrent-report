@@ -1,0 +1,34 @@
+erDiagram
+ users ||--o{ listings : "dang tin"
+ admins ||--o{ admins_roles : "duoc gan"
+ roles ||--o{ admins_roles : "thuoc"
+ media ||--o{ users : "avatar / giay to"
+
+ users {
+  varchar user_id PK
+  varchar email
+  varchar phone_number
+  varchar password
+  varchar first_name
+  varchar last_name
+  boolean is_verified
+  boolean is_broker
+  varchar broker_verification_status
+  bigint avatar_media_id FK
+ }
+ admins {
+  varchar admin_id PK
+  varchar email
+  varchar phone_number
+  varchar password
+  varchar first_name
+  varchar last_name
+ }
+ roles {
+  varchar role_id PK
+  varchar role_name
+ }
+ admins_roles {
+  varchar admin_id PK,FK
+  varchar role_id PK,FK
+ }

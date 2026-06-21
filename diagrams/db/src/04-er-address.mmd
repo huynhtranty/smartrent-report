@@ -1,0 +1,60 @@
+erDiagram
+ provinces ||--o{ wards : "co phuong/xa"
+ legacy_provinces ||--o{ legacy_districts : "co quan/huyen"
+ legacy_districts ||--o{ legacy_wards : "co phuong/xa"
+ legacy_provinces ||--o{ address_mapping : "nguon (cu)"
+ legacy_wards ||--o{ address_mapping : "nguon (cu)"
+ provinces ||--o{ address_mapping : "dich (moi)"
+ wards ||--o{ address_mapping : "dich (moi)"
+ addresses ||--|| address_metadata : "thanh phan"
+
+ addresses {
+  bigint address_id PK
+  text full_address
+  decimal latitude
+  decimal longitude
+  enum address_type
+  varchar new_province_code
+  varchar new_ward_code
+  int legacy_province_id
+  int legacy_district_id
+  int legacy_ward_id
+ }
+ provinces {
+  int province_id PK
+  varchar province_code UK
+  varchar province_name
+ }
+ wards {
+  int ward_id PK
+  varchar province_code FK
+  varchar ward_code UK
+  varchar ward_name
+ }
+ legacy_provinces {
+  int legacy_province_id PK
+  varchar province_code UK
+ }
+ legacy_districts {
+  int legacy_district_id PK
+  varchar province_code FK
+  varchar district_code UK
+ }
+ legacy_wards {
+  int legacy_ward_id PK
+  varchar district_code FK
+  varchar ward_code UK
+ }
+ address_mapping {
+  int mapping_id PK
+  varchar legacy_province_code FK
+  varchar legacy_ward_code FK
+  varchar new_province_code FK
+  varchar new_ward_code FK
+ }
+ address_metadata {
+  bigint metadata_id PK
+  bigint address_id FK,UK
+  varchar new_province_code
+  varchar new_ward_code
+ }

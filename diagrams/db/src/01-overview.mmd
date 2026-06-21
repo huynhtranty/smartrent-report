@@ -1,0 +1,51 @@
+flowchart TB
+ subgraph Core["Tin dang & noi dung cot loi"]
+ listings["listings"]
+ categories["categories"]
+ amenities["amenities · listing_amenities"]
+ media["media · images · videos"]
+ pricing["pricing_histories"]
+ drafts["listing_drafts · news"]
+ end
+ subgraph UserAuth["Nguoi dung & xac thuc"]
+ users["users"]
+ admins["admins · roles · admins_roles"]
+ end
+ subgraph Address["Dia chi"]
+ addresses["addresses · address_metadata"]
+ newaddr["provinces · wards"]
+ legacy["legacy_provinces/districts/wards<br/>address_mapping"]
+ end
+ subgraph Interact["Tuong tac nguoi dung"]
+ interact["favorites · saved_listings · views<br/>phone_clicks · listing_click_daily<br/>user_follows · notifications"]
+ telemetry["search_query_impressions<br/>search_suggestion_clicks"]
+ end
+ subgraph Mod["Kiem duyet & bao cao"]
+ reports["listing_reports · report_reasons<br/>listing_report_reasons"]
+ modevents["listing_moderation_events<br/>listing_owner_actions · listing_ai_moderation"]
+ end
+ subgraph Pay["Thanh toan & goi thanh vien"]
+ membership["membership_packages · user_memberships<br/>membership benefits"]
+ trans["transactions · transaction_audits"]
+ push["push_schedule · push_history<br/>vip_tier_details · push_details · listing_duration_plans"]
+ end
+
+ users --> listings
+ admins --> reports
+ categories --> listings
+ addresses --> listings
+ newaddr --> addresses
+ legacy --> addresses
+ amenities --> listings
+ media --> listings
+ pricing --> listings
+ users --> interact
+ listings --> interact
+ users --> telemetry
+ listings --> reports
+ listings --> modevents
+ users --> membership
+ users --> trans
+ listings --> push
+ trans --> push
+ membership --> push
