@@ -112,27 +112,543 @@ Ngoài ra, hệ thống tích hợp một số công nghệ chuyên biệt: Goog
 
 \section{Xây dựng các module chức năng}
 
-% TODO: Nội dung (mục mới bổ sung theo cấu trúc báo cáo).
+Phần này trình bày kết quả hiện thực các module chức năng của hệ thống, tổ chức theo ba nhóm người dùng: người thuê, chủ trọ và quản trị viên. Mỗi chức năng được mô tả kèm minh họa giao diện thực tế trên hệ thống đang vận hành. Riêng các năng lực trí tuệ nhân tạo tích hợp xuyên suốt các giao diện này được tách thành một mục riêng (Xây dựng module AI) ngay sau đây do tính chất kỹ thuật đặc thù.
 
-\subsection{Quản lý người dùng}
+\subsection{Chức năng dành cho người thuê}
+
+Hệ thống dành cho người thuê được hiện thực dưới dạng một ứng dụng web đáp ứng (responsive), phục vụ toàn bộ hành trình của người tìm trọ: từ khám phá, tìm kiếm, xem chi tiết, so sánh, lưu tin cho tới liên hệ trực tiếp với chủ trọ/môi giới. Phần này trình bày các kết quả chính đã đạt được trên ứng dụng web. Các tính năng AI tích hợp trong ứng dụng (trợ lý hội thoại, gợi ý cá nhân hóa\ldots) được trình bày chi tiết ở phần kết quả triển khai các tính năng AI; ở đây chỉ mô tả phần tích hợp và trải nghiệm phía giao diện.
+
+\subsubsection{Trang chủ và khám phá tin đăng}
+
+Trang chủ đóng vai trò điểm vào, tổng hợp nhiều khối nội dung giúp người dùng nhanh chóng định hướng (Hình~\ref{fig:homepage}). Đầu trang là ảnh giới thiệu dạng băng chuyền và một thanh tìm kiếm kèm bộ lọc nhanh theo địa điểm, loại hình và khoảng giá; tiếp đến là khối duyệt tin theo danh mục (phòng trọ, căn hộ, nhà nguyên căn\ldots) có kèm số lượng tin của mỗi loại. Phần giữa trang trình bày nhiều nhóm tin được tuyển chọn theo mục đích khác nhau: tin nổi bật và tin đáng chú ý (ưu tiên các tin ở hạng cao), tin đề xuất cá nhân hóa cho người dùng đã đăng nhập, và tin mới đăng. Cuối trang là khối duyệt tin theo địa điểm gắn với các tỉnh thành tiêu biểu (Hà Nội, Hồ Chí Minh, Đà Nẵng\ldots) kèm số lượng tin, và khối tin tức mới nhất về thị trường. Các số liệu thống kê và nhóm tin ổn định theo ngày được lưu đệm để giảm tải cho máy chủ và bảo đảm trang chủ hiển thị tức thì.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{trang-chu-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{trang-chu-2}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{trang-chu-3}\\[3pt]{\small (c)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{trang-chu-4}\\[3pt]{\small (d)}
+\end{minipage}
+\caption{Các khối nội dung trên trang chủ: (a) ảnh giới thiệu, thanh tìm kiếm và danh mục bất động sản; (b) tin nổi bật và tin đề xuất; (c) tin đáng chú ý và tin mới; (d) bất động sản theo địa điểm và tin tức mới nhất}
+\label{fig:homepage}
+\end{figure}
+
+\subsubsection{Tìm kiếm và lọc tin đăng}
+
+Trang danh sách tin đăng cung cấp khả năng tìm kiếm và lọc đa tiêu chí, gồm: khoảng giá, diện tích, loại hình (danh mục), vị trí (tỉnh/quận/phường), số phòng ngủ -- phòng tắm, tiện ích, các loại chi phí (điện, nước, internet, phí dịch vụ), hướng nhà và sắp xếp theo nhiều tiêu chí. Toàn bộ điều kiện lọc được đồng bộ vào tham số trên thanh địa chỉ (URL), nhờ đó người dùng có thể chia sẻ hoặc lưu lại một kết quả tìm kiếm cụ thể, và trạng thái lọc được khôi phục khi mở lại đường dẫn. Kết quả được phân trang và hỗ trợ bố cục hai cột (danh sách kèm bộ lọc bên cạnh) trên màn hình lớn.
+
+Một đặc điểm của thiết kế là thanh lọc nhanh được dùng lại nhất quán ở cả trang chủ lẫn trang danh sách. Ngay tại khối tìm kiếm ở đầu trang chủ (Hình~\ref{fig:filter-homepage}), người dùng đã có thể chọn sơ bộ loại hình, khoảng giá, sắp xếp, lọc theo môi giới chuyên nghiệp và nhập từ khóa. Khi bấm \textit{Áp dụng}, toàn bộ điều kiện lọc hiện hành được tuần tự hóa (serialize) thành tham số trên URL và ứng dụng điều hướng sang trang danh sách \texttt{/properties} kèm theo các tham số đó. Việc truyền điều kiện qua URL -- thay vì qua một vùng nhớ tạm dùng chung -- giúp trang danh sách khởi tạo lại đúng trạng thái lọc mà người dùng đã chọn từ trang chủ, đồng thời đường dẫn kết quả vẫn chia sẻ và lưu lại được.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{bo-loc-homepage}
+\caption{Thanh lọc nhanh tại khối tìm kiếm trên trang chủ}
+\label{fig:filter-homepage}
+\end{figure}
+
+Để lọc chi tiết hơn, người dùng mở hộp thoại bộ lọc đầy đủ (Hình~\ref{fig:filter-dialog}). Hộp thoại áp dụng cơ chế \textit{bản nháp} (draft): các thay đổi chỉ được ghi nhận khi người dùng xác nhận \textit{Áp dụng}, cho phép thử nhiều tổ hợp tiêu chí trước khi thực hiện truy vấn. Các tiêu chí bao gồm: nhu cầu (thuê hoặc ở ghép), địa chỉ (tỉnh/thành -- quận/huyện -- phường/xã), loại nhà đất, khoảng giá, diện tích, số phòng ngủ, hướng nhà, các loại chi phí (giá điện, nước, internet, phí dịch vụ), tiện ích và tùy chọn chỉ hiển thị tin đã xác minh.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{bo-loc-dialog}
+\caption{Hộp thoại bộ lọc đầy đủ với các tiêu chí chi tiết}
+\label{fig:filter-dialog}
+\end{figure}
+
+Trên trang danh sách, ngoài thanh lọc phía trên, màn hình lớn còn hiển thị một cột bộ lọc nhanh bên phải với các mốc dựng sẵn theo khoảng giá, diện tích và số phòng ngủ (Hình~\ref{fig:filter-listing}), giúp thu hẹp kết quả chỉ bằng một thao tác. Mọi thay đổi bộ lọc -- dù từ thanh trên, cột bên hay hộp thoại -- đều được đồng bộ hai chiều với URL: thao tác lọc cập nhật tham số đường dẫn theo cơ chế \textit{định tuyến nông} (shallow routing) mà không tải lại toàn trang, và ngược lại, khi mở một đường dẫn có sẵn tham số thì bộ lọc được phục hồi tương ứng. Trên thiết bị di động, cột bộ lọc và các nút điều khiển được thu gọn vào trong hộp thoại toàn màn hình để tiết kiệm không gian.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{bo-loc-listing-va-trang-tim-kiem}
+\caption{Trang danh sách với thanh lọc phía trên và cột bộ lọc theo khoảng giá, diện tích, số phòng ngủ bên phải}
+\label{fig:filter-listing}
+\end{figure}
+
+Phía sau giao diện, các điều kiện lọc được gửi tới Backend qua một lời gọi tìm kiếm dạng POST; các tiêu chí dạng khoảng (giá, diện tích, số phòng ngủ) được rút gọn thành chuỗi \texttt{min..max} trước khi truyền. Kết quả trả về được phân trang và lưu đệm theo bộ điều kiện hiện hành, nhờ đó khi người dùng quay lại một bộ lọc đã dùng thì danh sách hiển thị tức thì mà không phải truy vấn lại từ đầu.
+
+Ngoài việc nhập từ khóa tự do, ô tìm kiếm còn chủ động đưa ra gợi ý ngay khi người dùng gõ (Hình~\ref{fig:search-context}). Các gợi ý được chia thành hai nhóm: nhóm gợi ý trực tiếp theo từ khóa, và nhóm \textit{gợi ý theo ngữ cảnh} -- những truy vấn dựng sẵn kết hợp nhiều tiêu chí như khu vực và khoảng giá (chẳng hạn ``Nhà trọ Hồ Chí Minh từ 1 triệu đến 5 triệu''). Mỗi gợi ý có thể chọn bằng chuột hoặc điều hướng bằng bàn phím (phím mũi tên để di chuyển, Enter để chọn, Esc để đóng); khi chọn, hệ thống chuyển ngay gợi ý đó thành bộ điều kiện lọc tương ứng và hiển thị danh sách kết quả.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{search-theo-ngu-canh}
+\caption{Ô tìm kiếm với nhóm gợi ý theo ngữ cảnh: các truy vấn dựng sẵn kết hợp khu vực và khoảng giá}
+\label{fig:search-context}
+\end{figure}
+
+Về mặt nghiệp vụ, gợi ý theo ngữ cảnh giúp rút ngắn quãng đường từ nhu cầu còn mơ hồ tới kết quả cụ thể. Người tìm trọ thường chỉ có ý định chung chung (tìm phòng giá vừa phải ở một thành phố) mà chưa biết diễn đạt nhu cầu đó thành tổ hợp tiêu chí lọc; thay vì để họ tự mò mẫm qua từng bộ lọc, hệ thống đề xuất sẵn những truy vấn phổ biến, vốn có thật trong dữ liệu, để chỉ với một thao tác là ra được danh sách phù hợp. Cách làm này vừa giảm số lần tìm kiếm trả về kết quả rỗng, vừa định hướng người dùng tới những khu vực và khoảng giá đang có nhiều tin, nhờ đó tăng khả năng họ tìm thấy tin ưng ý và gắn bó lâu hơn với hệ thống.
+
+\subsubsection{Trang chi tiết tin đăng}
+
+Trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu SEO và tốc độ hiển thị lần đầu. Trang trình bày đầy đủ thông tin của một tin đăng: thư viện ảnh/video, tiêu đề và giá, danh sách tiện ích, mô tả chi tiết, biểu đồ lịch sử giá, bản đồ vị trí, và thẻ liên hệ chủ trọ/môi giới với chức năng hiện số điện thoại (có ghi nhận lượt bấm) cùng liên kết nhắn tin nhanh. Ở cuối trang còn có khối tin tương tự và khối tin vừa xem để gợi mở lựa chọn cho người dùng. Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự được tải động kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
+
+Khối đầu trang (Hình~\ref{fig:detail-top}) gồm thư viện ảnh/video có dải ảnh thu nhỏ và nút chuyển ảnh; bên cạnh tiêu đề là các nhãn tóm tắt loại bất động sản, hướng nhà và tình trạng nội thất, cùng nhãn \textit{ưu tiên} cho tin ở hạng cao. Khoảng giá được làm nổi ngay dưới tiêu đề, kèm địa chỉ rút gọn và địa chỉ đầy đủ. Một thanh hành động cung cấp các thao tác chia sẻ (sao chép đường dẫn), thêm vào danh sách so sánh, lưu tin yêu thích và báo cáo tin vi phạm. Thẻ liên hệ chủ trọ/môi giới được ghim (sticky) bên phải trên màn hình lớn, hiển thị thông tin người đăng cùng ba kênh liên hệ: \textit{chat qua Zalo}, \textit{gửi email} và nút \textit{hiện số} điện thoại. Số điện thoại được ẩn ban đầu: người dùng cần đăng nhập mới xem được, và mỗi lượt bấm hiện số được ghi nhận về máy chủ để phục vụ thống kê cho người đăng.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-anh-gia-dia-chi}
+\caption{Khối đầu trang chi tiết: thư viện ảnh, tiêu đề, các nhãn, khoảng giá, địa chỉ và thẻ liên hệ}
+\label{fig:detail-top}
+\end{figure}
+
+Tiếp theo là lưới thông số kỹ thuật của tin đăng (Hình~\ref{fig:detail-info}): diện tích, số phòng ngủ, phòng tắm, sức chứa, cùng các loại chi phí (giá điện, giá nước, giá internet, phí dịch vụ). Bên dưới là khối tiện ích hiển thị dưới dạng các thẻ có biểu tượng (phòng gym, gần bệnh viện, gần trường học, gần chợ/siêu thị\ldots) và phần thông tin mô tả chi tiết do người đăng cung cấp.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-thong-tin-khac}
+\caption{Lưới thông số, khối tiện ích và thông tin mô tả của tin đăng}
+\label{fig:detail-info}
+\end{figure}
+
+Một điểm nhấn của trang chi tiết là biểu đồ lịch sử giá (Hình~\ref{fig:detail-price-map}), giúp người thuê đánh giá xu hướng giá của tin đăng theo thời gian. Biểu đồ cho biết giá hiện tại, mức biến động theo tỷ lệ phần trăm và số lần thay đổi giá, có thể chuyển giữa các mốc thời gian một năm và hai năm; phía dưới tổng hợp giá thấp nhất, giá trung bình và giá cao nhất. Kế đó là bản đồ vị trí tích hợp Google Maps với điểm đánh dấu tin đăng và nút sao chép địa chỉ. Cả biểu đồ và bản đồ đều được tải động phía trình duyệt kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-lich-su-gia-ban-do}
+\caption{Biểu đồ lịch sử giá và bản đồ vị trí tin đăng}
+\label{fig:detail-price-map}
+\end{figure}
+
+Cuối trang là hai băng chuyền (carousel) gợi mở lựa chọn cho người dùng (Hình~\ref{fig:detail-similar}): khối \textit{bất động sản tương tự} lấy từ dịch vụ gợi ý theo tin đang xem, và khối \textit{tin đăng đã xem} dựng lại từ lịch sử duyệt tin được lưu cục bộ trên trình duyệt (và đồng bộ với máy chủ khi người dùng đã đăng nhập). Nhờ đó người dùng dễ dàng quay lại các tin quan tâm hoặc khám phá thêm các tin có đặc điểm gần giống.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{chi-tiet-tin-dang-bds-tuong-tu-da-xem-gan-day}
+\caption{Khối bất động sản tương tự và tin đăng đã xem ở cuối trang chi tiết}
+\label{fig:detail-similar}
+\end{figure}
+
+\subsubsection{Bản đồ tin đăng}
+
+Bên cạnh chế độ danh sách, người dùng có thể duyệt tin trên bản đồ tích hợp Google Maps (Hình~\ref{fig:map-overview}). Khi mở, hệ thống định vị người dùng qua trình duyệt và đưa bản đồ về vị trí đó; nếu người dùng từ chối hoặc không lấy được tọa độ thì dùng vị trí mặc định (trung tâm Việt Nam). Các điểm tin trong khung nhìn được gom nhóm những điểm gần nhau (gom cụm điểm đánh dấu -- marker clustering) để hiển thị gọn gàng, đồng thời đồng bộ với một bảng danh sách tin bên cạnh.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{map}
+\caption{Chế độ bản đồ: các cụm tin đăng hiển thị dưới dạng bong bóng tròn cùng một vài điểm đánh dấu đơn lẻ phân theo hạng tin}
+\label{fig:map-overview}
+\end{figure}
+
+\subsubsection*{a. Điểm đánh dấu và biểu tượng phân hạng}
+
+Mỗi tin đăng được biểu diễn bằng một điểm đánh dấu (marker) hình tròn có viền trắng và mũi nhọn chỉ xuống vị trí thực trên bản đồ; điểm đánh dấu chỉ mang biểu tượng, không kèm nhãn giá, nên bản đồ vẫn thoáng khi có nhiều tin. Màu sắc và biểu tượng bên trong mã hóa hạng tin (VIP) để người dùng phân biệt nhanh mức độ ưu tiên:
+
+\begin{itemize}
+\item \textbf{Hạng Kim cương (Diamond):} nền xanh dương, biểu tượng tia sáng (\textit{sparkles}).
+\item \textbf{Hạng Vàng (Gold):} nền vàng, biểu tượng vương miện (\textit{crown}).
+\item \textbf{Hạng Bạc (Silver):} nền xám, biểu tượng ngôi sao (\textit{star}).
+\item \textbf{Tin thường:} nền xanh lục, biểu tượng ngôi nhà (\textit{home}).
+\end{itemize}
+
+Khi một tin được chọn (bấm từ bản đồ hoặc từ bảng danh sách), điểm đánh dấu tương ứng được phóng to nhẹ và bao quanh bởi một vầng sáng nhấp nháy lan tỏa, giúp người dùng dễ định vị tin mình quan tâm giữa các điểm khác. Trạng thái đã xác minh và nhãn \textit{ưu tiên} không hiển thị trên điểm đánh dấu mà được thể hiện trên thẻ tóm tắt khi bấm vào tin.
+
+\subsubsection*{b. Gom cụm các điểm tin}
+
+Khi nhiều tin nằm sát nhau ở mức thu phóng thấp, hệ thống gom chúng thành một \textit{cụm} (cluster) -- một bong bóng tròn màu đỏ mang biểu tượng các lớp xếp chồng (\textit{layers}), không hiển thị con số (số lượng tin trong cụm được đưa vào nhãn trợ năng phục vụ trình đọc màn hình). Mọi cụm giữ nguyên một màu để không gây rối thị giác. Việc gom cụm được hiện thực bằng thư viện \texttt{@googlemaps/markerclusterer} với bộ kết xuất tùy biến. Khi người dùng phóng to, các cụm tự tách dần thành cụm nhỏ hơn rồi thành từng điểm đánh dấu riêng lẻ; bấm vào một cụm cũng đưa bản đồ phóng sâu để tách cụm đó ra.
+
+\subsubsection*{c. Đồng bộ bản đồ với bảng danh sách}
+
+Bản đồ và bảng danh sách bên cạnh được đồng bộ hai chiều theo khung nhìn hiện tại (Hình~\ref{fig:map-list}). Khi người dùng ngừng kéo hoặc thu phóng, hệ thống lấy giới hạn (bounds) của khung nhìn và chỉ tải bổ sung tin cho vùng đó, với một khoảng chờ gộp thao tác (debounce) để tránh gọi liên tục trong lúc người dùng còn di chuyển bản đồ. Các vùng đã tải được lưu đệm lại: nếu khung nhìn mới đã nằm trọn trong một vùng từng tải đầy đủ thì hệ thống phục vụ ngay từ bộ đệm mà không gọi lại API. Bản đồ chỉ bắt đầu tải tin từ một ngưỡng thu phóng đủ gần trở lên; ở mức quá xa, hệ thống không tải để tránh trả về lượng tin quá lớn. Bảng danh sách hiển thị tối đa một số lượng thẻ nhất định cho mỗi khung nhìn, trong khi bản đồ vẫn vẽ toàn bộ điểm đã nạp thông qua cơ chế gom cụm.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{map-list}
+\caption{Bố cục bản đồ kèm bảng danh sách tin đăng theo khung nhìn hiện tại}
+\label{fig:map-list}
+\end{figure}
+
+\subsubsection*{d. Thẻ tóm tắt khi chọn tin}
+
+Khi bấm vào một điểm đánh dấu, hệ thống hiển thị một thẻ tóm tắt tin đăng nổi trên bản đồ (Hình~\ref{fig:map-card}) -- gồm ảnh đại diện, tiêu đề, địa chỉ, giá, các thông số chính (diện tích, số phòng ngủ, phòng tắm, sức chứa), thông tin người đăng, nhãn \textit{đã xác minh} và \textit{ưu tiên} (nếu có), kèm nút mở trang chi tiết. Đồng thời bản đồ tự dịch chuyển và phóng tới vị trí tin để tách điểm khỏi cụm; thao tác dịch chuyển này được đánh dấu là chương trình tự thực hiện nên không kích hoạt việc tải lại tin theo khung nhìn.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{map-show-card-in-list}
+\caption{Thẻ tóm tắt tin đăng hiển thị khi chọn một điểm đánh dấu trên bản đồ}
+\label{fig:map-card}
+\end{figure}
+
+\subsubsection{So sánh tin đăng}
+
+Người dùng có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng (giá, diện tích, số phòng, tiện ích, địa chỉ, các loại chi phí, hạng tin\ldots). Việc chọn tin được thực hiện ngay trên mỗi thẻ tin bằng một nút bật/tắt ở góc: khi chưa chọn nút hiển thị biểu tượng dấu cộng, khi đã thêm vào danh sách so sánh nút chuyển sang biểu tượng dấu tích (Hình~\ref{fig:compare-card}). Danh sách so sánh được lưu tạm trong phiên làm việc của trình duyệt (\texttt{sessionStorage}) nên vẫn được giữ khi người dùng chuyển qua lại giữa các trang trong cùng phiên.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.30\textwidth]{compare-card-inactive}\hspace{0.04\textwidth}%
+\includegraphics[width=0.30\textwidth]{compare-card-active}
+\caption{Nút thêm vào so sánh trên thẻ tin: trạng thái chưa chọn (trái) và đã chọn (phải)}
+\label{fig:compare-card}
+\end{figure}
+
+Khi đã chọn ít nhất một tin, một thanh nổi xuất hiện ở giữa cạnh dưới màn hình, cho biết số tin đang chọn và cung cấp lối tắt mở trang so sánh; thanh này cho phép xem nhanh, bỏ chọn từng tin hoặc xóa toàn bộ danh sách, và tự ẩn khi người dùng đã ở trang so sánh (Hình~\ref{fig:compare-tool}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{compare-tool}
+\caption{Thanh nổi hiển thị số tin đã chọn và lối tắt mở trang so sánh}
+\label{fig:compare-tool}
+\end{figure}
+
+Trang so sánh trình bày các tin đã chọn cạnh nhau dưới dạng bảng đối chiếu, nhóm theo từng cụm thuộc tính (thông tin cơ bản, chi tiết bất động sản, phòng và nội thất\ldots) và tự đánh dấu mức giá thấp nhất, giúp người dùng nhanh chóng nhận ra khác biệt giữa các lựa chọn để ra quyết định (Hình~\ref{fig:compare-page}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{compare-page}
+\caption{Trang so sánh dạng bảng đối chiếu các tin đã chọn}
+\label{fig:compare-page}
+\end{figure}
+
+\subsubsection{Lưu tin và theo dõi người đăng}
+
+Đối với người dùng đã đăng nhập, hệ thống cho phép \textit{lưu tin yêu thích} và quản lý chúng trong một trang riêng có phân trang. Thao tác lưu được thực hiện ngay trên mỗi thẻ tin bằng nút hình trái tim ở góc; trái tim chuyển sang trạng thái đã tô màu để báo tin đã được lưu, bấm lại để bỏ lưu (Hình~\ref{fig:saved-button}). Toàn bộ tin đã lưu được tập hợp trong trang \textit{Tin đã lưu}, hiển thị dưới dạng lưới thẻ kèm số lượng tin đã lưu (Hình~\ref{fig:saved-page}), giúp người dùng dễ dàng xem lại các tin mình quan tâm.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.32\textwidth]{saved-inactive}\hspace{0.04\textwidth}%
+\includegraphics[width=0.32\textwidth]{saved-card-button}
+\caption{Nút lưu tin hình trái tim trên thẻ tin đăng: trạng thái chưa lưu (trái) và đã lưu (phải)}
+\label{fig:saved-button}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{saved-listing-page}
+\caption{Trang Tin đã lưu tổng hợp các tin người dùng đã lưu}
+\label{fig:saved-page}
+\end{figure}
+
+Ngoài việc lưu tin, hệ thống còn cho phép người dùng đã đăng nhập \textit{theo dõi} các chủ trọ/môi giới để không bỏ lỡ tin đăng mới của họ. Nút theo dõi được đặt ngay tại nơi người dùng tiếp xúc với người bán: trên thẻ thông tin người bán ở trang chi tiết tin đăng (Hình~\ref{fig:follow-detail}) và trên trang hồ sơ tổng hợp tin đăng của người bán (Hình~\ref{fig:follow-profile}). Thao tác theo dõi/bỏ theo dõi được cập nhật lạc quan (optimistic update) nên giao diện phản hồi tức thì; nếu người dùng chưa đăng nhập, hệ thống mở hộp thoại đăng nhập rồi đưa họ trở lại đúng trang đang xem.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{follow-indetailpage}
+\caption{Nút theo dõi trên thẻ thông tin người bán ở trang chi tiết tin đăng}
+\label{fig:follow-detail}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-indetailUser}
+\caption{Nút theo dõi trên trang hồ sơ tổng hợp các tin đăng của người bán}
+\label{fig:follow-profile}
+\end{figure}
+
+Toàn bộ hoạt động theo dõi được quản lý tại trang \textit{Đang theo dõi}, chia thành hai thẻ. Thẻ \textit{Bảng tin} tổng hợp các tin đăng mới nhất từ tất cả những người đang theo dõi, kèm thanh bên cho phép lọc nhanh theo từng người (Hình~\ref{fig:follow-feed}). Thẻ \textit{Đang theo dõi} liệt kê những người dùng đang được theo dõi dưới dạng lưới thẻ, mỗi thẻ có nút bỏ theo dõi và lối tắt mở bảng tin của người đó (Hình~\ref{fig:follow-list}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-listing}
+\caption{Thẻ Bảng tin tổng hợp tin đăng mới từ những người đang theo dõi}
+\label{fig:follow-feed}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{follow-listingUser}
+\caption{Thẻ Đang theo dõi liệt kê những người dùng đang được theo dõi}
+\label{fig:follow-list}
+\end{figure}
+
+Về phía hệ thống, quan hệ theo dõi được lưu như một đồ thị có hướng giữa các người dùng; các thao tác theo dõi và bỏ theo dõi đều có tính lũy đẳng (idempotent) nên việc lặp lại không gây sai lệch trạng thái. Khi một người được theo dõi đăng tin mới, hệ thống tự động phát thông báo trong ứng dụng đến toàn bộ người theo dõi của họ, khép kín vòng trải nghiệm cá nhân hóa và khuyến khích người dùng quay lại.
+
+\subsubsection{Trợ lý hội thoại AI trên giao diện}
+
+Ứng dụng tích hợp một widget trợ lý AI dạng nút nổi, có thể mở rộng thành cửa sổ hội thoại trên màn hình lớn hoặc toàn màn hình trên thiết bị di động. Về phía giao diện, widget nhận câu trả lời theo luồng thời gian thực (hiển thị dần từng đoạn kèm trạng thái xử lý), cho phép người dùng bấm vào các tin đăng do AI gợi ý để mở ngay hộp thoại chi tiết, ghi nhớ hội thoại trong phiên và hỗ trợ hủy luồng đang chạy. Năng lực xử lý ngôn ngữ và tìm kiếm phía sau của trợ lý được trình bày ở phần kết quả AI.
+
+\subsubsection{Đăng nhập và xác thực}
+
+Việc xác thực được thực hiện qua một hộp thoại bật lên ngay tại chỗ khi người dùng truy cập chức năng yêu cầu đăng nhập, thay vì chuyển sang trang riêng; sau khi đăng nhập thành công, người dùng được đưa trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Ứng dụng hỗ trợ ba cách đăng nhập (Hình~\ref{fig:auth}): bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email (magic link), và bằng tài khoản Google (OAuth).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\textwidth]{dang-nhap-xac-thuc}\\[4pt]
+{\small (a) Hộp thoại đăng nhập}\\[10pt]
+\includegraphics[width=0.72\textwidth]{xac-thuc-dang-ky}\\[4pt]
+{\small (b) Hộp thoại đăng ký}
+\caption{Hộp thoại đăng nhập và đăng ký của ứng dụng}
+\label{fig:auth}
+\end{figure}
+
+Người dùng mới đăng ký bằng họ tên, email và mật khẩu (có ô xác nhận mật khẩu, kiểm tra hợp lệ ngay phía trình duyệt); sau đó tài khoản cần được kích hoạt bằng mã xác minh (OTP) gửi tới hộp thư. Chức năng quên mật khẩu cũng dựa trên mã xác minh gửi qua email để cấp quyền đặt lại mật khẩu mới; toàn bộ mã xác minh và liên kết đăng nhập đều gửi qua email. Phía máy chủ, mật khẩu được băm bằng BCrypt và phiên làm việc được cấp dưới dạng cặp JWT gồm access token và refresh token lưu trong cookie; khi access token hết hạn, bộ chặn của \texttt{axios} tự động gọi làm mới rồi phát lại yêu cầu một cách trong suốt với người dùng.
+
+\subsubsection{Tin tức và thông báo}
+
+Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên mục, tìm kiếm theo từ khóa, bài nổi bật, khối ``xem nhiều nhất'' và trang chi tiết bài viết (kết xuất SSR).
+
+Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thông báo thời gian thực} qua WebSocket, kèm chỉ báo số thông báo chưa đọc và danh sách thông báo gần nhất khi mở chuông thông báo (Hình~\ref{fig:notification}). Phía máy chủ, mỗi thông báo được lưu lại rồi đẩy ngay tới đúng người nhận: hệ thống dùng giao thức STOMP trên một điểm kết nối WebSocket (\texttt{/ws}, có cơ chế dự phòng SockJS), mỗi người dùng lắng nghe trên kênh riêng theo định danh (\texttt{/topic/notifications/\{recipientId\}}) nên chỉ nhận thông báo của chính mình. Các sự kiện sinh thông báo bao gồm: kết quả kiểm duyệt tin đăng (được duyệt, bị từ chối, yêu cầu chỉnh sửa, bị gỡ hay đăng lại); vòng đời tin đăng như cảnh báo sắp hết hạn ở các mốc trước 7, 3 và 1 ngày; tiến trình đăng ký môi giới (đã tiếp nhận, được duyệt, bị từ chối); diễn biến tố cáo tin đăng; và thông báo khi một người dùng đang được theo dõi đăng tin mới. Quản trị viên cũng nhận các thông báo nghiệp vụ tương ứng (có tin mới bị tố cáo, có hồ sơ môi giới chờ duyệt\ldots) trên cùng cơ chế.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{notification}
+\caption{Hộp thông báo thời gian thực với chỉ báo số thông báo chưa đọc}
+\label{fig:notification}
+\end{figure}
+
+\subsubsection{Trải nghiệm đa thiết bị và đa ngôn ngữ}
+
+Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Việc chuyển đổi ngôn ngữ chỉ thay đổi nội dung chữ hiển thị (nhãn, thông báo, văn bản), còn giá tin đăng vẫn giữ nguyên đơn vị tiền đồng. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu và trạng thái rỗng có hướng dẫn rõ ràng góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
+
+Giao diện được thiết kế đáp ứng linh hoạt theo kích thước màn hình: trên màn hình lớn, các trang tận dụng bố cục nhiều cột -- trang danh sách đặt bộ lọc cạnh kết quả, trang chi tiết ghim thẻ liên hệ bên phải. Khi thu về kích thước điện thoại, bố cục tự xếp lại thành một cột: thanh điều hướng trên cùng được thu gọn thành nút trình đơn mở ra ngăn điều hướng dạng trượt (Hình~\ref{fig:responsive-home}); thanh tìm kiếm và các nút điều khiển trên trang danh sách dồn lại theo chiều dọc (Hình~\ref{fig:responsive-listing}); còn thẻ liên hệ trên trang chi tiết được đưa xuống dưới thư viện ảnh (Hình~\ref{fig:responsive-detail}). Nhờ đó, trải nghiệm vẫn liền mạch và đầy đủ chức năng trên mọi kích thước màn hình.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{homepage-desktop}\\[4pt]
+{\small (a) Trang chủ trên máy tính}\\[10pt]
+\includegraphics[height=7.2cm]{homepage-mobile}\hspace{0.8cm}
+\includegraphics[height=7.2cm]{homepage-mobile-navigation}\\[4pt]
+{\small (b) Trang chủ và (c) menu điều hướng thu gọn trên thiết bị di động}
+\caption{Trang chủ ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-home}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{listing-desktop}\\[4pt]
+{\small (a) Trang danh sách trên máy tính}\\[10pt]
+\includegraphics[height=7.6cm]{listing-mobile}\\[4pt]
+{\small (b) Trang danh sách trên thiết bị di động}
+\caption{Trang danh sách tin đăng ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-listing}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{detailpage-desktop}\\[4pt]
+{\small (a) Trang chi tiết trên máy tính}\\[10pt]
+\includegraphics[height=7.6cm]{detailpage-mobile}\\[4pt]
+{\small (b) Trang chi tiết trên thiết bị di động}
+\caption{Trang chi tiết tin đăng ở hai khổ màn hình máy tính và di động}
+\label{fig:responsive-detail}
+\end{figure}
+
+\subsection{Chức năng dành cho chủ trọ}
+
+Bên cạnh trải nghiệm dành cho người thuê, hệ thống cung cấp một không gian làm việc riêng dành cho chủ trọ và môi giới (kênh chủ trọ), tổ chức quanh một bố cục có thanh điều hướng riêng và đáp ứng tốt trên cả máy tính lẫn thiết bị di động. Kênh này phục vụ toàn bộ vòng đời của một tin đăng: từ tạo tin, quản lý, theo dõi hiệu suất, chăm sóc khách hàng tiềm năng cho tới quản lý gói hội viên và thanh toán. Phần này trình bày các nhóm chức năng chính của kênh chủ trọ; các năng lực AI hỗ trợ chủ trọ (sinh nội dung tin đăng, định giá) được mô tả chi tiết ở phần kết quả triển khai các tính năng AI.
+
+Toàn bộ các trang chức năng dùng chung một bố cục điều hướng nhất quán. Trên máy tính, một thanh điều hướng dọc cố định bên trái liệt kê các mục chính -- tổng quan, tin đăng, đăng tin, tin nháp, khách hàng, lịch sử giao dịch, gói hội viên, tài khoản cùng các trang hướng dẫn -- kèm thanh trên cùng chứa thông báo và nút chuyển chế độ sáng/tối. Trên thiết bị di động, thanh điều hướng dọc được thu gọn thành một thanh tab cố định ở cạnh dưới với nút đăng tin đặt ở giữa để thao tác nhanh (Hình~\ref{fig:owner-layout}). Nhờ đó chủ trọ truy cập mọi nhóm chức năng từ cùng một điểm điều hướng, đồng nhất giữa máy tính và di động.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[b]{0.64\textwidth}\centering
+\includegraphics[width=\linewidth]{giao-dien-chu-tro-desktop}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[b]{0.30\textwidth}\centering
+\includegraphics[width=\linewidth]{giao-dien-chu-tro-mobile}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Bố cục điều hướng của kênh chủ trọ: (a) thanh điều hướng dọc bên trái trên máy tính; (b) thanh tab ở cạnh dưới với nút đăng tin ở giữa trên thiết bị di động}
+\label{fig:owner-layout}
+\end{figure}
+
+\subsubsection{Bảng điều khiển và thống kê hiệu suất}
+
+Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại và hiệu suất tin đăng. Giao diện tổng hợp các biểu đồ theo thời gian về lượt bấm xem số điện thoại và lượt lưu tin của người dùng, giúp chủ trọ nắm được mức độ quan tâm thực tế đối với các tin của mình.
+
+\subsubsection{Quản lý tin đăng}
+
+Trang quản lý tin đăng là nơi chủ trọ theo dõi và điều hành toàn bộ tin của mình ở cùng một chỗ (Hình~\ref{fig:listing-management}). Các tin được phân nhóm theo trạng thái qua hàng thẻ ở đầu trang -- tất cả, đang hiển thị, sắp hết hạn, hết hạn, chờ duyệt và bị từ chối -- giúp chủ trọ nhanh chóng khoanh vùng nhóm tin cần xử lý (chẳng hạn lọc riêng các tin sắp hết hạn để gia hạn kịp thời). Bên dưới là thanh công cụ tìm kiếm theo từ khóa cùng các bộ lọc theo nhu cầu, loại bất động sản và tiêu chí sắp xếp, kèm một hộp thoại lọc nâng cao (khoảng giá, diện tích, số phòng\ldots); danh sách hỗ trợ phân trang trên máy tính và tự tải thêm khi cuộn trên thiết bị di động.
+
+Phía trên danh sách, một dải thông tin tóm tắt hạn mức quyền lợi của gói hội viên đang dùng -- tên gói, số ngày còn lại và số lượt đẩy tin miễn phí còn lại -- để chủ trọ biết mình còn bao nhiêu lượt trước khi thao tác. Mỗi tin hiển thị dưới dạng thẻ tóm tắt ảnh đại diện, tiêu đề, hạng tin và trạng thái xác thực, địa chỉ, giá thuê, diện tích cùng các mốc quản lý (mã tin, ngày đăng, ngày hết hạn). Ngay trên từng thẻ, chủ trọ thao tác trực tiếp mà không cần rời trang: chỉnh sửa nội dung, đẩy tin lên đầu danh sách, và qua menu mở rộng còn có sao chép liên kết, gỡ tin, xóa tin, cùng tùy chọn gia hạn hay đăng lại tùy theo trạng thái hiện tại của tin. Riêng với tin bị từ chối hoặc cần chỉnh sửa, nút sửa dẫn thẳng tới luồng chỉnh sửa kèm ngữ cảnh gửi duyệt lại, rút ngắn thao tác cho chủ trọ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{quan-ly-tin-dang}
+\caption{Trang quản lý tin đăng của chủ trọ: phân nhóm tin theo trạng thái, bộ lọc, dải hạn mức gói hội viên và các thao tác nhanh trên từng tin}
+\label{fig:listing-management}
+\end{figure}
+
+\subsubsection{Đăng tin}
+
+Quy trình đăng tin được chia thành năm bước nối tiếp với thanh tiến trình hiển thị bước hiện tại; hệ thống chỉ cho phép chuyển sang bước sau khi dữ liệu ở bước hiện tại hợp lệ, giúp chủ trọ tạo tin đầy đủ và chính xác trước khi xuất bản (Hình~\ref{fig:post-steps}). Năm bước lần lượt là: nhập thông tin bất động sản, định giá tham khảo bằng AI, chọn gói và cấu hình hiển thị, tải hình ảnh và video, cuối cùng là xem lại đơn hàng và thanh toán.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{post-listing-steps}
+\caption{Thanh tiến trình năm bước của luồng đăng tin}
+\label{fig:post-steps}
+\end{figure}
+
+\textbf{Bước 1 -- Thông tin bất động sản.} Bước đầu tiên thu thập toàn bộ dữ liệu của tin đăng, được tổ chức thành ba nhóm. Nhóm \textit{Thông tin tin đăng} gồm nhu cầu (cho thuê hoặc bán), loại danh mục và địa chỉ bất động sản; địa chỉ được chọn theo tỉnh/thành và phường/xã, kèm bản đồ tương tác cho phép kéo điểm đánh dấu để định vị chính xác (Hình~\ref{fig:post-step1}a). Nhóm \textit{Chi tiết bất động sản} nhập diện tích, giá, tình trạng nội thất, số phòng ngủ, phòng tắm, số người ở và danh sách tiện nghi (Hình~\ref{fig:post-step1}b). Nhóm \textit{Chi phí dịch vụ \& Hướng nhà} và \textit{Tiêu đề \& Mô tả} khai báo giá điện, nước, internet, phí dịch vụ, hướng nhà, đồng thời cho phép sinh tiêu đề và mô tả tự động bằng AI theo văn phong tùy chọn (Hình~\ref{fig:post-step1}c).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step1-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step1-2}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.62\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step1-3}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Bước 1 -- thông tin bất động sản: (a) thông tin tin đăng và bản đồ định vị; (b) chi tiết bất động sản và tiện nghi; (c) chi phí dịch vụ, hướng nhà và sinh tiêu đề/mô tả tự động bằng AI}
+\label{fig:post-step1}
+\end{figure}
+
+\textbf{Bước 2 -- Định giá AI.} Dựa trên thông tin vừa nhập, hệ thống đưa ra khoảng giá tham khảo cho khu vực tương ứng gồm mức tối thiểu, trung bình và tối đa, giúp chủ trọ định giá tin đăng hợp lý (Hình~\ref{fig:post-step2}). Chi tiết cơ chế định giá được trình bày ở phần kết quả triển khai các tính năng AI.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{post-step2}
+\caption{Bước 2 -- khoảng giá đề xuất do AI ước tính theo khu vực}
+\label{fig:post-step2}
+\end{figure}
+
+\textbf{Bước 3 -- Gói và cấu hình hiển thị.} Chủ trọ chọn hạng tin (Tin thường hoặc các hạng VIP Bạc, VIP Vàng, VIP Kim cương với mức ưu tiên hiển thị tăng dần), thời hạn đăng và ngày bắt đầu; bảng tổng hợp cập nhật tức thời tổng chi phí đã gồm thuế (Hình~\ref{fig:post-step3}a). Nếu đang sở hữu gói hội viên còn hạn mức, chủ trọ có thể chọn áp dụng quyền lợi (lượt đăng VIP miễn phí) cho tin này để được miễn hoặc giảm phí (Hình~\ref{fig:post-step3}b).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step3}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step-3-benefit}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Bước 3 -- gói và cấu hình hiển thị: (a) chọn hạng tin, thời hạn và tổng chi phí; (b) áp dụng quyền lợi gói hội viên còn hạn mức cho tin đăng}
+\label{fig:post-step3}
+\end{figure}
+
+\textbf{Bước 4 -- Hình ảnh và video.} Bước này yêu cầu tải ảnh bìa bắt buộc và bộ ảnh minh họa theo số lượng tối thiểu của từng hạng tin, kèm tùy chọn tải video hoặc nhúng liên kết YouTube; giao diện cũng cung cấp hướng dẫn chụp ảnh để nâng chất lượng tin đăng (Hình~\ref{fig:post-step4}).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.45\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step4-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.45\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step4-2}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Bước 4 -- hình ảnh và video: (a) tải ảnh bìa và bộ ảnh minh họa; (b) tải video, nhúng liên kết YouTube và hướng dẫn chụp ảnh}
+\label{fig:post-step4}
+\end{figure}
+
+\textbf{Bước 5 -- Tóm tắt đơn hàng và thanh toán.} Trước khi xuất bản, hệ thống tổng hợp lại thông tin liên hệ, chi tiết gói đăng tin, chi tiết thanh toán và bản xem trước tin đăng đúng như cách hiển thị với người thuê (Hình~\ref{fig:post-step5}a và b). Khi tin có phát sinh chi phí (không áp dụng quyền lợi hội viên hoặc không đủ hạn mức), chủ trọ chọn cổng thanh toán SePay hoặc ZaloPay để hoàn tất; nếu chi phí bằng không nhờ quyền lợi gói, tin được xuất bản trực tiếp (Hình~\ref{fig:post-step5}c).
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step-5}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.46\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step-5-2}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.6\textwidth}\centering
+\includegraphics[width=\linewidth]{post-step-5-thanh-toan-ifnotchoosebenefit}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Bước 5 -- tóm tắt đơn hàng và thanh toán: (a) tóm tắt thông tin liên hệ, gói và chi tiết thanh toán; (b) bản xem trước tin đăng; (c) chọn cổng thanh toán SePay hoặc ZaloPay khi tin phát sinh chi phí}
+\label{fig:post-step5}
+\end{figure}
+
+\subsubsection{Quản lý tin nháp}
+
+Trong quá trình đăng tin, chủ trọ có thể lưu lại bản nháp ở bất kỳ bước nào thay vì phải hoàn tất ngay; những tin chưa xuất bản này được tập hợp trong một trang riêng để tiếp tục về sau. Mỗi tin nháp hiển thị dưới dạng thẻ tóm tắt ảnh đại diện, tiêu đề, mô tả, địa chỉ và các thông số chính (giá, diện tích, số phòng ngủ, số phòng tắm) kèm chỉ báo mức độ hoàn thiện cho biết tin đã đủ thông tin để đăng hay chưa. Từ thẻ này, chủ trọ mở lại luồng đăng tin để chỉnh sửa, hoàn thiện và đăng lại, hoặc xóa bản nháp không còn dùng (Hình~\ref{fig:draft-management}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{draft-management}
+\caption{Trang quản lý tin nháp: các tin đăng đang lưu nháp kèm chỉ báo mức độ hoàn thiện và thao tác chỉnh sửa, đăng lại}
+\label{fig:draft-management}
+\end{figure}
+
+\subsubsection{Quản lý khách hàng tiềm năng}
+
+Hệ thống ghi nhận những người dùng đã quan tâm tới tin của chủ trọ (chẳng hạn bấm xem số điện thoại) và tổng hợp thành danh sách khách hàng tiềm năng, kèm các chỉ số như tổng số khách, tổng lượt bấm xem liên hệ và số người dùng duy nhất. Đây là cơ sở để chủ trọ chủ động liên hệ và chăm sóc khách.
+
+\subsubsection{Gói hội viên}
+
+Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấp sẵn một lượng quyền lợi đăng tin để dùng dần trong thời hạn gói thay vì trả phí cho từng tin. Hệ thống cung cấp ba hạng gói -- \textit{Cơ bản} (BASIC), \textit{Tiêu chuẩn} (STANDARD) và \textit{Nâng cao} (ADVANCED) -- mỗi gói có thời hạn một tháng và được niêm yết theo hai mức: giá gốc và giá bán sau khi trừ tỷ lệ chiết khấu (Hình~\ref{fig:membership-plans}). Trang gói dịch vụ trình bày ba gói cạnh nhau kèm bảng quyền lợi để chủ trọ đối chiếu trước khi mua; hạng càng cao thì số lượng quyền lợi càng nhiều.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership}
+\caption{Trang gói dịch vụ so sánh ba hạng gói hội viên kèm giá và quyền lợi}
+\label{fig:membership-plans}
+\end{figure}
+
+Quyền lợi của mỗi gói thuộc hai nhóm chính: số lượt đăng tin VIP miễn phí theo từng hạng tin -- VIP Bạc, VIP Vàng và VIP Kim cương (tin ở hạng cao được ưu tiên hiển thị hơn) -- và số lượt \textit{đẩy tin} (boost) miễn phí để đưa tin lên đầu danh sách. Khi mua gói thành công, hệ thống cấp một lần toàn bộ quyền lợi dưới dạng hạn mức (số lượt được cấp, số lượt đã dùng) có hiệu lực đến hết thời hạn gói. Mỗi khi chủ trọ đăng một tin VIP hoặc đẩy một tin, hệ thống trừ dần vào đúng loại hạn mức tương ứng và đánh dấu quyền lợi là đã dùng hết khi hạn mức về không; nhờ đó chủ trọ có thể dùng quyền lợi gói ngay trong luồng đăng tin và quản lý tin mà không phát sinh thêm chi phí (Hình~\ref{fig:membership-boost}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{memembership-push-listing}
+\caption{Hạn mức quyền lợi của gói được áp dụng trực tiếp trong trang quản lý tin đăng (số lượt đẩy tin còn lại)}
+\label{fig:membership-boost}
+\end{figure}
+
+Bảng điều khiển của chủ trọ tổng hợp tình trạng gói đang dùng: tên và hạng gói, ngày hết hạn cùng số ngày còn lại, và mức tiêu thụ của từng loại quyền lợi (đã dùng trên tổng số được cấp) để chủ trọ theo dõi phần quyền lợi còn lại (Hình~\ref{fig:membership-dashboard}). Khi gói hết hạn, hệ thống tự chuyển trạng thái gói và các quyền lợi chưa dùng sang \textit{hết hạn} thông qua tác vụ định kỳ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership-dashboard}
+\caption{Bảng điều khiển hiển thị gói đang dùng, số ngày còn lại và mức tiêu thụ từng quyền lợi}
+\label{fig:membership-dashboard}
+\end{figure}
+
+Khi đang sở hữu một gói, chủ trọ có thể \textit{nâng cấp} lên hạng cao hơn (Hình~\ref{fig:membership-upgrade}). Hệ thống áp dụng cơ chế chiết khấu theo tỷ lệ thời gian còn lại của gói hiện tại: phần giá trị tương ứng với số ngày chưa dùng được trừ vào giá gói mới, nhưng chủ trọ luôn phải trả tối thiểu khoản chênh lệch giá giữa hai gói. Trang nâng cấp hiển thị rõ giá gói mới, mức chiết khấu, số tiền phải trả, đồng thời nêu cả phần quyền lợi còn lại của gói cũ sẽ mất và phần quyền lợi mới nhận được, giúp chủ trọ cân nhắc trước khi quyết định. Sau khi nâng cấp, gói cũ được đánh dấu \textit{đã nâng cấp} và hệ thống khởi tạo gói mới với hạn mức quyền lợi đầy đủ.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{membership-upgrade}
+\caption{Trang nâng cấp gói với chiết khấu theo thời gian còn lại, quyền lợi sẽ mất và quyền lợi mới nhận}
+\label{fig:membership-upgrade}
+\end{figure}
+
+Mọi giao dịch mua và nâng cấp gói đều đi qua cổng thanh toán và được ghi nhận trong lịch sử giao dịch của chủ trọ.
+
+\subsubsection{Lịch sử giao dịch}
+
+Mọi khoản thanh toán dịch vụ phát sinh trong kênh chủ trọ -- mua gói hội viên, nâng cấp gói, phí đăng tin và phí đăng lại -- được lưu lại trong trang lịch sử giao dịch. Mỗi giao dịch hiển thị tên loại thanh toán, số tiền, phương thức (cổng SePay hoặc ZaloPay), trạng thái (đang chờ hoặc hoàn tất) và thời điểm tạo. Trang cung cấp ô tìm theo mã giao dịch hoặc mã hóa đơn cùng các bộ lọc theo trạng thái, loại thanh toán và khoảng thời gian, giúp chủ trọ tra cứu nhanh trong danh sách (Hình~\ref{fig:payment-history-list}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{history-payment-list}
+\caption{Trang lịch sử giao dịch của chủ trọ: danh sách các khoản thanh toán dịch vụ kèm bộ lọc theo trạng thái, loại thanh toán và khoảng thời gian}
+\label{fig:payment-history-list}
+\end{figure}
+
+Chọn một giao dịch để mở cửa sổ chi tiết, trình bày đầy đủ thông tin đối soát: mã giao dịch, trạng thái, số tiền, loại thanh toán, cổng và mã cổng thanh toán, phương thức thanh toán, mốc thời gian tạo và hoàn tất, thông tin đơn cùng tiến trình xử lý của giao dịch. Với giao dịch còn đang chờ, chủ trọ có thể bấm kiểm tra lại trạng thái để đồng bộ kết quả từ cổng thanh toán (Hình~\ref{fig:payment-history-detail}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{history-payment-detail}
+\caption{Chi tiết một giao dịch: thông tin đối soát với cổng thanh toán và tiến trình xử lý}
+\label{fig:payment-history-detail}
+\end{figure}
+
+\subsubsection{Hồ sơ chủ trọ và tài nguyên hỗ trợ}
+
+Chủ trọ có thể cập nhật hồ sơ công khai (thông tin liên hệ, ảnh đại diện\ldots) hiển thị trên các tin đăng và trang cá nhân của mình. Ngoài ra, kênh chủ trọ cung cấp các trang tài nguyên công khai gồm báo giá dịch vụ, hướng dẫn thanh toán và hướng dẫn sử dụng, giúp người dùng mới làm quen nhanh với quy trình đăng tin và thanh toán.
+
+\subsection{Chức năng dành cho quản trị viên}
 
 % TODO: Nội dung.
 
-\subsection{Quản lý phòng trọ}
+\subsubsection{Thống kê \& Giám sát Hệ thống}
 
 % TODO: Nội dung.
 
-\subsection{Tìm kiếm và lọc}
+\subsubsection{Quản lý Người dùng \& Phân quyền}
 
 % TODO: Nội dung.
 
-\subsection{Đặt lịch xem phòng}
+\subsubsection{Quản lý tin đăng và kiểm duyệt nội dung}
 
 % TODO: Nội dung.
 
-\subsection{Hệ thống đánh giá}
+\subsubsection{Quản lý doanh thu và thanh toán}
 
 % TODO: Nội dung.
+
 
 \section{Xây dựng module AI}
 
@@ -270,538 +786,3 @@ Phần xếp hạng tại dịch vụ AI dùng mô hình lai (hybrid) kết hợ
 \section{Các khó khăn và giải pháp trong quá trình xây dựng hệ thống}
 
 % TODO: Nội dung (trong file Báo Cáo Cuối Kỳ phần này mới chỉ có các tiểu mục để trống).
-\section{Kết quả giao diện dành cho người thuê}
-
-Hệ thống dành cho người thuê được hiện thực dưới dạng một ứng dụng web đáp ứng (responsive), phục vụ toàn bộ hành trình của người tìm trọ: từ khám phá, tìm kiếm, xem chi tiết, so sánh, lưu tin cho tới liên hệ trực tiếp với chủ trọ/môi giới. Phần này trình bày các kết quả chính đã đạt được trên ứng dụng web. Các tính năng AI tích hợp trong ứng dụng (trợ lý hội thoại, gợi ý cá nhân hóa\ldots) được trình bày chi tiết ở phần kết quả triển khai các tính năng AI; ở đây chỉ mô tả phần tích hợp và trải nghiệm phía giao diện.
-
-\subsection{Trang chủ và khám phá tin đăng}
-
-Trang chủ đóng vai trò điểm vào, tổng hợp nhiều khối nội dung giúp người dùng nhanh chóng định hướng (Hình~\ref{fig:homepage}). Đầu trang là ảnh giới thiệu dạng băng chuyền và một thanh tìm kiếm kèm bộ lọc nhanh theo địa điểm, loại hình và khoảng giá; tiếp đến là khối duyệt tin theo danh mục (phòng trọ, căn hộ, nhà nguyên căn\ldots) có kèm số lượng tin của mỗi loại. Phần giữa trang trình bày nhiều nhóm tin được tuyển chọn theo mục đích khác nhau: tin nổi bật và tin đáng chú ý (ưu tiên các tin ở hạng cao), tin đề xuất cá nhân hóa cho người dùng đã đăng nhập, và tin mới đăng. Cuối trang là khối duyệt tin theo địa điểm gắn với các tỉnh thành tiêu biểu (Hà Nội, Hồ Chí Minh, Đà Nẵng\ldots) kèm số lượng tin, và khối tin tức mới nhất về thị trường. Các số liệu thống kê và nhóm tin ổn định theo ngày được lưu đệm để giảm tải cho máy chủ và bảo đảm trang chủ hiển thị tức thì.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{trang-chu-1}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{trang-chu-2}\\[3pt]{\small (b)}
-\end{minipage}
-
-\vspace{8pt}
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{trang-chu-3}\\[3pt]{\small (c)}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{trang-chu-4}\\[3pt]{\small (d)}
-\end{minipage}
-\caption{Các khối nội dung trên trang chủ: (a) ảnh giới thiệu, thanh tìm kiếm và danh mục bất động sản; (b) tin nổi bật và tin đề xuất; (c) tin đáng chú ý và tin mới; (d) bất động sản theo địa điểm và tin tức mới nhất}
-\label{fig:homepage}
-\end{figure}
-
-\subsection{Tìm kiếm và lọc tin đăng}
-
-Trang danh sách tin đăng cung cấp khả năng tìm kiếm và lọc đa tiêu chí, gồm: khoảng giá, diện tích, loại hình (danh mục), vị trí (tỉnh/quận/phường), số phòng ngủ -- phòng tắm, tiện ích, các loại chi phí (điện, nước, internet, phí dịch vụ), hướng nhà và sắp xếp theo nhiều tiêu chí. Toàn bộ điều kiện lọc được đồng bộ vào tham số trên thanh địa chỉ (URL), nhờ đó người dùng có thể chia sẻ hoặc lưu lại một kết quả tìm kiếm cụ thể, và trạng thái lọc được khôi phục khi mở lại đường dẫn. Kết quả được phân trang và hỗ trợ bố cục hai cột (danh sách kèm bộ lọc bên cạnh) trên màn hình lớn.
-
-Một đặc điểm của thiết kế là thanh lọc nhanh được dùng lại nhất quán ở cả trang chủ lẫn trang danh sách. Ngay tại khối tìm kiếm ở đầu trang chủ (Hình~\ref{fig:filter-homepage}), người dùng đã có thể chọn sơ bộ loại hình, khoảng giá, sắp xếp, lọc theo môi giới chuyên nghiệp và nhập từ khóa. Khi bấm \textit{Áp dụng}, toàn bộ điều kiện lọc hiện hành được tuần tự hóa (serialize) thành tham số trên URL và ứng dụng điều hướng sang trang danh sách \texttt{/properties} kèm theo các tham số đó. Việc truyền điều kiện qua URL -- thay vì qua một vùng nhớ tạm dùng chung -- giúp trang danh sách khởi tạo lại đúng trạng thái lọc mà người dùng đã chọn từ trang chủ, đồng thời đường dẫn kết quả vẫn chia sẻ và lưu lại được.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{bo-loc-homepage}
-\caption{Thanh lọc nhanh tại khối tìm kiếm trên trang chủ}
-\label{fig:filter-homepage}
-\end{figure}
-
-Để lọc chi tiết hơn, người dùng mở hộp thoại bộ lọc đầy đủ (Hình~\ref{fig:filter-dialog}). Hộp thoại áp dụng cơ chế \textit{bản nháp} (draft): các thay đổi chỉ được ghi nhận khi người dùng xác nhận \textit{Áp dụng}, cho phép thử nhiều tổ hợp tiêu chí trước khi thực hiện truy vấn. Các tiêu chí bao gồm: nhu cầu (thuê hoặc ở ghép), địa chỉ (tỉnh/thành -- quận/huyện -- phường/xã), loại nhà đất, khoảng giá, diện tích, số phòng ngủ, hướng nhà, các loại chi phí (giá điện, nước, internet, phí dịch vụ), tiện ích và tùy chọn chỉ hiển thị tin đã xác minh.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.7\textwidth]{bo-loc-dialog}
-\caption{Hộp thoại bộ lọc đầy đủ với các tiêu chí chi tiết}
-\label{fig:filter-dialog}
-\end{figure}
-
-Trên trang danh sách, ngoài thanh lọc phía trên, màn hình lớn còn hiển thị một cột bộ lọc nhanh bên phải với các mốc dựng sẵn theo khoảng giá, diện tích và số phòng ngủ (Hình~\ref{fig:filter-listing}), giúp thu hẹp kết quả chỉ bằng một thao tác. Mọi thay đổi bộ lọc -- dù từ thanh trên, cột bên hay hộp thoại -- đều được đồng bộ hai chiều với URL: thao tác lọc cập nhật tham số đường dẫn theo cơ chế \textit{định tuyến nông} (shallow routing) mà không tải lại toàn trang, và ngược lại, khi mở một đường dẫn có sẵn tham số thì bộ lọc được phục hồi tương ứng. Trên thiết bị di động, cột bộ lọc và các nút điều khiển được thu gọn vào trong hộp thoại toàn màn hình để tiết kiệm không gian.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{bo-loc-listing-va-trang-tim-kiem}
-\caption{Trang danh sách với thanh lọc phía trên và cột bộ lọc theo khoảng giá, diện tích, số phòng ngủ bên phải}
-\label{fig:filter-listing}
-\end{figure}
-
-Phía sau giao diện, các điều kiện lọc được gửi tới Backend qua một lời gọi tìm kiếm dạng POST; các tiêu chí dạng khoảng (giá, diện tích, số phòng ngủ) được rút gọn thành chuỗi \texttt{min..max} trước khi truyền. Kết quả trả về được phân trang và lưu đệm theo bộ điều kiện hiện hành, nhờ đó khi người dùng quay lại một bộ lọc đã dùng thì danh sách hiển thị tức thì mà không phải truy vấn lại từ đầu.
-
-Ngoài việc nhập từ khóa tự do, ô tìm kiếm còn chủ động đưa ra gợi ý ngay khi người dùng gõ (Hình~\ref{fig:search-context}). Các gợi ý được chia thành hai nhóm: nhóm gợi ý trực tiếp theo từ khóa, và nhóm \textit{gợi ý theo ngữ cảnh} -- những truy vấn dựng sẵn kết hợp nhiều tiêu chí như khu vực và khoảng giá (chẳng hạn ``Nhà trọ Hồ Chí Minh từ 1 triệu đến 5 triệu''). Mỗi gợi ý có thể chọn bằng chuột hoặc điều hướng bằng bàn phím (phím mũi tên để di chuyển, Enter để chọn, Esc để đóng); khi chọn, hệ thống chuyển ngay gợi ý đó thành bộ điều kiện lọc tương ứng và hiển thị danh sách kết quả.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{search-theo-ngu-canh}
-\caption{Ô tìm kiếm với nhóm gợi ý theo ngữ cảnh: các truy vấn dựng sẵn kết hợp khu vực và khoảng giá}
-\label{fig:search-context}
-\end{figure}
-
-Về mặt nghiệp vụ, gợi ý theo ngữ cảnh giúp rút ngắn quãng đường từ nhu cầu còn mơ hồ tới kết quả cụ thể. Người tìm trọ thường chỉ có ý định chung chung (tìm phòng giá vừa phải ở một thành phố) mà chưa biết diễn đạt nhu cầu đó thành tổ hợp tiêu chí lọc; thay vì để họ tự mò mẫm qua từng bộ lọc, hệ thống đề xuất sẵn những truy vấn phổ biến, vốn có thật trong dữ liệu, để chỉ với một thao tác là ra được danh sách phù hợp. Cách làm này vừa giảm số lần tìm kiếm trả về kết quả rỗng, vừa định hướng người dùng tới những khu vực và khoảng giá đang có nhiều tin, nhờ đó tăng khả năng họ tìm thấy tin ưng ý và gắn bó lâu hơn với hệ thống.
-
-\subsection{Trang chi tiết tin đăng}
-
-Trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu SEO và tốc độ hiển thị lần đầu. Trang trình bày đầy đủ thông tin của một tin đăng: thư viện ảnh/video, tiêu đề và giá, danh sách tiện ích, mô tả chi tiết, biểu đồ lịch sử giá, bản đồ vị trí, và thẻ liên hệ chủ trọ/môi giới với chức năng hiện số điện thoại (có ghi nhận lượt bấm) cùng liên kết nhắn tin nhanh. Ở cuối trang còn có khối tin tương tự và khối tin vừa xem để gợi mở lựa chọn cho người dùng. Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự được tải động kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
-
-Khối đầu trang (Hình~\ref{fig:detail-top}) gồm thư viện ảnh/video có dải ảnh thu nhỏ và nút chuyển ảnh; bên cạnh tiêu đề là các nhãn tóm tắt loại bất động sản, hướng nhà và tình trạng nội thất, cùng nhãn \textit{ưu tiên} cho tin ở hạng cao. Khoảng giá được làm nổi ngay dưới tiêu đề, kèm địa chỉ rút gọn và địa chỉ đầy đủ. Một thanh hành động cung cấp các thao tác chia sẻ (sao chép đường dẫn), thêm vào danh sách so sánh, lưu tin yêu thích và báo cáo tin vi phạm. Thẻ liên hệ chủ trọ/môi giới được ghim (sticky) bên phải trên màn hình lớn, hiển thị thông tin người đăng cùng ba kênh liên hệ: \textit{chat qua Zalo}, \textit{gửi email} và nút \textit{hiện số} điện thoại. Số điện thoại được ẩn ban đầu: người dùng cần đăng nhập mới xem được, và mỗi lượt bấm hiện số được ghi nhận về máy chủ để phục vụ thống kê cho người đăng.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-anh-gia-dia-chi}
-\caption{Khối đầu trang chi tiết: thư viện ảnh, tiêu đề, các nhãn, khoảng giá, địa chỉ và thẻ liên hệ}
-\label{fig:detail-top}
-\end{figure}
-
-Tiếp theo là lưới thông số kỹ thuật của tin đăng (Hình~\ref{fig:detail-info}): diện tích, số phòng ngủ, phòng tắm, sức chứa, cùng các loại chi phí (giá điện, giá nước, giá internet, phí dịch vụ). Bên dưới là khối tiện ích hiển thị dưới dạng các thẻ có biểu tượng (phòng gym, gần bệnh viện, gần trường học, gần chợ/siêu thị\ldots) và phần thông tin mô tả chi tiết do người đăng cung cấp.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-thong-tin-khac}
-\caption{Lưới thông số, khối tiện ích và thông tin mô tả của tin đăng}
-\label{fig:detail-info}
-\end{figure}
-
-Một điểm nhấn của trang chi tiết là biểu đồ lịch sử giá (Hình~\ref{fig:detail-price-map}), giúp người thuê đánh giá xu hướng giá của tin đăng theo thời gian. Biểu đồ cho biết giá hiện tại, mức biến động theo tỷ lệ phần trăm và số lần thay đổi giá, có thể chuyển giữa các mốc thời gian một năm và hai năm; phía dưới tổng hợp giá thấp nhất, giá trung bình và giá cao nhất. Kế đó là bản đồ vị trí tích hợp Google Maps với điểm đánh dấu tin đăng và nút sao chép địa chỉ. Cả biểu đồ và bản đồ đều được tải động phía trình duyệt kèm khung chờ (skeleton) để không làm chậm phần nội dung chính.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-lich-su-gia-ban-do}
-\caption{Biểu đồ lịch sử giá và bản đồ vị trí tin đăng}
-\label{fig:detail-price-map}
-\end{figure}
-
-Cuối trang là hai băng chuyền (carousel) gợi mở lựa chọn cho người dùng (Hình~\ref{fig:detail-similar}): khối \textit{bất động sản tương tự} lấy từ dịch vụ gợi ý theo tin đang xem, và khối \textit{tin đăng đã xem} dựng lại từ lịch sử duyệt tin được lưu cục bộ trên trình duyệt (và đồng bộ với máy chủ khi người dùng đã đăng nhập). Nhờ đó người dùng dễ dàng quay lại các tin quan tâm hoặc khám phá thêm các tin có đặc điểm gần giống.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{chi-tiet-tin-dang-bds-tuong-tu-da-xem-gan-day}
-\caption{Khối bất động sản tương tự và tin đăng đã xem ở cuối trang chi tiết}
-\label{fig:detail-similar}
-\end{figure}
-
-\subsection{Bản đồ tin đăng}
-
-Bên cạnh chế độ danh sách, người dùng có thể duyệt tin trên bản đồ tích hợp Google Maps (Hình~\ref{fig:map-overview}). Khi mở, hệ thống định vị người dùng qua trình duyệt và đưa bản đồ về vị trí đó; nếu người dùng từ chối hoặc không lấy được tọa độ thì dùng vị trí mặc định (trung tâm Việt Nam). Các điểm tin trong khung nhìn được gom nhóm những điểm gần nhau (gom cụm điểm đánh dấu -- marker clustering) để hiển thị gọn gàng, đồng thời đồng bộ với một bảng danh sách tin bên cạnh.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{map}
-\caption{Chế độ bản đồ: các cụm tin đăng hiển thị dưới dạng bong bóng tròn cùng một vài điểm đánh dấu đơn lẻ phân theo hạng tin}
-\label{fig:map-overview}
-\end{figure}
-
-\subsubsection*{a. Điểm đánh dấu và biểu tượng phân hạng}
-
-Mỗi tin đăng được biểu diễn bằng một điểm đánh dấu (marker) hình tròn có viền trắng và mũi nhọn chỉ xuống vị trí thực trên bản đồ; điểm đánh dấu chỉ mang biểu tượng, không kèm nhãn giá, nên bản đồ vẫn thoáng khi có nhiều tin. Màu sắc và biểu tượng bên trong mã hóa hạng tin (VIP) để người dùng phân biệt nhanh mức độ ưu tiên:
-
-\begin{itemize}
-\item \textbf{Hạng Kim cương (Diamond):} nền xanh dương, biểu tượng tia sáng (\textit{sparkles}).
-\item \textbf{Hạng Vàng (Gold):} nền vàng, biểu tượng vương miện (\textit{crown}).
-\item \textbf{Hạng Bạc (Silver):} nền xám, biểu tượng ngôi sao (\textit{star}).
-\item \textbf{Tin thường:} nền xanh lục, biểu tượng ngôi nhà (\textit{home}).
-\end{itemize}
-
-Khi một tin được chọn (bấm từ bản đồ hoặc từ bảng danh sách), điểm đánh dấu tương ứng được phóng to nhẹ và bao quanh bởi một vầng sáng nhấp nháy lan tỏa, giúp người dùng dễ định vị tin mình quan tâm giữa các điểm khác. Trạng thái đã xác minh và nhãn \textit{ưu tiên} không hiển thị trên điểm đánh dấu mà được thể hiện trên thẻ tóm tắt khi bấm vào tin.
-
-\subsubsection*{b. Gom cụm các điểm tin}
-
-Khi nhiều tin nằm sát nhau ở mức thu phóng thấp, hệ thống gom chúng thành một \textit{cụm} (cluster) -- một bong bóng tròn màu đỏ mang biểu tượng các lớp xếp chồng (\textit{layers}), không hiển thị con số (số lượng tin trong cụm được đưa vào nhãn trợ năng phục vụ trình đọc màn hình). Mọi cụm giữ nguyên một màu để không gây rối thị giác. Việc gom cụm được hiện thực bằng thư viện \texttt{@googlemaps/markerclusterer} với bộ kết xuất tùy biến. Khi người dùng phóng to, các cụm tự tách dần thành cụm nhỏ hơn rồi thành từng điểm đánh dấu riêng lẻ; bấm vào một cụm cũng đưa bản đồ phóng sâu để tách cụm đó ra.
-
-\subsubsection*{c. Đồng bộ bản đồ với bảng danh sách}
-
-Bản đồ và bảng danh sách bên cạnh được đồng bộ hai chiều theo khung nhìn hiện tại (Hình~\ref{fig:map-list}). Khi người dùng ngừng kéo hoặc thu phóng, hệ thống lấy giới hạn (bounds) của khung nhìn và chỉ tải bổ sung tin cho vùng đó, với một khoảng chờ gộp thao tác (debounce) để tránh gọi liên tục trong lúc người dùng còn di chuyển bản đồ. Các vùng đã tải được lưu đệm lại: nếu khung nhìn mới đã nằm trọn trong một vùng từng tải đầy đủ thì hệ thống phục vụ ngay từ bộ đệm mà không gọi lại API. Bản đồ chỉ bắt đầu tải tin từ một ngưỡng thu phóng đủ gần trở lên; ở mức quá xa, hệ thống không tải để tránh trả về lượng tin quá lớn. Bảng danh sách hiển thị tối đa một số lượng thẻ nhất định cho mỗi khung nhìn, trong khi bản đồ vẫn vẽ toàn bộ điểm đã nạp thông qua cơ chế gom cụm.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{map-list}
-\caption{Bố cục bản đồ kèm bảng danh sách tin đăng theo khung nhìn hiện tại}
-\label{fig:map-list}
-\end{figure}
-
-\subsubsection*{d. Thẻ tóm tắt khi chọn tin}
-
-Khi bấm vào một điểm đánh dấu, hệ thống hiển thị một thẻ tóm tắt tin đăng nổi trên bản đồ (Hình~\ref{fig:map-card}) -- gồm ảnh đại diện, tiêu đề, địa chỉ, giá, các thông số chính (diện tích, số phòng ngủ, phòng tắm, sức chứa), thông tin người đăng, nhãn \textit{đã xác minh} và \textit{ưu tiên} (nếu có), kèm nút mở trang chi tiết. Đồng thời bản đồ tự dịch chuyển và phóng tới vị trí tin để tách điểm khỏi cụm; thao tác dịch chuyển này được đánh dấu là chương trình tự thực hiện nên không kích hoạt việc tải lại tin theo khung nhìn.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{map-show-card-in-list}
-\caption{Thẻ tóm tắt tin đăng hiển thị khi chọn một điểm đánh dấu trên bản đồ}
-\label{fig:map-card}
-\end{figure}
-
-\subsection{So sánh tin đăng}
-
-Người dùng có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng (giá, diện tích, số phòng, tiện ích, địa chỉ, các loại chi phí, hạng tin\ldots). Việc chọn tin được thực hiện ngay trên mỗi thẻ tin bằng một nút bật/tắt ở góc: khi chưa chọn nút hiển thị biểu tượng dấu cộng, khi đã thêm vào danh sách so sánh nút chuyển sang biểu tượng dấu tích (Hình~\ref{fig:compare-card}). Danh sách so sánh được lưu tạm trong phiên làm việc của trình duyệt (\texttt{sessionStorage}) nên vẫn được giữ khi người dùng chuyển qua lại giữa các trang trong cùng phiên.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.30\textwidth]{compare-card-inactive}\hspace{0.04\textwidth}%
-\includegraphics[width=0.30\textwidth]{compare-card-active}
-\caption{Nút thêm vào so sánh trên thẻ tin: trạng thái chưa chọn (trái) và đã chọn (phải)}
-\label{fig:compare-card}
-\end{figure}
-
-Khi đã chọn ít nhất một tin, một thanh nổi xuất hiện ở giữa cạnh dưới màn hình, cho biết số tin đang chọn và cung cấp lối tắt mở trang so sánh; thanh này cho phép xem nhanh, bỏ chọn từng tin hoặc xóa toàn bộ danh sách, và tự ẩn khi người dùng đã ở trang so sánh (Hình~\ref{fig:compare-tool}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.5\textwidth]{compare-tool}
-\caption{Thanh nổi hiển thị số tin đã chọn và lối tắt mở trang so sánh}
-\label{fig:compare-tool}
-\end{figure}
-
-Trang so sánh trình bày các tin đã chọn cạnh nhau dưới dạng bảng đối chiếu, nhóm theo từng cụm thuộc tính (thông tin cơ bản, chi tiết bất động sản, phòng và nội thất\ldots) và tự đánh dấu mức giá thấp nhất, giúp người dùng nhanh chóng nhận ra khác biệt giữa các lựa chọn để ra quyết định (Hình~\ref{fig:compare-page}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{compare-page}
-\caption{Trang so sánh dạng bảng đối chiếu các tin đã chọn}
-\label{fig:compare-page}
-\end{figure}
-
-\subsection{Lưu tin và theo dõi người đăng}
-
-Đối với người dùng đã đăng nhập, hệ thống cho phép \textit{lưu tin yêu thích} và quản lý chúng trong một trang riêng có phân trang. Thao tác lưu được thực hiện ngay trên mỗi thẻ tin bằng nút hình trái tim ở góc; trái tim chuyển sang trạng thái đã tô màu để báo tin đã được lưu, bấm lại để bỏ lưu (Hình~\ref{fig:saved-button}). Toàn bộ tin đã lưu được tập hợp trong trang \textit{Tin đã lưu}, hiển thị dưới dạng lưới thẻ kèm số lượng tin đã lưu (Hình~\ref{fig:saved-page}), giúp người dùng dễ dàng xem lại các tin mình quan tâm.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.32\textwidth]{saved-inactive}\hspace{0.04\textwidth}%
-\includegraphics[width=0.32\textwidth]{saved-card-button}
-\caption{Nút lưu tin hình trái tim trên thẻ tin đăng: trạng thái chưa lưu (trái) và đã lưu (phải)}
-\label{fig:saved-button}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{saved-listing-page}
-\caption{Trang Tin đã lưu tổng hợp các tin người dùng đã lưu}
-\label{fig:saved-page}
-\end{figure}
-
-Ngoài việc lưu tin, hệ thống còn cho phép người dùng đã đăng nhập \textit{theo dõi} các chủ trọ/môi giới để không bỏ lỡ tin đăng mới của họ. Nút theo dõi được đặt ngay tại nơi người dùng tiếp xúc với người bán: trên thẻ thông tin người bán ở trang chi tiết tin đăng (Hình~\ref{fig:follow-detail}) và trên trang hồ sơ tổng hợp tin đăng của người bán (Hình~\ref{fig:follow-profile}). Thao tác theo dõi/bỏ theo dõi được cập nhật lạc quan (optimistic update) nên giao diện phản hồi tức thì; nếu người dùng chưa đăng nhập, hệ thống mở hộp thoại đăng nhập rồi đưa họ trở lại đúng trang đang xem.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{follow-indetailpage}
-\caption{Nút theo dõi trên thẻ thông tin người bán ở trang chi tiết tin đăng}
-\label{fig:follow-detail}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{follow-indetailUser}
-\caption{Nút theo dõi trên trang hồ sơ tổng hợp các tin đăng của người bán}
-\label{fig:follow-profile}
-\end{figure}
-
-Toàn bộ hoạt động theo dõi được quản lý tại trang \textit{Đang theo dõi}, chia thành hai thẻ. Thẻ \textit{Bảng tin} tổng hợp các tin đăng mới nhất từ tất cả những người đang theo dõi, kèm thanh bên cho phép lọc nhanh theo từng người (Hình~\ref{fig:follow-feed}). Thẻ \textit{Đang theo dõi} liệt kê những người dùng đang được theo dõi dưới dạng lưới thẻ, mỗi thẻ có nút bỏ theo dõi và lối tắt mở bảng tin của người đó (Hình~\ref{fig:follow-list}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{follow-listing}
-\caption{Thẻ Bảng tin tổng hợp tin đăng mới từ những người đang theo dõi}
-\label{fig:follow-feed}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{follow-listingUser}
-\caption{Thẻ Đang theo dõi liệt kê những người dùng đang được theo dõi}
-\label{fig:follow-list}
-\end{figure}
-
-Về phía hệ thống, quan hệ theo dõi được lưu như một đồ thị có hướng giữa các người dùng; các thao tác theo dõi và bỏ theo dõi đều có tính lũy đẳng (idempotent) nên việc lặp lại không gây sai lệch trạng thái. Khi một người được theo dõi đăng tin mới, hệ thống tự động phát thông báo trong ứng dụng đến toàn bộ người theo dõi của họ, khép kín vòng trải nghiệm cá nhân hóa và khuyến khích người dùng quay lại.
-
-\subsection{Trợ lý hội thoại AI trên giao diện}
-
-Ứng dụng tích hợp một widget trợ lý AI dạng nút nổi, có thể mở rộng thành cửa sổ hội thoại trên màn hình lớn hoặc toàn màn hình trên thiết bị di động. Về phía giao diện, widget nhận câu trả lời theo luồng thời gian thực (hiển thị dần từng đoạn kèm trạng thái xử lý), cho phép người dùng bấm vào các tin đăng do AI gợi ý để mở ngay hộp thoại chi tiết, ghi nhớ hội thoại trong phiên và hỗ trợ hủy luồng đang chạy. Năng lực xử lý ngôn ngữ và tìm kiếm phía sau của trợ lý được trình bày ở phần kết quả AI.
-
-\subsection{Đăng nhập và xác thực}
-
-Việc xác thực được thực hiện qua một hộp thoại bật lên ngay tại chỗ khi người dùng truy cập chức năng yêu cầu đăng nhập, thay vì chuyển sang trang riêng; sau khi đăng nhập thành công, người dùng được đưa trở lại đúng trang đang thao tác nhờ cơ chế \texttt{returnUrl}. Ứng dụng hỗ trợ ba cách đăng nhập (Hình~\ref{fig:auth}): bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email (magic link), và bằng tài khoản Google (OAuth).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{dang-nhap-xac-thuc}\\[4pt]
-{\small (a) Hộp thoại đăng nhập}\\[10pt]
-\includegraphics[width=0.72\textwidth]{xac-thuc-dang-ky}\\[4pt]
-{\small (b) Hộp thoại đăng ký}
-\caption{Hộp thoại đăng nhập và đăng ký của ứng dụng}
-\label{fig:auth}
-\end{figure}
-
-Người dùng mới đăng ký bằng họ tên, email và mật khẩu (có ô xác nhận mật khẩu, kiểm tra hợp lệ ngay phía trình duyệt); sau đó tài khoản cần được kích hoạt bằng mã xác minh (OTP) gửi tới hộp thư. Chức năng quên mật khẩu cũng dựa trên mã xác minh gửi qua email để cấp quyền đặt lại mật khẩu mới; toàn bộ mã xác minh và liên kết đăng nhập đều gửi qua email. Phía máy chủ, mật khẩu được băm bằng BCrypt và phiên làm việc được cấp dưới dạng cặp JWT gồm access token và refresh token lưu trong cookie; khi access token hết hạn, bộ chặn của \texttt{axios} tự động gọi làm mới rồi phát lại yêu cầu một cách trong suốt với người dùng.
-
-\subsection{Tin tức và thông báo}
-
-Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên mục, tìm kiếm theo từ khóa, bài nổi bật, khối ``xem nhiều nhất'' và trang chi tiết bài viết (kết xuất SSR).
-
-Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thông báo thời gian thực} qua WebSocket, kèm chỉ báo số thông báo chưa đọc và danh sách thông báo gần nhất khi mở chuông thông báo (Hình~\ref{fig:notification}). Phía máy chủ, mỗi thông báo được lưu lại rồi đẩy ngay tới đúng người nhận: hệ thống dùng giao thức STOMP trên một điểm kết nối WebSocket (\texttt{/ws}, có cơ chế dự phòng SockJS), mỗi người dùng lắng nghe trên kênh riêng theo định danh (\texttt{/topic/notifications/\{recipientId\}}) nên chỉ nhận thông báo của chính mình. Các sự kiện sinh thông báo bao gồm: kết quả kiểm duyệt tin đăng (được duyệt, bị từ chối, yêu cầu chỉnh sửa, bị gỡ hay đăng lại); vòng đời tin đăng như cảnh báo sắp hết hạn ở các mốc trước 7, 3 và 1 ngày; tiến trình đăng ký môi giới (đã tiếp nhận, được duyệt, bị từ chối); diễn biến tố cáo tin đăng; và thông báo khi một người dùng đang được theo dõi đăng tin mới. Quản trị viên cũng nhận các thông báo nghiệp vụ tương ứng (có tin mới bị tố cáo, có hồ sơ môi giới chờ duyệt\ldots) trên cùng cơ chế.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{notification}
-\caption{Hộp thông báo thời gian thực với chỉ báo số thông báo chưa đọc}
-\label{fig:notification}
-\end{figure}
-
-\subsection{Trải nghiệm đa thiết bị và đa ngôn ngữ}
-
-Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Việc chuyển đổi ngôn ngữ chỉ thay đổi nội dung chữ hiển thị (nhãn, thông báo, văn bản), còn giá tin đăng vẫn giữ nguyên đơn vị tiền đồng. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu và trạng thái rỗng có hướng dẫn rõ ràng góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
-
-Giao diện được thiết kế đáp ứng linh hoạt theo kích thước màn hình: trên màn hình lớn, các trang tận dụng bố cục nhiều cột -- trang danh sách đặt bộ lọc cạnh kết quả, trang chi tiết ghim thẻ liên hệ bên phải. Khi thu về kích thước điện thoại, bố cục tự xếp lại thành một cột: thanh điều hướng trên cùng được thu gọn thành nút trình đơn mở ra ngăn điều hướng dạng trượt (Hình~\ref{fig:responsive-home}); thanh tìm kiếm và các nút điều khiển trên trang danh sách dồn lại theo chiều dọc (Hình~\ref{fig:responsive-listing}); còn thẻ liên hệ trên trang chi tiết được đưa xuống dưới thư viện ảnh (Hình~\ref{fig:responsive-detail}). Nhờ đó, trải nghiệm vẫn liền mạch và đầy đủ chức năng trên mọi kích thước màn hình.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{homepage-desktop}\\[4pt]
-{\small (a) Trang chủ trên máy tính}\\[10pt]
-\includegraphics[height=7.2cm]{homepage-mobile}\hspace{0.8cm}
-\includegraphics[height=7.2cm]{homepage-mobile-navigation}\\[4pt]
-{\small (b) Trang chủ và (c) menu điều hướng thu gọn trên thiết bị di động}
-\caption{Trang chủ ở hai khổ màn hình máy tính và di động}
-\label{fig:responsive-home}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{listing-desktop}\\[4pt]
-{\small (a) Trang danh sách trên máy tính}\\[10pt]
-\includegraphics[height=7.6cm]{listing-mobile}\\[4pt]
-{\small (b) Trang danh sách trên thiết bị di động}
-\caption{Trang danh sách tin đăng ở hai khổ màn hình máy tính và di động}
-\label{fig:responsive-listing}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.9\textwidth]{detailpage-desktop}\\[4pt]
-{\small (a) Trang chi tiết trên máy tính}\\[10pt]
-\includegraphics[height=7.6cm]{detailpage-mobile}\\[4pt]
-{\small (b) Trang chi tiết trên thiết bị di động}
-\caption{Trang chi tiết tin đăng ở hai khổ màn hình máy tính và di động}
-\label{fig:responsive-detail}
-\end{figure}
-
-\section{Kết quả giao diện dành cho chủ trọ}
-
-Bên cạnh trải nghiệm dành cho người thuê, hệ thống cung cấp một không gian làm việc riêng dành cho chủ trọ và môi giới (kênh chủ trọ), tổ chức quanh một bố cục có thanh điều hướng riêng và đáp ứng tốt trên cả máy tính lẫn thiết bị di động. Kênh này phục vụ toàn bộ vòng đời của một tin đăng: từ tạo tin, quản lý, theo dõi hiệu suất, chăm sóc khách hàng tiềm năng cho tới quản lý gói hội viên và thanh toán. Phần này trình bày các nhóm chức năng chính của kênh chủ trọ; các năng lực AI hỗ trợ chủ trọ (sinh nội dung tin đăng, định giá) được mô tả chi tiết ở phần kết quả triển khai các tính năng AI.
-
-Toàn bộ các trang chức năng dùng chung một bố cục điều hướng nhất quán. Trên máy tính, một thanh điều hướng dọc cố định bên trái liệt kê các mục chính -- tổng quan, tin đăng, đăng tin, tin nháp, khách hàng, lịch sử giao dịch, gói hội viên, tài khoản cùng các trang hướng dẫn -- kèm thanh trên cùng chứa thông báo và nút chuyển chế độ sáng/tối. Trên thiết bị di động, thanh điều hướng dọc được thu gọn thành một thanh tab cố định ở cạnh dưới với nút đăng tin đặt ở giữa để thao tác nhanh (Hình~\ref{fig:owner-layout}). Nhờ đó chủ trọ truy cập mọi nhóm chức năng từ cùng một điểm điều hướng, đồng nhất giữa máy tính và di động.
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[b]{0.64\textwidth}\centering
-\includegraphics[width=\linewidth]{giao-dien-chu-tro-desktop}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}[b]{0.30\textwidth}\centering
-\includegraphics[width=\linewidth]{giao-dien-chu-tro-mobile}\\[3pt]{\small (b)}
-\end{minipage}
-\caption{Bố cục điều hướng của kênh chủ trọ: (a) thanh điều hướng dọc bên trái trên máy tính; (b) thanh tab ở cạnh dưới với nút đăng tin ở giữa trên thiết bị di động}
-\label{fig:owner-layout}
-\end{figure}
-
-\subsection{Bảng điều khiển và thống kê hiệu suất}
-
-Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại và hiệu suất tin đăng. Giao diện tổng hợp các biểu đồ theo thời gian về lượt bấm xem số điện thoại và lượt lưu tin của người dùng, giúp chủ trọ nắm được mức độ quan tâm thực tế đối với các tin của mình.
-
-\subsection{Quản lý tin đăng}
-
-Trang quản lý tin đăng là nơi chủ trọ theo dõi và điều hành toàn bộ tin của mình ở cùng một chỗ (Hình~\ref{fig:listing-management}). Các tin được phân nhóm theo trạng thái qua hàng thẻ ở đầu trang -- tất cả, đang hiển thị, sắp hết hạn, hết hạn, chờ duyệt và bị từ chối -- giúp chủ trọ nhanh chóng khoanh vùng nhóm tin cần xử lý (chẳng hạn lọc riêng các tin sắp hết hạn để gia hạn kịp thời). Bên dưới là thanh công cụ tìm kiếm theo từ khóa cùng các bộ lọc theo nhu cầu, loại bất động sản và tiêu chí sắp xếp, kèm một hộp thoại lọc nâng cao (khoảng giá, diện tích, số phòng\ldots); danh sách hỗ trợ phân trang trên máy tính và tự tải thêm khi cuộn trên thiết bị di động.
-
-Phía trên danh sách, một dải thông tin tóm tắt hạn mức quyền lợi của gói hội viên đang dùng -- tên gói, số ngày còn lại và số lượt đẩy tin miễn phí còn lại -- để chủ trọ biết mình còn bao nhiêu lượt trước khi thao tác. Mỗi tin hiển thị dưới dạng thẻ tóm tắt ảnh đại diện, tiêu đề, hạng tin và trạng thái xác thực, địa chỉ, giá thuê, diện tích cùng các mốc quản lý (mã tin, ngày đăng, ngày hết hạn). Ngay trên từng thẻ, chủ trọ thao tác trực tiếp mà không cần rời trang: chỉnh sửa nội dung, đẩy tin lên đầu danh sách, và qua menu mở rộng còn có sao chép liên kết, gỡ tin, xóa tin, cùng tùy chọn gia hạn hay đăng lại tùy theo trạng thái hiện tại của tin. Riêng với tin bị từ chối hoặc cần chỉnh sửa, nút sửa dẫn thẳng tới luồng chỉnh sửa kèm ngữ cảnh gửi duyệt lại, rút ngắn thao tác cho chủ trọ.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{quan-ly-tin-dang}
-\caption{Trang quản lý tin đăng của chủ trọ: phân nhóm tin theo trạng thái, bộ lọc, dải hạn mức gói hội viên và các thao tác nhanh trên từng tin}
-\label{fig:listing-management}
-\end{figure}
-
-\subsection{Đăng tin}
-
-Quy trình đăng tin được chia thành năm bước nối tiếp với thanh tiến trình hiển thị bước hiện tại; hệ thống chỉ cho phép chuyển sang bước sau khi dữ liệu ở bước hiện tại hợp lệ, giúp chủ trọ tạo tin đầy đủ và chính xác trước khi xuất bản (Hình~\ref{fig:post-steps}). Năm bước lần lượt là: nhập thông tin bất động sản, định giá tham khảo bằng AI, chọn gói và cấu hình hiển thị, tải hình ảnh và video, cuối cùng là xem lại đơn hàng và thanh toán.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{post-listing-steps}
-\caption{Thanh tiến trình năm bước của luồng đăng tin}
-\label{fig:post-steps}
-\end{figure}
-
-\textbf{Bước 1 -- Thông tin bất động sản.} Bước đầu tiên thu thập toàn bộ dữ liệu của tin đăng, được tổ chức thành ba nhóm. Nhóm \textit{Thông tin tin đăng} gồm nhu cầu (cho thuê hoặc bán), loại danh mục và địa chỉ bất động sản; địa chỉ được chọn theo tỉnh/thành và phường/xã, kèm bản đồ tương tác cho phép kéo điểm đánh dấu để định vị chính xác (Hình~\ref{fig:post-step1}a). Nhóm \textit{Chi tiết bất động sản} nhập diện tích, giá, tình trạng nội thất, số phòng ngủ, phòng tắm, số người ở và danh sách tiện nghi (Hình~\ref{fig:post-step1}b). Nhóm \textit{Chi phí dịch vụ \& Hướng nhà} và \textit{Tiêu đề \& Mô tả} khai báo giá điện, nước, internet, phí dịch vụ, hướng nhà, đồng thời cho phép sinh tiêu đề và mô tả tự động bằng AI theo văn phong tùy chọn (Hình~\ref{fig:post-step1}c).
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step1-1}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step1-2}\\[3pt]{\small (b)}
-\end{minipage}
-
-\vspace{8pt}
-\begin{minipage}{0.62\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step1-3}\\[3pt]{\small (c)}
-\end{minipage}
-\caption{Bước 1 -- thông tin bất động sản: (a) thông tin tin đăng và bản đồ định vị; (b) chi tiết bất động sản và tiện nghi; (c) chi phí dịch vụ, hướng nhà và sinh tiêu đề/mô tả tự động bằng AI}
-\label{fig:post-step1}
-\end{figure}
-
-\textbf{Bước 2 -- Định giá AI.} Dựa trên thông tin vừa nhập, hệ thống đưa ra khoảng giá tham khảo cho khu vực tương ứng gồm mức tối thiểu, trung bình và tối đa, giúp chủ trọ định giá tin đăng hợp lý (Hình~\ref{fig:post-step2}). Chi tiết cơ chế định giá được trình bày ở phần kết quả triển khai các tính năng AI.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.6\textwidth]{post-step2}
-\caption{Bước 2 -- khoảng giá đề xuất do AI ước tính theo khu vực}
-\label{fig:post-step2}
-\end{figure}
-
-\textbf{Bước 3 -- Gói và cấu hình hiển thị.} Chủ trọ chọn hạng tin (Tin thường hoặc các hạng VIP Bạc, VIP Vàng, VIP Kim cương với mức ưu tiên hiển thị tăng dần), thời hạn đăng và ngày bắt đầu; bảng tổng hợp cập nhật tức thời tổng chi phí đã gồm thuế (Hình~\ref{fig:post-step3}a). Nếu đang sở hữu gói hội viên còn hạn mức, chủ trọ có thể chọn áp dụng quyền lợi (lượt đăng VIP miễn phí) cho tin này để được miễn hoặc giảm phí (Hình~\ref{fig:post-step3}b).
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step3}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step-3-benefit}\\[3pt]{\small (b)}
-\end{minipage}
-\caption{Bước 3 -- gói và cấu hình hiển thị: (a) chọn hạng tin, thời hạn và tổng chi phí; (b) áp dụng quyền lợi gói hội viên còn hạn mức cho tin đăng}
-\label{fig:post-step3}
-\end{figure}
-
-\textbf{Bước 4 -- Hình ảnh và video.} Bước này yêu cầu tải ảnh bìa bắt buộc và bộ ảnh minh họa theo số lượng tối thiểu của từng hạng tin, kèm tùy chọn tải video hoặc nhúng liên kết YouTube; giao diện cũng cung cấp hướng dẫn chụp ảnh để nâng chất lượng tin đăng (Hình~\ref{fig:post-step4}).
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.45\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step4-1}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.45\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step4-2}\\[3pt]{\small (b)}
-\end{minipage}
-\caption{Bước 4 -- hình ảnh và video: (a) tải ảnh bìa và bộ ảnh minh họa; (b) tải video, nhúng liên kết YouTube và hướng dẫn chụp ảnh}
-\label{fig:post-step4}
-\end{figure}
-
-\textbf{Bước 5 -- Tóm tắt đơn hàng và thanh toán.} Trước khi xuất bản, hệ thống tổng hợp lại thông tin liên hệ, chi tiết gói đăng tin, chi tiết thanh toán và bản xem trước tin đăng đúng như cách hiển thị với người thuê (Hình~\ref{fig:post-step5}a và b). Khi tin có phát sinh chi phí (không áp dụng quyền lợi hội viên hoặc không đủ hạn mức), chủ trọ chọn cổng thanh toán SePay hoặc ZaloPay để hoàn tất; nếu chi phí bằng không nhờ quyền lợi gói, tin được xuất bản trực tiếp (Hình~\ref{fig:post-step5}c).
-
-\begin{figure}[H]
-\centering
-\begin{minipage}[t]{0.46\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step-5}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.46\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step-5-2}\\[3pt]{\small (b)}
-\end{minipage}
-
-\vspace{8pt}
-\begin{minipage}{0.6\textwidth}\centering
-\includegraphics[width=\linewidth]{post-step-5-thanh-toan-ifnotchoosebenefit}\\[3pt]{\small (c)}
-\end{minipage}
-\caption{Bước 5 -- tóm tắt đơn hàng và thanh toán: (a) tóm tắt thông tin liên hệ, gói và chi tiết thanh toán; (b) bản xem trước tin đăng; (c) chọn cổng thanh toán SePay hoặc ZaloPay khi tin phát sinh chi phí}
-\label{fig:post-step5}
-\end{figure}
-
-\subsection{Quản lý tin nháp}
-
-Trong quá trình đăng tin, chủ trọ có thể lưu lại bản nháp ở bất kỳ bước nào thay vì phải hoàn tất ngay; những tin chưa xuất bản này được tập hợp trong một trang riêng để tiếp tục về sau. Mỗi tin nháp hiển thị dưới dạng thẻ tóm tắt ảnh đại diện, tiêu đề, mô tả, địa chỉ và các thông số chính (giá, diện tích, số phòng ngủ, số phòng tắm) kèm chỉ báo mức độ hoàn thiện cho biết tin đã đủ thông tin để đăng hay chưa. Từ thẻ này, chủ trọ mở lại luồng đăng tin để chỉnh sửa, hoàn thiện và đăng lại, hoặc xóa bản nháp không còn dùng (Hình~\ref{fig:draft-management}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{draft-management}
-\caption{Trang quản lý tin nháp: các tin đăng đang lưu nháp kèm chỉ báo mức độ hoàn thiện và thao tác chỉnh sửa, đăng lại}
-\label{fig:draft-management}
-\end{figure}
-
-\subsection{Quản lý khách hàng tiềm năng}
-
-Hệ thống ghi nhận những người dùng đã quan tâm tới tin của chủ trọ (chẳng hạn bấm xem số điện thoại) và tổng hợp thành danh sách khách hàng tiềm năng, kèm các chỉ số như tổng số khách, tổng lượt bấm xem liên hệ và số người dùng duy nhất. Đây là cơ sở để chủ trọ chủ động liên hệ và chăm sóc khách.
-
-\subsection{Gói hội viên}
-
-Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấp sẵn một lượng quyền lợi đăng tin để dùng dần trong thời hạn gói thay vì trả phí cho từng tin. Hệ thống cung cấp ba hạng gói -- \textit{Cơ bản} (BASIC), \textit{Tiêu chuẩn} (STANDARD) và \textit{Nâng cao} (ADVANCED) -- mỗi gói có thời hạn một tháng và được niêm yết theo hai mức: giá gốc và giá bán sau khi trừ tỷ lệ chiết khấu (Hình~\ref{fig:membership-plans}). Trang gói dịch vụ trình bày ba gói cạnh nhau kèm bảng quyền lợi để chủ trọ đối chiếu trước khi mua; hạng càng cao thì số lượng quyền lợi càng nhiều.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{membership}
-\caption{Trang gói dịch vụ so sánh ba hạng gói hội viên kèm giá và quyền lợi}
-\label{fig:membership-plans}
-\end{figure}
-
-Quyền lợi của mỗi gói thuộc hai nhóm chính: số lượt đăng tin VIP miễn phí theo từng hạng tin -- VIP Bạc, VIP Vàng và VIP Kim cương (tin ở hạng cao được ưu tiên hiển thị hơn) -- và số lượt \textit{đẩy tin} (boost) miễn phí để đưa tin lên đầu danh sách. Khi mua gói thành công, hệ thống cấp một lần toàn bộ quyền lợi dưới dạng hạn mức (số lượt được cấp, số lượt đã dùng) có hiệu lực đến hết thời hạn gói. Mỗi khi chủ trọ đăng một tin VIP hoặc đẩy một tin, hệ thống trừ dần vào đúng loại hạn mức tương ứng và đánh dấu quyền lợi là đã dùng hết khi hạn mức về không; nhờ đó chủ trọ có thể dùng quyền lợi gói ngay trong luồng đăng tin và quản lý tin mà không phát sinh thêm chi phí (Hình~\ref{fig:membership-boost}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{memembership-push-listing}
-\caption{Hạn mức quyền lợi của gói được áp dụng trực tiếp trong trang quản lý tin đăng (số lượt đẩy tin còn lại)}
-\label{fig:membership-boost}
-\end{figure}
-
-Bảng điều khiển của chủ trọ tổng hợp tình trạng gói đang dùng: tên và hạng gói, ngày hết hạn cùng số ngày còn lại, và mức tiêu thụ của từng loại quyền lợi (đã dùng trên tổng số được cấp) để chủ trọ theo dõi phần quyền lợi còn lại (Hình~\ref{fig:membership-dashboard}). Khi gói hết hạn, hệ thống tự chuyển trạng thái gói và các quyền lợi chưa dùng sang \textit{hết hạn} thông qua tác vụ định kỳ.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{membership-dashboard}
-\caption{Bảng điều khiển hiển thị gói đang dùng, số ngày còn lại và mức tiêu thụ từng quyền lợi}
-\label{fig:membership-dashboard}
-\end{figure}
-
-Khi đang sở hữu một gói, chủ trọ có thể \textit{nâng cấp} lên hạng cao hơn (Hình~\ref{fig:membership-upgrade}). Hệ thống áp dụng cơ chế chiết khấu theo tỷ lệ thời gian còn lại của gói hiện tại: phần giá trị tương ứng với số ngày chưa dùng được trừ vào giá gói mới, nhưng chủ trọ luôn phải trả tối thiểu khoản chênh lệch giá giữa hai gói. Trang nâng cấp hiển thị rõ giá gói mới, mức chiết khấu, số tiền phải trả, đồng thời nêu cả phần quyền lợi còn lại của gói cũ sẽ mất và phần quyền lợi mới nhận được, giúp chủ trọ cân nhắc trước khi quyết định. Sau khi nâng cấp, gói cũ được đánh dấu \textit{đã nâng cấp} và hệ thống khởi tạo gói mới với hạn mức quyền lợi đầy đủ.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{membership-upgrade}
-\caption{Trang nâng cấp gói với chiết khấu theo thời gian còn lại, quyền lợi sẽ mất và quyền lợi mới nhận}
-\label{fig:membership-upgrade}
-\end{figure}
-
-Mọi giao dịch mua và nâng cấp gói đều đi qua cổng thanh toán và được ghi nhận trong lịch sử giao dịch của chủ trọ.
-
-\subsection{Lịch sử giao dịch}
-
-Mọi khoản thanh toán dịch vụ phát sinh trong kênh chủ trọ -- mua gói hội viên, nâng cấp gói, phí đăng tin và phí đăng lại -- được lưu lại trong trang lịch sử giao dịch. Mỗi giao dịch hiển thị tên loại thanh toán, số tiền, phương thức (cổng SePay hoặc ZaloPay), trạng thái (đang chờ hoặc hoàn tất) và thời điểm tạo. Trang cung cấp ô tìm theo mã giao dịch hoặc mã hóa đơn cùng các bộ lọc theo trạng thái, loại thanh toán và khoảng thời gian, giúp chủ trọ tra cứu nhanh trong danh sách (Hình~\ref{fig:payment-history-list}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\textwidth]{history-payment-list}
-\caption{Trang lịch sử giao dịch của chủ trọ: danh sách các khoản thanh toán dịch vụ kèm bộ lọc theo trạng thái, loại thanh toán và khoảng thời gian}
-\label{fig:payment-history-list}
-\end{figure}
-
-Chọn một giao dịch để mở cửa sổ chi tiết, trình bày đầy đủ thông tin đối soát: mã giao dịch, trạng thái, số tiền, loại thanh toán, cổng và mã cổng thanh toán, phương thức thanh toán, mốc thời gian tạo và hoàn tất, thông tin đơn cùng tiến trình xử lý của giao dịch. Với giao dịch còn đang chờ, chủ trọ có thể bấm kiểm tra lại trạng thái để đồng bộ kết quả từ cổng thanh toán (Hình~\ref{fig:payment-history-detail}).
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.6\textwidth]{history-payment-detail}
-\caption{Chi tiết một giao dịch: thông tin đối soát với cổng thanh toán và tiến trình xử lý}
-\label{fig:payment-history-detail}
-\end{figure}
-
-\subsection{Hồ sơ chủ trọ và tài nguyên hỗ trợ}
-
-Chủ trọ có thể cập nhật hồ sơ công khai (thông tin liên hệ, ảnh đại diện\ldots) hiển thị trên các tin đăng và trang cá nhân của mình. Ngoài ra, kênh chủ trọ cung cấp các trang tài nguyên công khai gồm báo giá dịch vụ, hướng dẫn thanh toán và hướng dẫn sử dụng, giúp người dùng mới làm quen nhanh với quy trình đăng tin và thanh toán.
-
-\section{Kết quả giao diện dành cho quản trị viên}
-
-% TODO: Nội dung.
-
-\subsection{Thống kê \& Giám sát Hệ thống}
-
-% TODO: Nội dung.
-
-\subsection{Quản lý Người dùng \& Phân quyền}
-
-% TODO: Nội dung.
-
-\subsection{Quản lý tin đăng và kiểm duyệt nội dung}
-
-% TODO: Nội dung.
-
-\subsection{Quản lý doanh thu và thanh toán}
-
-% TODO: Nội dung.
-
