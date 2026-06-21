@@ -1,0 +1,54 @@
+flowchart TB
+ subgraph API["Tầng API — FastAPI (app/api/v1)"]
+ direction LR
+ Chat["chat<br/><small>/chat · /chat/stream (SSE)</small>"]
+ Verify["listing_verification<br/><small>/ai/verify-listing</small>"]
+ Price["price_suggestion<br/><small>/price-suggestion</small>"]
+ Reco["recommendation<br/><small>/recommendations/*</small>"]
+ Compl["completion<br/><small>/completion</small>"]
+ end
+ subgraph Service["Tầng dịch vụ (app/service)"]
+ direction LR
+ ChatSvc["ChatService"]
+ VerifySvc["ListingVerificationService"]
+ PriceSvc["PricePredictionService"]
+ RecoSvc["RecommendationService<br/><small>NumPy · scikit-learn</small>"]
+ end
+ subgraph Agent["Lõi tác tử (app/agent)"]
+ direction LR
+ Orch["AgentOrchestrator<br/><small>OpenAI Agents SDK · Runner</small>"]
+ Tools["tools/ (14)<br/><small>@function_tool</small>"]
+ RAG["RAG retriever<br/><small>knowledge_base/*.json</small>"]
+ end
+ subgraph Model["Tầng mô hình (app/ai)"]
+ direction LR
+ Factory["llm/agent_factory<br/><small>make_model · LiteLLM</small>"]
+ Gateway["llm/gateway<br/><small>Langfuse trace · prompt</small>"]
+ Helper["llm/gemini_listing_helper<br/><small>đa phương thức</small>"]
+ Predictor["house_pricing/price_predictor<br/><small>XGBoost</small>"]
+ end
+ subgraph Infra["Hạ tầng (app/core)"]
+ Client["backend_client<br/><small>httpx</small>"]
+ Config["config<br/><small>pydantic-settings</small>"]
+ end
+ Vertex(["Vertex AI Gemini"])
+ Langfuse(["Langfuse"])
+ Backend(["SmartRent Backend"])
+
+ Chat --> ChatSvc --> Orch
+ Verify --> VerifySvc
+ Price --> PriceSvc
+ Reco --> RecoSvc
+ Compl --> Gateway
+ Orch --> Tools
+ Orch --> RAG
+ Orch --> Factory
+ Orch --> Gateway
+ VerifySvc --> Helper
+ PriceSvc --> Factory
+ Tools --> Predictor
+ Tools --> Client
+ Helper --> Factory
+ Factory --> Vertex
+ Gateway --> Langfuse
+ Client --> Backend

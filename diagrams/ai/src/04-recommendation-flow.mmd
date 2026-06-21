@@ -1,0 +1,21 @@
+flowchart TB
+ Req["Yêu cầu gợi ý<br/><small>ứng viên + lịch sử tương tác</small>"]
+ Matrix["Ma trận đặc trưng<br/><small>giá · diện tích · phòng ngủ (MinMax)<br/>one-hot: loại BĐS · loại tin · tỉnh</small>"]
+ subgraph Score["Tính điểm lai"]
+ direction LR
+ CBF["CBF<br/><small>cosine(hồ sơ, ứng viên)</small>"]
+ CF["CF<br/><small>đồng xuất hiện item-item</small>"]
+ end
+ Profile["Vector hồ sơ người dùng<br/><small>trung bình có trọng số</small>"]
+ Blend["Trộn điểm<br/><small>0.4·CF + 0.6·CBF</small>"]
+ Geo["Suy giảm theo khoảng cách<br/><small>Haversine · exp(-k·d)</small>"]
+ Boost["Boost<br/><small>VIP · độ mới</small>"]
+ Rank["Xếp hạng · cắt top_n"]
+
+ Req --> Matrix
+ Matrix --> Profile
+ Profile --> CBF
+ Req --> CF
+ CBF --> Blend
+ CF --> Blend
+ Blend --> Geo --> Boost --> Rank

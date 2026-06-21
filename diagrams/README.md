@@ -1,6 +1,6 @@
 # Diagrams — Sơ đồ kiến trúc SmartRent
 
-Sơ đồ tổ chức mã nguồn hệ thống SmartRent viết bằng **Mermaid**, render sẵn ra **PDF vector** để nhúng vào báo cáo LaTeX. Chia theo 2 thành phần:
+Sơ đồ tổ chức mã nguồn hệ thống SmartRent viết bằng **Mermaid**, render sẵn ra **PDF vector** để nhúng vào báo cáo LaTeX. Chia theo 3 thành phần:
 
 ```
 diagrams/
@@ -8,8 +8,10 @@ diagrams/
 │   ├── src/  pdf/  png/
 ├── be/                 # Backend — smartrent-backend (Spring Boot)
 │   ├── src/  pdf/  png/
+├── ai/                 # AI — smartrent-ai (FastAPI · Agents SDK)
+│   ├── src/  pdf/  png/
 ├── mermaid.config.json # cấu hình theme/font dùng chung
-├── render.sh           # render lại toàn bộ (hoặc fe / be)
+├── render.sh           # render lại toàn bộ (hoặc fe / be / ai)
 └── README.md
 ```
 
@@ -37,12 +39,24 @@ Mỗi phần: `src/` = nguồn `.mmd` (sửa ở đây) · `pdf/` = vector cho L
 | `04-domain-modules` | 40 nhóm domain service (listing, auth, payment, ai…) |
 | `05-external-integrations` | Tích hợp ngoài: MySQL, Redis, S3, Google, Brevo, ZaloPay/SePay, AI |
 
+## AI — `ai/` (FastAPI · OpenAI Agents SDK · LiteLLM · Gemini 2.5 Flash)
+
+| File | Nội dung |
+|------|----------|
+| `01-architecture-layers` | Phân lớp: API → Service → Lõi tác tử → Mô hình → Hạ tầng |
+| `02-ai-surfaces` | Sáu bề mặt AI gom theo nhóm mô hình tính toán |
+| `03-chat-flow` | Luồng hội thoại SSE: RAG → vòng lặp tác tử → tool → Backend |
+| `04-recommendation-flow` | Bộ gợi ý lai: CBF + CF + boost (VIP, độ mới) |
+| `05-external-integrations` | Bên gọi (FE, Backend, MCP) và dịch vụ ngoài (Gemini, Langfuse, Backend) |
+| `06-provider-abstraction` | Thay thế nhà cung cấp mô hình qua LiteLLM |
+
 ## Render lại (sau khi sửa `.mmd`)
 
 ```bash
-bash render.sh          # cả fe + be ; cần Node.js (mermaid-cli qua npx)
+bash render.sh          # cả fe + be + ai ; cần Node.js (mermaid-cli qua npx)
 bash render.sh fe       # chỉ frontend
 bash render.sh be       # chỉ backend
+bash render.sh ai       # chỉ AI
 ```
 
 ## Nhúng vào LaTeX
