@@ -29,7 +29,8 @@ và **xóa dòng TODO** khi viết xong.
 | `Chapter5/chapter5.tex` §5.1 | Kết quả hệ thống Người thuê | Web | **Phát** |
 | `Chapter5/chapter5.tex` §5.2 | Kết quả hệ thống Quản trị viên | Web / Backend | **Hùng** |
 | `Chapter5/chapter5.tex` §5.3 | Kết quả triển khai các tính năng AI | AI | **Vy** + **Vũ** |
-| `Chapter6/chapter6.tex` | Ý nghĩa, kinh nghiệm, vấn đề tồn đọng, hướng phát triển | Chung | **Vũ** (tổng hợp ý kiến cả nhóm) |
+| `Chapter6/chapter6.tex` | Kiểm thử và đánh giá hệ thống: kế hoạch, kiểm thử chức năng/API/bảo mật/hiệu năng, đánh giá AI, so sánh | Kiểm thử / QA | **Ty** |
+| `Chapter7/chapter7.tex` | Kết luận và hướng phát triển: kết quả đạt được, kinh nghiệm, hạn chế, hướng phát triển | Chung | **Vũ** (tổng hợp ý kiến cả nhóm) |
 | `Appendix/summary.tex` | Tóm tắt toàn đồ án | Nhóm trưởng | **Vũ** |
 | `Appendix/appendix1.tex` | Bổ sung từ viết tắt / thuật ngữ khi viết bài | Tất cả | **Tất cả** |
 | `References/references.bib` | Thêm tài liệu tham khảo (nhớ cập nhật `resetnumbers` trong `main.tex`) | Người trích dẫn | **Người trích dẫn tự thêm** |
@@ -39,7 +40,7 @@ và **xóa dòng TODO** khi viết xong.
 | Người | Vai trò trong hệ thống | Phần báo cáo phụ trách |
 |---|---|---|
 | **Trường Vũ** | Nhóm trưởng – Backend + AI | Ch1, Ch3.1 (kiến trúc), Ch3.4 (AI, cùng Vy), Ch4 (quản lý dự án), Ch5.3 (kết quả AI, cùng Vy), Ch6, `summary.tex`, review backend |
-| **Ty** | Backend + AI / DevOps | Ch3.3 (backend, cùng Tường), Ch3.4 (review AI), Ch3.5 (hạ tầng) |
+| **Ty** | Backend + AI / DevOps | Ch3.3 (backend, cùng Tường), Ch3.4 (review AI), Ch3.5 (hạ tầng → nay là §5.7 Triển khai), **Ch6 Kiểm thử và đánh giá** |
 | **Tường** | Backend | Ch3.3 (backend, cùng Ty), Ch3.6 (CSDL) |
 | **Vy** | AI | Ch2 (khoảng trống AI), Ch3.4 (AI, cùng Vũ), Ch5.3 (kết quả AI, cùng Vũ) |
 | **Phát** | Web – Webapp người thuê | Ch2 (hỗ trợ phần web), Ch3.2 (web, cùng Hùng), Ch5.1 (kết quả người thuê) |
