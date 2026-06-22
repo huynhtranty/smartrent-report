@@ -1,0 +1,28 @@
+flowchart LR
+ KT(["Người thuê"])
+ subgraph HT["Hệ thống SmartRent"]
+  direction TB
+  U1("Đăng ký, đăng nhập")
+  U2("Tìm kiếm và lọc tin đăng")
+  U3("Xem chi tiết tin đăng")
+  U4("Duyệt tin trên bản đồ")
+  U5("So sánh tin đăng")
+  U6("Lưu tin yêu thích")
+  U7("Theo dõi người đăng")
+  U8("Nhận thông báo thời gian thực")
+  U9("Trò chuyện với trợ lý AI")
+  U10("Xem gợi ý cá nhân hóa")
+ end
+ AI(["Dịch vụ AI"])
+ KT --- U1
+ KT --- U2
+ KT --- U3
+ KT --- U4
+ KT --- U5
+ KT --- U6
+ KT --- U7
+ KT --- U8
+ KT --- U9
+ KT --- U10
+ U9 --- AI
+ U10 --- AI

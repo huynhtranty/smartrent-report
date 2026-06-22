@@ -1,0 +1,23 @@
+flowchart LR
+ QT(["Quản trị viên"])
+ subgraph HT["Hệ thống SmartRent"]
+  direction TB
+  A1("Giám sát, thống kê hệ thống")
+  A2("Quản lý người dùng và phân quyền")
+  A3("Kiểm duyệt tin đăng")
+  A4("Kiểm duyệt tự động bằng AI")
+  A5("Xử lý tin bị tố cáo")
+  A6("Xét duyệt hồ sơ môi giới")
+  A7("Quản lý doanh thu, thanh toán")
+  A8("Đối chiếu cổng thông tin nhà nước")
+ end
+ AI(["Dịch vụ AI"])
+ QT --- A1
+ QT --- A2
+ QT --- A3
+ QT --- A5
+ QT --- A6
+ QT --- A7
+ A3 -.->|"«include»"| A4
+ A6 -.->|"«include»"| A8
+ A4 --- AI

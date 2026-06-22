@@ -1,0 +1,37 @@
+flowchart LR
+ CT(["Chủ trọ / Môi giới"])
+ subgraph HT["Hệ thống SmartRent"]
+  direction TB
+  P1("Đăng tin cho thuê")
+  P2("Định giá tham khảo bằng AI")
+  P3("Sinh nội dung tin đăng bằng AI")
+  P4("Quản lý tin đăng")
+  P5("Quản lý tin nháp")
+  P6("Quản lý khách hàng tiềm năng")
+  P7("Xem thống kê hiệu suất")
+  P8("Mua, nâng cấp gói hội viên")
+  P9("Thanh toán dịch vụ")
+  P10("Tra cứu lịch sử giao dịch")
+  P11("Đăng ký môi giới")
+  P12("Cập nhật hồ sơ")
+  P13("Tải lên giấy tờ pháp lý")
+ end
+ AI(["Dịch vụ AI"])
+ PG(["Cổng thanh toán"])
+ CT --- P1
+ CT --- P4
+ CT --- P5
+ CT --- P6
+ CT --- P7
+ CT --- P8
+ CT --- P10
+ CT --- P11
+ CT --- P12
+ P1 -.->|"«include»"| P2
+ P1 -.->|"«include»"| P3
+ P1 -.->|"«include»"| P9
+ P8 -.->|"«include»"| P9
+ P11 -.->|"«include»"| P13
+ P2 --- AI
+ P3 --- AI
+ P9 --- PG
