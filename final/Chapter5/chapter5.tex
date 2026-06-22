@@ -22,6 +22,7 @@
 % TODO: Nội dung.
 
 \section{Quy trình làm việc nhóm}
+\label{sec:teamwork}
 
 \subsection{Phân công vai trò}
 
@@ -761,31 +762,45 @@ Phần xếp hạng tại dịch vụ AI dùng mô hình lai (hybrid) kết hợ
 % TODO: Nội dung.
 \section{Triển khai hệ thống}
 
-% TODO: Nội dung.
+Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js, gồm ứng dụng cho người dùng và trang quản trị) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
 
-\subsection{R2}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/be/pdf/06-deployment}
+\caption{Sơ đồ hạ tầng và triển khai hệ thống SmartRent}
+\label{fig:deployment}
+\end{figure}
 
-% TODO: Nội dung.
+\subsection{Lưu trữ đối tượng (Cloudflare R2)}
 
-\subsection{MySQL}
+Toàn bộ tệp đa phương tiện có kích thước lớn --- ảnh và video của tin đăng, ảnh đại diện người dùng, ảnh bìa bài viết tin tức --- không được lưu trực tiếp trong cơ sở dữ liệu quan hệ mà được đẩy lên dịch vụ \textbf{lưu trữ đối tượng} (object storage). Hệ thống sử dụng \textbf{Cloudflare R2}~\cite{CloudflareR2}, một dịch vụ tương thích giao thức S3; nhờ đó Backend thao tác thông qua bộ thư viện AWS S3 SDK ở tầng \texttt{infra/storage} mà không phụ thuộc cứng vào một nhà cung cấp duy nhất. Việc tải tệp lên áp dụng cơ chế \textbf{URL ký trước} (presigned URL): khi người dùng cần đăng ảnh hoặc video, Backend cấp một URL có chữ ký và thời hạn ngắn để trình duyệt tải tệp \textit{trực tiếp} lên R2 mà không phải đi vòng qua Backend, nhờ đó giảm đáng kể tải băng thông và bộ nhớ cho máy chủ ứng dụng; cơ sở dữ liệu chỉ lưu đường dẫn (URL) trỏ tới tệp. Việc chọn R2 mang lại hai lợi ích chính: chi phí thấp do không tính phí băng thông tải ra (egress) và khả năng phân phối nội dung nhanh nhờ hạ tầng biên (edge) của Cloudflare.
 
-% TODO: Nội dung.
+\subsection{Cơ sở dữ liệu MySQL}
 
-\subsection{LiteLLM \& Langfuse}
+\textbf{MySQL}~\cite{MySQLDocs} là cơ sở dữ liệu quan hệ chính, lưu toàn bộ dữ liệu nghiệp vụ có cấu trúc (người dùng, tin đăng, danh mục, giao dịch, gói thành viên\ldots). Hệ thống sử dụng MySQL dưới dạng \textbf{cơ sở dữ liệu được quản lý} (managed database) thuê trên nền tảng \textbf{DigitalOcean}~\cite{DigitalOcean}; nhờ đó các tác vụ vận hành như sao lưu tự động, vá lỗi và bảo đảm tính sẵn sàng đều do nhà cung cấp đảm nhiệm, thay vì nhóm phải tự quản trị máy chủ cơ sở dữ liệu. Backend truy xuất dữ liệu qua \textbf{Spring Data JPA} (đã trình bày ở phần thiết kế Backend, Mục~\ref{sec:backend-design}). Lược đồ cơ sở dữ liệu được quản lý phiên bản bằng \textbf{Flyway}~\cite{FlywayDocs}: mỗi thay đổi cấu trúc bảng được viết thành một kịch bản di trú (migration) đánh số thứ tự và lưu trong mã nguồn, tự động áp dụng khi ứng dụng khởi động. Nhờ đó lược đồ luôn đồng bộ và nhất quán giữa các môi trường (máy phát triển, kiểm thử và chạy thật), tránh tình trạng lệch cấu trúc do sửa thủ công. Để giảm tải truy vấn cho các dữ liệu được đọc nhiều (thống kê trang chủ, chi tiết tin đăng\ldots), hệ thống đặt một lớp đệm \textbf{Redis}~\cite{RedisDocs} phía trước cơ sở dữ liệu; đồng thời khóa chính của các bảng dùng định danh kiểu Snowflake nhằm thuận tiện khi mở rộng.
 
-% TODO: Nội dung.
+\subsection{Cổng truy cập mô hình ngôn ngữ: LiteLLM \& Langfuse}
+
+Để phục vụ các tính năng AI (trợ lý hội thoại, định giá, sinh và kiểm duyệt nội dung\ldots), hệ thống tách riêng một tầng hạ tầng AI gồm hai thành phần bổ trợ cho nhau. \textbf{LiteLLM}~\cite{LiteLLM} đóng vai trò \textit{cổng truy cập mô hình ngôn ngữ} (LLM gateway): nó cung cấp một điểm cuối thống nhất theo chuẩn tương thích OpenAI để Backend và dịch vụ AI gọi tới, thay vì gọi trực tiếp tới từng nhà cung cấp mô hình. Nhờ vậy, việc quản lý khóa API, định tuyến giữa các mô hình, giới hạn tần suất, dự phòng (fallback) khi một mô hình gặp lỗi và theo dõi chi phí được tập trung về một nơi; khi muốn thay đổi hay bổ sung mô hình, chỉ cần cấu hình tại gateway mà không phải sửa mã ứng dụng. \textbf{Langfuse}~\cite{Langfuse} đảm nhận việc \textit{giám sát và truy vết} (observability) cho các lời gọi AI: mỗi yêu cầu được ghi lại đầy đủ ngữ cảnh (prompt, mô hình sử dụng, số token, độ trễ, chi phí và kết quả trả về), giúp gỡ lỗi, theo dõi chất lượng phản hồi và làm cơ sở để đánh giá, cải thiện các tính năng AI ở Chương~\ref{Chapter6}. Trong đề tài, cả LiteLLM và Langfuse đều được sử dụng dưới dạng \textbf{dịch vụ đám mây} (hosted) thay vì tự dựng, giúp nhóm tập trung vào phát triển tính năng mà không phải vận hành thêm hạ tầng AI.
 
 \subsection{Cổng thanh toán}
 
-% TODO: Nội dung.
+Hệ thống áp dụng mô hình thương mại dựa trên các gói tin VIP và gói thành viên, do đó cần tích hợp thanh toán trực tuyến. Hai cổng thanh toán nội địa được sử dụng là \textbf{ZaloPay}~\cite{ZaloPay} (ví điện tử, thanh toán qua mã QR) và \textbf{SePay}~\cite{SePay} (tự động xác nhận và đối soát giao dịch chuyển khoản ngân hàng), được điều phối bởi các module \texttt{payment}, \texttt{membership} và \texttt{transaction} ở Backend. Luồng thanh toán điển hình diễn ra như sau: người dùng chọn gói cần mua, Backend tạo một bản ghi giao dịch ở trạng thái chờ và sinh yêu cầu thanh toán gửi sang cổng; người dùng được điều hướng sang cổng để hoàn tất (quét mã hoặc chuyển khoản); sau khi thanh toán, cổng gọi ngược về Backend qua một điểm cuối callback (IPN --- thông báo tức thời), Backend xác minh chữ ký, cập nhật giao dịch thành công và kích hoạt gói tương ứng cho người dùng. Các lỗi phát sinh trong quá trình thanh toán được xử lý tập trung qua \texttt{GlobalPaymentExceptionHandler} nhằm bảo đảm tính nhất quán của dữ liệu giao dịch. Ở giai đoạn hiện tại, cả hai cổng được tích hợp ở \textbf{môi trường thử nghiệm} (sandbox) nhằm kiểm thử trọn vẹn luồng thanh toán trước khi chuyển sang môi trường thật.
 
-\subsection{CI/CD Pipeline}
+\subsection{Quy trình tích hợp và triển khai liên tục (CI/CD)}
 
-% TODO: Nội dung.
+Mã nguồn của các khối dịch vụ được quản lý tập trung trên \textbf{GitHub} theo quy trình nhánh và pull request đã trình bày ở Mục~\ref{sec:teamwork}. Nhóm thiết lập quy trình \textbf{tích hợp liên tục --- triển khai liên tục} (CI/CD) bằng \textbf{GitHub Actions}~\cite{GitHubActions}, tách thành hai pha rõ rệt. Ở pha \textit{tích hợp liên tục} (CI), mỗi pull request vào nhánh chính kích hoạt một workflow biên dịch và chạy kiểm thử đơn vị (kèm đo độ phủ mã) như một cổng kiểm soát --- chỉ mã đã qua kiểm thử mới được phép hợp nhất. Ở pha \textit{triển khai liên tục} (CD), ngay khi mã được hợp nhất vào nhánh chính, một workflow khác đóng gói ứng dụng thành ảnh \textbf{Docker}~\cite{Docker} và đẩy lên kho ảnh \textbf{Docker Hub}, sau đó gọi một \textit{webhook} của Dokploy; Dokploy nhận tín hiệu, kéo ảnh mới từ kho và tạo lại container trên máy chủ production mà không cần thao tác SSH thủ công. Nhờ tách bạch CI và CD, mọi thay đổi đều đi qua cùng một quy trình kiểm tra nhất quán, giúp phát hiện sớm lỗi biên dịch hoặc lỗi kiểm thử và bảo đảm chỉ những phiên bản đã kiểm thử mới được triển khai. Hình~\ref{fig:cicd} tóm tắt các bước của quy trình này.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{../diagrams/be/pdf/07-cicd}
+\caption{Quy trình CI/CD: từ mã nguồn trên GitHub tới triển khai trên máy chủ production}
+\label{fig:cicd}
+\end{figure}
 
 \subsection{Triển khai ứng dụng}
 
-% TODO: Nội dung.
+Ở môi trường \textbf{production}, phần lõi xử lý của hệ thống được triển khai trên một \textbf{máy ảo} (Droplet) thuê tại \textbf{DigitalOcean}~\cite{DigitalOcean}, chạy hệ điều hành Ubuntu với cấu hình 2 vCPU, 4~GB RAM và 120~GB SSD, được quản lý bằng nền tảng triển khai tự lưu trữ \textbf{Dokploy}~\cite{Dokploy} --- một giải pháp dạng PaaS (Platform-as-a-Service) mã nguồn mở lo việc đóng gói, cập nhật phiên bản, theo dõi nhật ký và quản lý biến môi trường cùng thông tin bí mật (secrets). \textbf{Backend} và \textbf{dịch vụ AI}, cùng \textbf{Redis} làm bộ đệm, chạy dưới dạng container do Dokploy điều phối. Mọi truy cập từ Internet đi qua \textbf{Traefik}~\cite{Traefik} ở vai trò \textit{reverse proxy}: Traefik tiếp nhận lưu lượng tại cổng 80/443, tự động cấp và gia hạn chứng chỉ TLS để phục vụ HTTPS, rồi định tuyến theo tên miền con --- \texttt{api.thuenhatro.net} tới Backend và \texttt{ai.thuenhatro.net} tới dịch vụ AI. Riêng \textbf{Frontend} (Next.js) được triển khai tách biệt trên nền tảng \textbf{Vercel}~\cite{Vercel} thay vì trên máy ảo: người dùng truy cập giao diện tại tên miền \texttt{thuenhatro.net} do Vercel phục vụ, và giao diện gọi tới Backend cùng dịch vụ AI qua các tên miền con nêu trên. Các container phối hợp với những dịch vụ được quản lý bên ngoài đã nêu (MySQL của DigitalOcean, lưu trữ đối tượng Cloudflare R2, LiteLLM/Langfuse bản đám mây và các cổng thanh toán); nhờ tách cơ sở dữ liệu và lưu trữ tệp sang dịch vụ quản lý riêng, máy chủ ứng dụng nhẹ tải và mỗi dịch vụ có thể cập nhật, khởi động lại độc lập mà không ảnh hưởng tới dữ liệu.
 
 \section{Các khó khăn và giải pháp trong quá trình xây dựng hệ thống}
 

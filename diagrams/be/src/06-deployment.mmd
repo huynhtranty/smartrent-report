@@ -1,0 +1,23 @@
+flowchart TB
+    User(["Người dùng<br/><small>trình duyệt web</small>"])
+    Vercel["Frontend --- Next.js<br/><small>webapp + admin · triển khai trên Vercel</small>"]
+
+    subgraph VM["Máy chủ DigitalOcean Droplet --- Dokploy (Ubuntu, 2 vCPU / 4 GB)"]
+        Traefik["Traefik<br/><small>reverse proxy · HTTPS · cổng 80/443</small>"]
+        subgraph Apps["Container do Dokploy điều phối"]
+            direction LR
+            BE["Backend<br/><small>Spring Boot · api.thuenhatro.net</small>"]
+            AIsvc["Dịch vụ AI<br/><small>SmartRent AI · ai.thuenhatro.net</small>"]
+            Redis[("Redis<br/><small>bộ đệm</small>")]
+        end
+    end
+
+    Ext["<b>Dịch vụ được quản lý bên ngoài</b><br/><small>MySQL (DigitalOcean Managed) &nbsp;·&nbsp; Cloudflare R2<br/>LiteLLM + Langfuse (cloud) &nbsp;·&nbsp; ZaloPay / SePay</small>"]
+
+    User -->|"HTTPS · thuenhatro.net"| Vercel
+    Vercel -->|"gọi API (api. / ai.)"| Traefik
+    Traefik --> BE
+    Traefik --> AIsvc
+    BE --> Redis
+    BE --> Ext
+    AIsvc --> Ext
