@@ -3,100 +3,365 @@
 
 \section{Mô tả bài toán}
 
-% TODO: Nội dung (chương mới bổ sung theo cấu trúc báo cáo).
+Thị trường cho thuê nhà trọ trực tuyến hiện nay tuy có nhiều nền tảng đăng tin nhưng phần lớn mới dừng ở vai trò một bảng tin: người thuê tự dò tìm qua các bộ lọc cứng nhắc, chủ trọ tự xoay xở khâu viết tin và định giá, còn chất lượng tin đăng phụ thuộc vào ý thức của từng người đăng. Hệ quả là người tìm trọ mất nhiều thời gian sàng lọc, dễ gặp tin sai lệch hoặc giá ảo, trong khi chủ trọ khó tiếp cận đúng đối tượng quan tâm.
+
+Đề tài đặt ra bài toán xây dựng hệ thống SmartRent -- một nền tảng cho thuê nhà trọ trực tuyến không chỉ kết nối người thuê với chủ trọ mà còn chủ động hỗ trợ cả hai phía ở từng khâu của hành trình. Cụ thể, hệ thống cần đáp ứng ba nhóm mục tiêu. Thứ nhất, về phía người thuê, hệ thống phải giúp tìm kiếm và đánh giá tin đăng nhanh, chính xác và trực quan thông qua tìm kiếm đa tiêu chí, bản đồ, so sánh và một trợ lý hội thoại hiểu ngôn ngữ tự nhiên. Thứ hai, về phía chủ trọ và môi giới, hệ thống phải đơn giản hóa việc đăng tin, định giá và quảng bá tin đăng, đồng thời cung cấp công cụ theo dõi hiệu suất và chăm sóc khách hàng tiềm năng. Thứ ba, về phía vận hành, hệ thống phải bảo đảm chất lượng nội dung trên nền tảng thông qua cơ chế kiểm duyệt và quản trị tập trung.
+
+Điểm khác biệt cốt lõi của bài toán là yêu cầu tích hợp trí tuệ nhân tạo (Artificial Intelligence -- AI) như một thành phần xuyên suốt chứ không phải một tính năng phụ: trợ lý tìm kiếm, gợi ý cá nhân hóa, định giá tham khảo, sinh nội dung tin đăng và kiểm duyệt tự động. Chương này phân tích nghiệp vụ của các bên liên quan, đặc tả yêu cầu chức năng và phi chức năng, phân tích vai trò của AI và đặc tả một số use case chính làm cơ sở cho việc thiết kế và xây dựng hệ thống ở các chương sau.
 
 \section{Phân tích nghiệp vụ}
 
-% TODO: Nội dung.
+Hệ thống phục vụ ba nhóm tác nhân (actor) chính với mục tiêu nghiệp vụ khác nhau: người thuê trọ, chủ nhà trọ (gồm cả môi giới) và quản trị viên. Bên cạnh đó, các dịch vụ AI đóng vai trò một tác nhân hỗ trợ, được kích hoạt trong nhiều luồng nghiệp vụ của hai nhóm người dùng đầu. Phần này mô tả nhu cầu và hoạt động nghiệp vụ của từng nhóm.
 
 \subsection{Người thuê trọ}
 
-% TODO: Nội dung.
+Người thuê trọ là nhóm người dùng cuối đông đảo nhất, có nhu cầu tìm được một chỗ ở phù hợp với khả năng tài chính, vị trí và điều kiện sinh hoạt của mình trong thời gian ngắn nhất. Hành trình nghiệp vụ điển hình của người thuê gồm: khám phá tin đăng từ trang chủ, thu hẹp lựa chọn bằng tìm kiếm và lọc đa tiêu chí, xem chi tiết từng tin (hình ảnh, tiện ích, vị trí trên bản đồ, lịch sử giá), đối chiếu vài tin tiềm năng, rồi liên hệ trực tiếp với chủ trọ qua điện thoại hoặc kênh nhắn tin.
+
+Phần lớn thao tác duyệt và tìm kiếm không bắt buộc đăng nhập để hạ thấp rào cản tiếp cận. Tuy nhiên, các chức năng mang tính cá nhân -- lưu tin yêu thích, theo dõi chủ trọ, nhận thông báo, xem số điện thoại liên hệ và trò chuyện với trợ lý AI có ngữ cảnh tài khoản -- đòi hỏi người dùng phải đăng nhập. Một đặc điểm nghiệp vụ quan trọng là người thuê thường khởi đầu với nhu cầu còn mơ hồ; do đó hệ thống cần chủ động định hướng họ bằng gợi ý theo ngữ cảnh, tin đề xuất cá nhân hóa và trợ lý hội thoại, thay vì chỉ thụ động chờ truy vấn chính xác.
 
 \subsection{Chủ nhà trọ}
 
-% TODO: Nội dung.
+Chủ nhà trọ -- bao gồm cả chủ sở hữu cho thuê trực tiếp lẫn môi giới chuyên nghiệp -- là nhóm tạo ra nguồn cung tin đăng cho nền tảng. Mục tiêu nghiệp vụ của họ là đưa tin đăng tiếp cận đúng và nhiều người thuê tiềm năng với chi phí hợp lý. Hành trình của chủ trọ xoay quanh vòng đời của tin đăng: tạo tin (nhập thông tin bất động sản, định giá, chọn hạng hiển thị, tải hình ảnh, thanh toán), quản lý tin theo trạng thái (đang hiển thị, sắp hết hạn, hết hạn, chờ duyệt, bị từ chối), gia hạn hoặc đăng lại, và theo dõi hiệu suất tin qua các chỉ số lượt xem số điện thoại và lượt lưu tin.
+
+Để đăng tin, chủ trọ trả phí theo từng tin hoặc sử dụng quyền lợi từ gói hội viên thuê bao theo tháng. Nghiệp vụ này kéo theo các hoạt động liên quan tới thanh toán: mua và nâng cấp gói hội viên, trừ dần hạn mức quyền lợi, và tra cứu lịch sử giao dịch để đối soát. Ngoài ra, chủ trọ còn quản lý danh sách khách hàng tiềm năng (những người đã quan tâm tới tin của mình) và cập nhật hồ sơ công khai hiển thị trên các tin đăng. Trở thành môi giới chuyên nghiệp là một quy trình riêng cần được quản trị viên xét duyệt.
 
 \subsection{Quản trị viên}
 
-% TODO: Nội dung.
+Quản trị viên chịu trách nhiệm vận hành và bảo đảm chất lượng của toàn nền tảng. Nghiệp vụ của quản trị viên không trực tiếp tạo ra tin đăng hay tìm kiếm mà tập trung vào giám sát và điều tiết. Các hoạt động chính gồm: theo dõi các chỉ số vận hành tổng thể của hệ thống (số người dùng, số tin đăng, doanh thu); quản lý người dùng và phân quyền; kiểm duyệt tin đăng trước khi xuất bản và xử lý các tin bị tố cáo vi phạm; xét duyệt hồ sơ đăng ký môi giới; và quản lý doanh thu, đối soát các giao dịch thanh toán.
+
+Đặc thù nghiệp vụ kiểm duyệt là khối lượng tin đăng lớn và liên tục, đòi hỏi hệ thống phải hỗ trợ quản trị viên bằng một bước kiểm duyệt tự động bằng AI để sàng lọc sơ bộ, giúp quản trị viên chỉ tập trung vào các trường hợp cần phán đoán của con người. Mọi kết quả kiểm duyệt (được duyệt, bị từ chối, yêu cầu chỉnh sửa) đều phải được phản hồi tới chủ trọ qua hệ thống thông báo.
 
 \section{Yêu cầu chức năng}
 
-% TODO: Nội dung.
+Phần này đặc tả các yêu cầu chức năng (functional requirements) của hệ thống, nhóm theo các khối nghiệp vụ chính. Mỗi nhóm được trình bày kèm các tác nhân liên quan và phạm vi chức năng cần đáp ứng.
 
-\subsection{Đăng ký, đăng nhập}
+\subsection{Đăng ký, đăng nhập và quản lý tài khoản}
 
-% TODO: Nội dung.
+Hệ thống phải cho phép người dùng tạo tài khoản bằng họ tên, email và mật khẩu, có kiểm tra hợp lệ ngay phía trình duyệt và yêu cầu kích hoạt tài khoản bằng mã xác minh (One-Time Password -- OTP) gửi qua email. Việc đăng nhập cần hỗ trợ ba phương thức: email kèm mật khẩu, liên kết đăng nhập một lần gửi qua email (magic link) và tài khoản Google (OAuth). Hệ thống phải cung cấp chức năng quên mật khẩu dựa trên mã xác minh gửi qua email.
 
-\subsection{Quản lý hồ sơ người dùng}
+Về trải nghiệm, việc xác thực cần được thực hiện ngay tại chỗ thông qua hộp thoại bật lên khi người dùng truy cập một chức năng yêu cầu đăng nhập, và sau khi đăng nhập thành công phải đưa người dùng trở lại đúng trang đang thao tác. Người dùng đã đăng nhập có thể cập nhật hồ sơ cá nhân; riêng chủ trọ quản lý thêm hồ sơ công khai hiển thị trên tin đăng.
 
-% TODO: Nội dung.
+\subsection{Tìm kiếm, lọc và khám phá tin đăng}
 
-\subsection{Đăng tin cho thuê phòng}
+Đây là nhóm chức năng trọng tâm phía người thuê. Hệ thống phải cung cấp một trang chủ tổng hợp nhiều khối nội dung định hướng (danh mục bất động sản, tin nổi bật, tin đề xuất cá nhân hóa, tin mới, duyệt theo địa điểm, tin tức) và một trang danh sách hỗ trợ tìm kiếm, lọc theo nhiều tiêu chí: khoảng giá, diện tích, loại hình, vị trí (tỉnh/quận/phường), số phòng ngủ -- phòng tắm, tiện ích, các loại chi phí, hướng nhà và nhiều cách sắp xếp.
 
-% TODO: Nội dung.
+Toàn bộ điều kiện lọc cần được đồng bộ vào tham số trên đường dẫn (URL) để người dùng có thể chia sẻ, lưu lại và khôi phục một kết quả tìm kiếm cụ thể. Ô tìm kiếm phải đưa ra gợi ý ngay khi người dùng gõ, bao gồm cả nhóm gợi ý theo ngữ cảnh -- những truy vấn dựng sẵn kết hợp khu vực và khoảng giá -- nhằm rút ngắn quãng đường từ nhu cầu mơ hồ tới kết quả cụ thể. Kết quả tìm kiếm phải được phân trang và hiển thị nhất quán trên cả màn hình lớn lẫn thiết bị di động.
 
-\subsection{Tìm kiếm phòng trọ}
+\subsection{Xem chi tiết, bản đồ và so sánh tin đăng}
 
-% TODO: Nội dung.
+Hệ thống phải cung cấp trang chi tiết tin đăng đầy đủ thông tin: thư viện ảnh và video, giá, lưới thông số kỹ thuật, danh sách tiện ích, mô tả, biểu đồ lịch sử giá, bản đồ vị trí và thẻ liên hệ chủ trọ. Số điện thoại liên hệ phải được ẩn ban đầu và chỉ hiển thị cho người dùng đã đăng nhập, đồng thời mỗi lượt xem số phải được ghi nhận để phục vụ thống kê cho chủ trọ.
 
-\subsection{Đặt lịch xem phòng}
+Bên cạnh chế độ danh sách, hệ thống cần cho phép duyệt tin trên bản đồ tích hợp dịch vụ bản đồ trực tuyến, với cơ chế gom cụm các điểm tin ở gần nhau và đồng bộ hai chiều giữa bản đồ và bảng danh sách theo khung nhìn hiện tại. Ngoài ra, người dùng phải có thể chọn tối đa ba tin đăng để so sánh song song theo các thuộc tính quan trọng dưới dạng bảng đối chiếu, có đánh dấu mức giá thấp nhất để hỗ trợ ra quyết định.
 
-% TODO: Nội dung.
+\subsection{Lưu tin, theo dõi người đăng và thông báo}
 
-\subsection{Quản lý hợp đồng thuê}
+Đối với người dùng đã đăng nhập, hệ thống phải cho phép lưu tin yêu thích và quản lý chúng trong một trang riêng, cũng như theo dõi (follow) các chủ trọ/môi giới để không bỏ lỡ tin đăng mới của họ. Hệ thống cần tổng hợp tin đăng mới từ những người đang được theo dõi thành một bảng tin riêng và cho phép lọc nhanh theo từng người.
 
-% TODO: Nội dung.
+Hệ thống phải cung cấp cơ chế thông báo thời gian thực tới người dùng đã đăng nhập, kèm chỉ báo số thông báo chưa đọc. Các sự kiện cần sinh thông báo gồm: kết quả kiểm duyệt tin đăng, cảnh báo tin sắp hết hạn theo các mốc thời gian, tiến trình đăng ký môi giới, diễn biến tố cáo tin đăng và thông báo khi một người đang được theo dõi đăng tin mới. Quản trị viên cũng nhận các thông báo nghiệp vụ tương ứng trên cùng cơ chế.
 
-\subsection{Đánh giá và phản hồi}
+\subsection{Đăng tin và quản lý tin đăng}
 
-% TODO: Nội dung.
+Hệ thống phải cung cấp cho chủ trọ một luồng đăng tin nhiều bước, hướng dẫn nhập đầy đủ và chính xác thông tin trước khi xuất bản: thông tin bất động sản (nhu cầu, loại hình, địa chỉ kèm định vị trên bản đồ, diện tích, giá, tiện nghi, chi phí dịch vụ, hướng nhà, tiêu đề và mô tả), định giá tham khảo, chọn hạng tin và cấu hình hiển thị, tải hình ảnh và video, cuối cùng là xem lại và thanh toán. Hệ thống chỉ cho phép chuyển bước khi dữ liệu ở bước hiện tại hợp lệ, và phải cho phép lưu bản nháp ở bất kỳ bước nào để tiếp tục về sau.
 
-\subsection{Chat hỗ trợ}
+Sau khi đăng, chủ trọ cần một trang quản lý tập trung để theo dõi toàn bộ tin của mình, phân nhóm theo trạng thái, tìm kiếm và lọc, kèm các thao tác nhanh ngay trên từng tin: chỉnh sửa, đẩy tin lên đầu danh sách, sao chép liên kết, gỡ tin, xóa, gia hạn hoặc đăng lại tùy trạng thái. Hệ thống phải cung cấp bảng điều khiển thống kê hiệu suất tin đăng (lượt xem số điện thoại, lượt lưu tin) và danh sách khách hàng tiềm năng tổng hợp những người đã quan tâm tới tin của chủ trọ.
 
-% TODO: Nội dung.
+\subsection{Gói hội viên, thanh toán và giao dịch}
+
+Hệ thống phải hỗ trợ hai hình thức chi trả cho việc đăng tin: trả phí theo từng tin hoặc sử dụng quyền lợi từ gói hội viên thuê bao theo tháng. Cần cung cấp nhiều hạng gói hội viên với quyền lợi tăng dần (số lượt đăng tin VIP và số lượt đẩy tin miễn phí), cấp hạn mức quyền lợi một lần khi mua và trừ dần khi sử dụng. Hệ thống phải cho phép nâng cấp gói với cơ chế chiết khấu theo thời gian còn lại của gói hiện tại.
+
+Mọi giao dịch -- mua gói, nâng cấp gói, phí đăng tin và phí đăng lại -- phải đi qua cổng thanh toán trực tuyến (SePay hoặc ZaloPay) và được ghi nhận trong lịch sử giao dịch của chủ trọ, kèm trạng thái, phương thức và đầy đủ thông tin đối soát. Với giao dịch còn đang chờ, hệ thống cần cho phép kiểm tra lại trạng thái để đồng bộ kết quả từ cổng thanh toán.
+
+\subsection{Quản trị và kiểm duyệt nội dung}
+
+Hệ thống phải cung cấp một khu vực quản trị riêng cho quản trị viên, gồm: bảng thống kê và giám sát các chỉ số vận hành tổng thể; quản lý người dùng và phân quyền; quản lý tin đăng và kiểm duyệt nội dung (duyệt, từ chối, yêu cầu chỉnh sửa, xử lý tin bị tố cáo); xét duyệt hồ sơ đăng ký môi giới; và quản lý doanh thu, đối soát thanh toán. Quy trình kiểm duyệt cần được hỗ trợ bởi một bước sàng lọc tự động bằng AI, và mọi kết quả kiểm duyệt phải được phản hồi tới chủ trọ qua hệ thống thông báo.
 
 \section{Yêu cầu phi chức năng}
 
-% TODO: Nội dung.
+Ngoài các chức năng nghiệp vụ, hệ thống cần đáp ứng các yêu cầu phi chức năng (non-functional requirements) về hiệu năng, bảo mật, khả năng mở rộng và tính khả dụng.
 
 \subsection{Hiệu năng}
 
-% TODO: Nội dung.
+Hệ thống phải bảo đảm thời gian phản hồi nhanh ở các trang có lưu lượng cao. Các trang định hướng và trang chi tiết tin đăng cần được kết xuất phía máy chủ (Server-Side Rendering -- SSR) để tối ưu tốc độ hiển thị lần đầu và khả năng tối ưu hóa công cụ tìm kiếm (Search Engine Optimization -- SEO). Dữ liệu ổn định theo ngày (số liệu thống kê, các nhóm tin trên trang chủ) cần được lưu đệm (cache) để giảm tải cho máy chủ.
+
+Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự phải được tải động (lazy loading) kèm khung chờ để không làm chậm nội dung chính. Trên bản đồ, việc tải tin theo khung nhìn cần áp dụng cơ chế gộp thao tác (debounce) và lưu đệm vùng đã tải để tránh gọi máy chủ liên tục. Kết quả tìm kiếm và danh sách phải được phân trang và lưu đệm theo bộ điều kiện hiện hành.
 
 \subsection{Bảo mật}
 
-% TODO: Nội dung.
+Mật khẩu người dùng phải được băm (hash) trước khi lưu, không lưu ở dạng văn bản thường. Phiên đăng nhập cần được quản lý bằng cặp mã thông báo (JSON Web Token -- JWT) gồm access token và refresh token, với cơ chế tự động làm mới khi access token hết hạn một cách trong suốt với người dùng. Hệ thống phải phân quyền rõ ràng theo vai trò (người thuê, chủ trọ, môi giới, quản trị viên), bảo đảm mỗi vai trò chỉ truy cập được các chức năng và dữ liệu thuộc phạm vi của mình.
+
+Một số dữ liệu nhạy cảm phải được kiểm soát truy cập: số điện thoại liên hệ chỉ hiển thị cho người dùng đã đăng nhập. Hệ thống cũng cần cơ chế kiểm duyệt nội dung và tiếp nhận tố cáo để ngăn chặn tin đăng vi phạm, giữ an toàn cho cộng đồng người dùng.
 
 \subsection{Khả năng mở rộng}
 
-% TODO: Nội dung.
+Hệ thống phải được tổ chức theo hướng dễ mở rộng và bảo trì. Backend cần tách thành các module nghiệp vụ rõ ràng để có thể phát triển và thay đổi độc lập. Các dịch vụ AI cần được tách thành một thành phần riêng, giao tiếp với backend qua giao diện lập trình ứng dụng (Application Programming Interface -- API), để có thể tiến hóa độc lập với phần xử lý nghiệp vụ.
+
+Việc truy cập mô hình ngôn ngữ lớn (Large Language Model -- LLM) cần đi qua một cổng trung gian, cho phép thay đổi nhà cung cấp mô hình mà không ảnh hưởng phần còn lại của hệ thống. Lưu trữ tệp (hình ảnh, video) cần dùng dịch vụ lưu trữ đối tượng (object storage) tách khỏi cơ sở dữ liệu quan hệ, bảo đảm khả năng chịu tải khi lượng nội dung đa phương tiện tăng nhanh.
 
 \subsection{Tính khả dụng}
 
-% TODO: Nội dung.
+Giao diện phải được thiết kế đáp ứng (responsive), hoạt động liền mạch và đầy đủ chức năng trên cả máy tính lẫn thiết bị di động. Hệ thống cần hỗ trợ song ngữ Việt -- Anh với khả năng chuyển đổi tức thời mà không tải lại trang. Mọi thao tác bất đồng bộ cần có phản hồi trạng thái rõ ràng: khung chờ khi tải dữ liệu, chỉ báo tiến trình khi chuyển trang, thông báo lỗi thân thiện và trạng thái rỗng có hướng dẫn.
+
+Các thành phần giao diện cần bảo đảm khả năng truy cập (accessibility) cho người dùng, kể cả khi điều hướng bằng bàn phím hoặc dùng trình đọc màn hình. Sự nhất quán về bố cục và thao tác giữa các trang, cũng như giữa máy tính và di động, là yêu cầu quan trọng để người dùng dễ làm quen và sử dụng.
 
 \section{Phân tích AI hỗ trợ hệ thống}
 
-% TODO: Nội dung.
+Trí tuệ nhân tạo trong SmartRent không phải một tính năng đơn lẻ mà là một lớp năng lực xuyên suốt, hỗ trợ cả người thuê lẫn chủ trọ ở nhiều khâu nghiệp vụ. Phần này phân tích vai trò và yêu cầu đối với năm năng lực AI của hệ thống; chi tiết kiến trúc và cách hiện thực được trình bày ở các chương thiết kế và xây dựng hệ thống.
 
-\subsection{Chatbot tư vấn tìm phòng}
+\subsection{Trợ lý hội thoại tìm kiếm bất động sản}
 
-% TODO: Nội dung.
+Hệ thống cần một trợ lý hội thoại (conversational agent) cho phép người thuê tìm và tra cứu bất động sản bằng ngôn ngữ tự nhiên thay vì thao tác qua bộ lọc. Trợ lý phải trích xuất được tiêu chí từ câu nói tự nhiên (khu vực, khoảng giá, loại hình), thực hiện tìm kiếm, xem chi tiết, so sánh, đánh giá giá và lưu tin ngay trong cửa sổ hội thoại. Trợ lý cần hiểu được các chỉ định theo ngữ cảnh (ví dụ ``xem cái thứ hai'', ``so sánh hai tin trên'') nhờ lưu lịch sử hội thoại, và phải giới hạn phạm vi hỗ trợ trong lĩnh vực bất động sản, từ chối lịch sự các câu hỏi ngoài phạm vi. Câu trả lời cần được truyền về theo luồng thời gian thực để người dùng thấy được tiến trình xử lý.
 
-\subsection{Gợi ý phòng trọ thông minh}
+\subsection{Gợi ý tin đăng cá nhân hóa}
 
-% TODO: Nội dung.
+Hệ thống cần đưa ra gợi ý tin đăng riêng cho từng người dùng thay vì một danh sách chung. Gợi ý cá nhân hóa phải dựa trên hành vi của người dùng (lịch sử xem, lưu, liên hệ) kết hợp với hành vi của cộng đồng, và xuất hiện ở những vị trí phù hợp như khối tin đề xuất trên trang chủ và khối bất động sản tương tự ở cuối trang chi tiết. Kết quả gợi ý cần cân bằng giữa mức độ phù hợp với sở thích và tính đa dạng, đồng thời có chú thích cho người dùng biết gợi ý dựa trên cơ sở nào.
 
-\subsection{Phân tích nhu cầu người dùng}
+\subsection{Định giá bất động sản tham khảo}
 
-% TODO: Nội dung.
+Hệ thống cần hỗ trợ chủ trọ định giá hợp lý bằng cách ước tính khoảng giá thị trường (tối thiểu, trung bình, tối đa) dựa trên dữ liệu các tin đăng tương đương về vị trí, loại hình và diện tích. Năng lực này phải xuất hiện trong luồng đăng tin để hỗ trợ chủ trọ, đồng thời được trợ lý hội thoại tái sử dụng khi người thuê muốn đánh giá một mức giá có hợp lý hay không. Hệ thống cần có phương án dự phòng theo quy tắc khi khu vực không đủ dữ liệu so sánh, bảo đảm luôn trả về một khoảng giá hợp lý.
 
-\subsection{Tóm tắt thông tin phòng trọ bằng AI}
+\subsection{Sinh nội dung tin đăng}
 
-% TODO: Nội dung.
+Hệ thống cần hỗ trợ chủ trọ sinh tự động tiêu đề và mô tả tin đăng từ các thông tin đã nhập (loại hình, vị trí, diện tích, giá, tiện nghi), theo văn phong tùy chọn. Nội dung sinh ra phải nêu bật lợi ích vị trí, tiện ích xung quanh và đối tượng người thuê phù hợp, đồng thời được điền sẵn vào biểu mẫu để chủ trọ rà soát và chỉnh sửa trước khi đăng. Yêu cầu này vừa rút ngắn thời gian đăng tin, vừa nâng cao chất lượng và độ đồng đều của nội dung trên nền tảng.
+
+\subsection{Kiểm duyệt nội dung tự động}
+
+Trước khối lượng tin đăng lớn và liên tục, hệ thống cần một bước kiểm duyệt nội dung tự động bằng AI để sàng lọc sơ bộ trước khi tin tới tay quản trị viên. Bước kiểm duyệt cần xét cả phần văn bản lẫn hình ảnh và video của tin trên nhiều phương diện: chất lượng và tính xác thực của hình ảnh (phát hiện ảnh mờ, ảnh có dấu nước, số điện thoại hay ảnh không phải chụp thực tế); sự phù hợp của nội dung (đúng là tin cho thuê nhà ở, không chứa ngôn từ phản cảm); tính đầy đủ của thông tin; và sự nhất quán giữa thông tin khai báo với hình ảnh (giá, diện tích, số phòng, loại hình). Trên cơ sở đó, hệ thống đưa ra một trong ba đề xuất -- duyệt, từ chối hoặc cần xem xét thêm -- kèm điểm đánh giá và lý do.
+
+Kết quả tự động này nhằm giảm tải cho quản trị viên, giúp họ tập trung vào các trường hợp cần phán đoán của con người và rút ngắn thời gian chờ duyệt cho chủ trọ; quyết định cuối cùng vẫn thuộc về quản trị viên và phải được phản hồi tới chủ trọ qua hệ thống thông báo.
 
 \section{Đặc tả Use Case}
 
-% TODO: Nội dung (đặc tả một vài use case chính).
+Phần này tổng hợp các use case chính của hệ thống theo từng tác nhân và đặc tả chi tiết một số use case tiêu biểu.
+
+Hệ thống có ba tác nhân chính -- người thuê, chủ trọ (gồm môi giới) và quản trị viên -- cùng một tác nhân hỗ trợ là dịch vụ AI và một tác nhân ngoài là cổng thanh toán. Bảng~\ref{tab:usecase-list} liệt kê các use case chính tương ứng với mỗi tác nhân.
+
+\begin{table}[H]
+\centering
+\caption{Danh sách các use case chính theo tác nhân}
+\label{tab:usecase-list}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Tác nhân} & \textbf{Các use case chính} \\
+\hline
+Người thuê & Đăng ký, đăng nhập; tìm kiếm và lọc tin đăng; xem chi tiết tin đăng; duyệt tin trên bản đồ; so sánh tin đăng; lưu tin yêu thích; theo dõi chủ trọ; nhận thông báo; trò chuyện với trợ lý AI \\
+\hline
+Chủ trọ / Môi giới & Đăng tin cho thuê; quản lý tin đăng; lưu và quản lý tin nháp; định giá bằng AI; sinh nội dung bằng AI; mua và nâng cấp gói hội viên; thanh toán; tra cứu lịch sử giao dịch; quản lý khách hàng tiềm năng; đăng ký môi giới \\
+\hline
+Quản trị viên & Giám sát hệ thống; quản lý người dùng và phân quyền; kiểm duyệt tin đăng; xử lý tin bị tố cáo; xét duyệt hồ sơ môi giới; quản lý doanh thu và thanh toán \\
+\hline
+Dịch vụ AI & Hỗ trợ tìm kiếm hội thoại; gợi ý cá nhân hóa; ước tính giá; sinh nội dung tin đăng; kiểm duyệt nội dung tự động \\
+\hline
+\end{tabular}
+\end{table}
+
+Sơ đồ use case của ba tác nhân chính được biểu diễn lần lượt trong Hình~\ref{fig:uc-nguoithue}, Hình~\ref{fig:uc-chutro} và Hình~\ref{fig:uc-quantrivien}, trong đó dịch vụ AI và cổng thanh toán đóng vai trò tác nhân hỗ trợ; quan hệ \textit{«include»} cho biết một use case luôn kéo theo use case khác (chẳng hạn đăng tin luôn gồm bước định giá và thanh toán).
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.86\textwidth]{../diagrams/usecase/pdf/01-nguoi-thue}
+\caption{Sơ đồ use case của tác nhân người thuê}
+\label{fig:uc-nguoithue}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{../diagrams/usecase/pdf/02-chu-tro}
+\caption{Sơ đồ use case của tác nhân chủ trọ / môi giới}
+\label{fig:uc-chutro}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{../diagrams/usecase/pdf/03-quan-tri-vien}
+\caption{Sơ đồ use case của tác nhân quản trị viên}
+\label{fig:uc-quantrivien}
+\end{figure}
+
+Dưới đây đặc tả chi tiết một số use case tiêu biểu, trải trên cả ba tác nhân chính. Use case tìm kiếm và lọc tin đăng (Bảng~\ref{tab:uc-search}) mô tả cách người thuê thu hẹp kết quả bằng từ khóa và bộ lọc đa tiêu chí.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Tìm kiếm và lọc tin đăng}
+\label{tab:uc-search}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-01 \\
+\hline
+\textbf{Tên} & Tìm kiếm và lọc tin đăng \\
+\hline
+\textbf{Tác nhân} & Người thuê \\
+\hline
+\textbf{Mô tả} & Người thuê tìm kiếm tin đăng phù hợp bằng từ khóa và các tiêu chí lọc đa dạng. \\
+\hline
+\textbf{Điều kiện trước} & Người dùng truy cập trang chủ hoặc trang danh sách tin đăng. \\
+\hline
+\textbf{Luồng chính} & 1. Người dùng nhập từ khóa hoặc chọn tiêu chí lọc (khoảng giá, diện tích, loại hình, vị trí, số phòng\ldots). 2. Hệ thống đưa ra gợi ý theo từ khóa và theo ngữ cảnh. 3. Người dùng xác nhận áp dụng bộ lọc. 4. Hệ thống đồng bộ điều kiện lọc vào tham số URL và truy vấn dữ liệu. 5. Hệ thống hiển thị danh sách kết quả có phân trang. \\
+\hline
+\textbf{Luồng thay thế} & 4a. Nếu không có kết quả, hệ thống hiển thị trạng thái rỗng kèm gợi ý điều chỉnh tiêu chí. \\
+\hline
+\textbf{Điều kiện sau} & Danh sách tin phù hợp được hiển thị; đường dẫn kết quả có thể chia sẻ và lưu lại. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case đăng tin cho thuê (Bảng~\ref{tab:uc-post}) thể hiện luồng nhiều bước mà chủ trọ thực hiện, với sự hỗ trợ của AI ở khâu định giá và sinh nội dung.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Đăng tin cho thuê}
+\label{tab:uc-post}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-02 \\
+\hline
+\textbf{Tên} & Đăng tin cho thuê \\
+\hline
+\textbf{Tác nhân} & Chủ trọ / Môi giới; Dịch vụ AI (hỗ trợ) \\
+\hline
+\textbf{Mô tả} & Chủ trọ tạo và xuất bản một tin đăng cho thuê qua luồng nhiều bước. \\
+\hline
+\textbf{Điều kiện trước} & Chủ trọ đã đăng nhập vào kênh chủ trọ. \\
+\hline
+\textbf{Luồng chính} & 1. Nhập thông tin bất động sản và định vị trên bản đồ. 2. Xem khoảng giá tham khảo do AI ước tính. 3. Chọn hạng tin, thời hạn và cấu hình hiển thị. 4. Tải hình ảnh và video. 5. Xem lại đơn hàng và thanh toán qua cổng SePay/ZaloPay (hoặc áp dụng quyền lợi gói hội viên). 6. Hệ thống đưa tin vào hàng chờ kiểm duyệt. \\
+\hline
+\textbf{Luồng thay thế} & 1a. Chủ trọ yêu cầu AI sinh tiêu đề và mô tả tự động. 5a. Nếu chi phí bằng không nhờ quyền lợi gói, tin được xuất bản trực tiếp. Bất kỳ bước nào: chủ trọ lưu bản nháp để tiếp tục sau. \\
+\hline
+\textbf{Điều kiện sau} & Tin đăng được tạo và chuyển sang trạng thái chờ duyệt. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case kiểm duyệt tin đăng (Bảng~\ref{tab:uc-moderate}) mô tả quy trình quản trị viên xét duyệt tin, có bước sàng lọc tự động bằng AI trước khi đưa ra quyết định cuối cùng.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Kiểm duyệt tin đăng}
+\label{tab:uc-moderate}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-03 \\
+\hline
+\textbf{Tên} & Kiểm duyệt tin đăng \\
+\hline
+\textbf{Tác nhân} & Quản trị viên; Dịch vụ AI (hỗ trợ) \\
+\hline
+\textbf{Mô tả} & Quản trị viên xét duyệt tin đăng trước khi cho phép xuất bản. \\
+\hline
+\textbf{Điều kiện trước} & Tồn tại tin đăng đang ở trạng thái chờ duyệt. \\
+\hline
+\textbf{Luồng chính} & 1. Dịch vụ AI sàng lọc sơ bộ và gắn cảnh báo cho các tin nghi vấn. 2. Quản trị viên xem danh sách tin chờ duyệt cùng kết quả sàng lọc. 3. Quản trị viên xem chi tiết và ra quyết định: duyệt, từ chối hoặc yêu cầu chỉnh sửa. 4. Hệ thống cập nhật trạng thái tin và gửi thông báo tới chủ trọ. \\
+\hline
+\textbf{Luồng thay thế} & 3a. Với tin bị tố cáo, quản trị viên xem xét nội dung tố cáo trước khi quyết định gỡ tin hoặc giữ lại. \\
+\hline
+\textbf{Điều kiện sau} & Tin được xuất bản, bị từ chối hoặc được yêu cầu chỉnh sửa; chủ trọ nhận thông báo kết quả. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case đăng nhập và xác thực (Bảng~\ref{tab:uc-auth}) trình bày ba phương thức đăng nhập cùng các luồng đăng ký và đặt lại mật khẩu.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Đăng nhập và xác thực}
+\label{tab:uc-auth}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-04 \\
+\hline
+\textbf{Tên} & Đăng nhập và xác thực \\
+\hline
+\textbf{Tác nhân} & Người dùng (người thuê, chủ trọ) \\
+\hline
+\textbf{Mô tả} & Người dùng đăng nhập để sử dụng các chức năng yêu cầu xác thực. \\
+\hline
+\textbf{Điều kiện trước} & Người dùng đã có tài khoản hoặc tiến hành đăng ký mới. \\
+\hline
+\textbf{Luồng chính} & 1. Người dùng truy cập một chức năng cần đăng nhập; hệ thống mở hộp thoại xác thực ngay tại chỗ. 2. Người dùng chọn một trong ba phương thức: email kèm mật khẩu, liên kết đăng nhập một lần (magic link) gửi qua email, hoặc tài khoản Google. 3. Hệ thống xác thực và cấp phiên đăng nhập. 4. Hệ thống đưa người dùng trở lại đúng trang đang thao tác. \\
+\hline
+\textbf{Luồng thay thế} & 2a. Người dùng mới đăng ký bằng họ tên, email, mật khẩu rồi kích hoạt tài khoản bằng mã xác minh (OTP) gửi qua email. 2b. Quên mật khẩu: người dùng nhận mã xác minh qua email để đặt lại mật khẩu. \\
+\hline
+\textbf{Điều kiện sau} & Phiên đăng nhập được thiết lập; người dùng truy cập được các chức năng cá nhân. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case mua gói hội viên (Bảng~\ref{tab:uc-membership}) mô tả việc chủ trọ mua hoặc nâng cấp gói và thanh toán qua cổng trực tuyến.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Mua gói hội viên}
+\label{tab:uc-membership}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-05 \\
+\hline
+\textbf{Tên} & Mua gói hội viên \\
+\hline
+\textbf{Tác nhân} & Chủ trọ / Môi giới; Cổng thanh toán \\
+\hline
+\textbf{Mô tả} & Chủ trọ mua gói hội viên để nhận hạn mức quyền lợi đăng tin. \\
+\hline
+\textbf{Điều kiện trước} & Chủ trọ đã đăng nhập. \\
+\hline
+\textbf{Luồng chính} & 1. Chủ trọ xem bảng so sánh các hạng gói và quyền lợi. 2. Chọn gói muốn mua. 3. Hệ thống tạo giao dịch và chuyển tới cổng thanh toán (SePay hoặc ZaloPay). 4. Thanh toán thành công; hệ thống cấp hạn mức quyền lợi và ghi giao dịch vào lịch sử. \\
+\hline
+\textbf{Luồng thay thế} & 2a. Nếu đang sở hữu một gói, chủ trọ chọn nâng cấp; hệ thống tính chiết khấu theo thời gian còn lại của gói hiện tại. 4a. Thanh toán thất bại hoặc bị hủy: giao dịch chuyển sang trạng thái tương ứng, không cấp quyền lợi. \\
+\hline
+\textbf{Điều kiện sau} & Gói hội viên được kích hoạt cùng hạn mức quyền lợi; giao dịch được lưu lại để đối soát. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case trò chuyện với trợ lý AI (Bảng~\ref{tab:uc-aichat}) thể hiện cách người thuê tìm và thao tác với tin đăng bằng ngôn ngữ tự nhiên ngay trong cửa sổ hội thoại.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Trò chuyện với trợ lý AI tìm phòng}
+\label{tab:uc-aichat}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-06 \\
+\hline
+\textbf{Tên} & Trò chuyện với trợ lý AI tìm phòng \\
+\hline
+\textbf{Tác nhân} & Người thuê; Dịch vụ AI \\
+\hline
+\textbf{Mô tả} & Người thuê tìm và tra cứu bất động sản bằng ngôn ngữ tự nhiên qua trợ lý hội thoại. \\
+\hline
+\textbf{Điều kiện trước} & Người dùng mở trợ lý hội thoại (một số thao tác như lưu tin yêu cầu đăng nhập). \\
+\hline
+\textbf{Luồng chính} & 1. Người dùng nhập yêu cầu bằng ngôn ngữ tự nhiên. 2. Trợ lý trích xuất tiêu chí, tìm kiếm và trả về danh sách kèm thẻ tin theo luồng thời gian thực. 3. Người dùng yêu cầu xem chi tiết, so sánh, đánh giá giá hoặc lưu tin ngay trong hội thoại. 4. Trợ lý gọi công cụ tương ứng và phản hồi kết quả. \\
+\hline
+\textbf{Luồng thay thế} & 2a. Câu hỏi nằm ngoài phạm vi bất động sản: trợ lý từ chối lịch sự và nhắc lại những việc có thể hỗ trợ. 3a. Thao tác cần đăng nhập (lưu tin) khi chưa đăng nhập: hệ thống yêu cầu đăng nhập rồi tiếp tục. \\
+\hline
+\textbf{Điều kiện sau} & Người dùng nhận được kết quả phù hợp; có thể đã lưu tin vào tài khoản. \\
+\hline
+\end{tabular}
+\end{table}
+
+Use case đăng ký môi giới (Bảng~\ref{tab:uc-broker}) mô tả quy trình một người dùng nộp hồ sơ để được xác minh là môi giới chuyên nghiệp, có sự xét duyệt của quản trị viên.
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case Đăng ký môi giới chuyên nghiệp}
+\label{tab:uc-broker}
+\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
+\hline
+\textbf{Mã use case} & UC-07 \\
+\hline
+\textbf{Tên} & Đăng ký môi giới chuyên nghiệp \\
+\hline
+\textbf{Tác nhân} & Chủ trọ / Người dùng; Quản trị viên \\
+\hline
+\textbf{Mô tả} & Người dùng nộp hồ sơ để được xác minh là môi giới chuyên nghiệp. \\
+\hline
+\textbf{Điều kiện trước} & Người dùng đã đăng nhập và hoàn thiện thông tin cá nhân (họ tên, số điện thoại, ảnh đại diện). \\
+\hline
+\textbf{Luồng chính} & 1. Người dùng tải lên ba giấy tờ: căn cước công dân mặt trước, mặt sau và chứng chỉ hành nghề. 2. Người dùng gửi hồ sơ; hệ thống chuyển hồ sơ sang trạng thái chờ duyệt và thông báo cho quản trị viên. 3. Quản trị viên đối chiếu giấy tờ với cổng thông tin của cơ quan nhà nước. 4. Quản trị viên duyệt; hệ thống gắn cờ môi giới đã xác minh và thông báo cho người dùng. \\
+\hline
+\textbf{Luồng thay thế} & 4a. Quản trị viên từ chối kèm lý do; người dùng nhận thông báo và có thể nộp lại hồ sơ với giấy tờ mới. \\
+\hline
+\textbf{Điều kiện sau} & Tài khoản được xác minh là môi giới chuyên nghiệp, hiển thị huy hiệu và lọc được theo bộ lọc môi giới; hoặc hồ sơ bị từ chối. \\
+\hline
+\end{tabular}
+\end{table}
