@@ -446,7 +446,39 @@ Toàn bộ các trang chức năng dùng chung một bố cục điều hướng
 
 \subsubsection{Bảng điều khiển và thống kê hiệu suất}
 
-Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại và hiệu suất tin đăng. Giao diện tổng hợp các biểu đồ theo thời gian về lượt bấm xem số điện thoại và lượt lưu tin của người dùng, giúp chủ trọ nắm được mức độ quan tâm thực tế đối với các tin của mình.
+Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại (đã trình bày ở mục gói hội viên, Hình~\ref{fig:membership-dashboard}) và hiệu suất tin đăng. Phần thống kê hiệu suất gồm hai khối phân tích bổ trợ -- lượt bấm xem số điện thoại và lượt lưu tin -- giúp chủ trọ nắm được mức độ quan tâm thực tế của người dùng đối với từng tin và toàn bộ danh mục tin của mình.
+
+Khối \textit{phân tích lượt click số điện thoại} tổng hợp ba chỉ số chính cho tin đang chọn: tổng lượt bấm xem số điện thoại, tổng lượt xem tin và tỷ lệ chuyển đổi (tỷ lệ lượt bấm xem số trên lượt xem tin); kèm theo là biểu đồ đường thể hiện lượt click theo thời gian, có ô chọn tin đăng, bộ chọn khoảng thời gian (7, 30, 90 ngày\ldots) và thanh trượt thu phóng để khảo sát chi tiết một giai đoạn (Hình~\ref{fig:owner-stats-click}a). Bên dưới là bảng tổng quan toàn bộ tin đăng kèm tổng lượt click của từng tin, có ô tìm theo tiêu đề, phân trang và nút mở phân tích chi tiết cho từng tin, giúp chủ trọ nhanh chóng xác định đâu là tin thu hút nhiều liên hệ nhất (Hình~\ref{fig:owner-stats-click}b).
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.92\textwidth}\centering
+\includegraphics[width=\linewidth]{thong-ke-hieu-suat-1}\\[3pt]{\small (a)}
+\end{minipage}
+
+\vspace{6pt}
+\begin{minipage}{0.92\textwidth}\centering
+\includegraphics[width=\linewidth]{thong-ke-hieu-suat-2}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Khối phân tích lượt click số điện thoại: (a) các chỉ số tổng hợp, tỷ lệ chuyển đổi và biểu đồ lượt click theo thời gian của tin đang chọn; (b) bảng tổng quan toàn bộ tin đăng kèm tổng lượt click}
+\label{fig:owner-stats-click}
+\end{figure}
+
+Tương tự, khối \textit{phân tích lượt lưu tin} cho biết tổng lượt lưu trên tất cả tin đăng và xu hướng lượt lưu theo thời gian của một tin được chọn (Hình~\ref{fig:owner-stats-save}a). Một biểu đồ cột ngang xếp hạng các tin theo số lượt lưu, kèm bảng tổng quan lượt lưu của toàn bộ tin và lối tắt xem xu hướng từng tin, giúp chủ trọ nhận diện những tin được người dùng quan tâm lưu lại nhiều nhất (Hình~\ref{fig:owner-stats-save}b). Nhờ hai khối phân tích này, chủ trọ có cơ sở dữ liệu để điều chỉnh nội dung, giá hoặc hạng tin nhằm tăng hiệu quả tiếp cận.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.92\textwidth}\centering
+\includegraphics[width=\linewidth]{thong-ke-hieu-suat-3}\\[3pt]{\small (a)}
+\end{minipage}
+
+\vspace{6pt}
+\begin{minipage}{0.92\textwidth}\centering
+\includegraphics[width=\linewidth]{thong-ke-hieu-suat-4}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Khối phân tích lượt lưu tin: (a) tổng lượt lưu và biểu đồ lượt lưu theo thời gian của tin đang chọn; (b) biểu đồ cột xếp hạng và bảng tổng quan lượt lưu của toàn bộ tin đăng}
+\label{fig:owner-stats-save}
+\end{figure}
 
 \subsubsection{Quản lý tin đăng}
 
@@ -560,7 +592,28 @@ Trong quá trình đăng tin, chủ trọ có thể lưu lại bản nháp ở b
 
 \subsubsection{Quản lý khách hàng tiềm năng}
 
-Hệ thống ghi nhận những người dùng đã quan tâm tới tin của chủ trọ (chẳng hạn bấm xem số điện thoại) và tổng hợp thành danh sách khách hàng tiềm năng, kèm các chỉ số như tổng số khách, tổng lượt bấm xem liên hệ và số người dùng duy nhất. Đây là cơ sở để chủ trọ chủ động liên hệ và chăm sóc khách.
+Hệ thống ghi nhận những người dùng đã quan tâm tới tin của chủ trọ (chẳng hạn bấm xem số điện thoại) và tổng hợp thành danh sách khách hàng tiềm năng. Trang quản lý khách hàng mở đầu bằng ba chỉ số: tổng số khách hàng, tổng lượt bấm xem số điện thoại và số người dùng duy nhất; bên dưới là bảng danh sách khách hàng kèm ô tìm kiếm theo tên hoặc thông tin liên hệ. Mỗi dòng hiển thị họ tên, email, số điện thoại (kèm dấu đã xác thực), tổng số lần bấm xem liên hệ và các tin mà khách đã xem (Hình~\ref{fig:owner-customers}). Đây là cơ sở để chủ trọ chủ động liên hệ và chăm sóc khách.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{quan-ly-khach-hang}
+\caption{Trang quản lý khách hàng tiềm năng: các chỉ số tổng hợp và bảng danh sách khách hàng đã quan tâm tới tin của chủ trọ}
+\label{fig:owner-customers}
+\end{figure}
+
+Từ danh sách, chủ trọ có thể mở cửa sổ chi tiết theo hai chiều bổ trợ. Chọn một khách hàng sẽ hiển thị hồ sơ khách: tổng số lần bấm xem, tổng số tin đã xem, lần xem gần nhất, thông tin liên hệ (email và số điện thoại kèm nút sao chép) cùng lịch sử các tin mà khách đã bấm xem số điện thoại (Hình~\ref{fig:owner-customers-detail}a). Ngược lại, chọn một tin đăng sẽ hiển thị danh sách những khách hàng cùng quan tâm tới tin đó, kèm tổng lượt xem số điện thoại và số người dùng duy nhất của tin (Hình~\ref{fig:owner-customers-detail}b). Hai góc nhìn này giúp chủ trọ vừa theo dõi từng khách hàng, vừa đánh giá sức hút của từng tin đăng.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{quan-ly-khach-hang-dialog}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{quan-ly-khach-hang-dialog-theo-tro}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Cửa sổ chi tiết khách hàng tiềm năng: (a) hồ sơ một khách hàng kèm lịch sử xem số điện thoại; (b) danh sách khách hàng cùng quan tâm tới một tin đăng}
+\label{fig:owner-customers-detail}
+\end{figure}
 
 \subsubsection{Gói hội viên}
 
@@ -622,13 +675,21 @@ Chọn một giao dịch để mở cửa sổ chi tiết, trình bày đầy đ
 \label{fig:payment-history-detail}
 \end{figure}
 
-\subsubsection{Hồ sơ chủ trọ và tài nguyên hỗ trợ}
-
-Chủ trọ có thể cập nhật hồ sơ công khai (thông tin liên hệ, ảnh đại diện\ldots) hiển thị trên các tin đăng và trang cá nhân của mình. Ngoài ra, kênh chủ trọ cung cấp các trang tài nguyên công khai gồm báo giá dịch vụ, hướng dẫn thanh toán và hướng dẫn sử dụng, giúp người dùng mới làm quen nhanh với quy trình đăng tin và thanh toán.
-
 \subsubsection{Đăng ký trở thành môi giới chuyên nghiệp}
 
-Bên cạnh chủ trọ thông thường, hệ thống cho phép người dùng đăng ký trở thành \textit{môi giới chuyên nghiệp} -- một danh hiệu được xác minh nhằm tăng độ tin cậy với người thuê. Chức năng đăng ký nằm trong phần quản lý tài khoản của kênh chủ trọ, truy cập nhanh qua mục \textit{Môi giới chuyên nghiệp} trên trình đơn tài khoản. Để nộp hồ sơ, người dùng cần hoàn thiện thông tin cá nhân (họ tên, số điện thoại, ảnh đại diện) rồi tải lên ba giấy tờ bắt buộc: ảnh căn cước công dân mặt trước, mặt sau và ảnh chứng chỉ hành nghề môi giới. Ảnh được tải trực tiếp lên kho lưu trữ đối tượng qua đường dẫn ký sẵn (presigned URL) ngay khi chọn tệp, và hệ thống xác nhận trạng thái tải lên của từng ảnh trước khi cho phép gửi hồ sơ.
+Bên cạnh chủ trọ thông thường, hệ thống cho phép người dùng đăng ký trở thành \textit{môi giới chuyên nghiệp} -- một danh hiệu được xác minh nhằm tăng độ tin cậy với người thuê. Chức năng đăng ký nằm trong phần quản lý tài khoản của kênh chủ trọ, truy cập nhanh qua mục \textit{Môi giới chuyên nghiệp} trên trình đơn tài khoản. Để nộp hồ sơ, người dùng cần hoàn thiện thông tin cá nhân (họ tên, số điện thoại, ảnh đại diện) rồi tải lên ba giấy tờ bắt buộc: ảnh căn cước công dân mặt trước, mặt sau và ảnh chứng chỉ hành nghề môi giới. Ảnh được tải trực tiếp lên kho lưu trữ đối tượng qua đường dẫn ký sẵn (presigned URL) ngay khi chọn tệp, và hệ thống xác nhận trạng thái tải lên của từng ảnh trước khi cho phép gửi hồ sơ (Hình~\ref{fig:broker-register}). Giao diện cũng nhắc người dùng hoàn thiện thông tin cá nhân còn thiếu trước khi gửi và chỉ kích hoạt nút gửi hồ sơ khi đủ điều kiện.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{moi-gioi-chuyen-nghiep-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{moi-gioi-chuyen-nghiep-2}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Biểu mẫu đăng ký môi giới chuyên nghiệp: (a) lợi ích của hồ sơ xác minh và tải ảnh chứng chỉ hành nghề; (b) tải ảnh căn cước mặt trước, mặt sau và gửi hồ sơ xác thực}
+\label{fig:broker-register}
+\end{figure}
 
 Hồ sơ đi qua bốn trạng thái: \textit{chưa đăng ký}, \textit{chờ duyệt}, \textit{được duyệt} và \textit{bị từ chối}. Sau khi gửi, hồ sơ chuyển sang trạng thái chờ duyệt và giao diện tự động cập nhật định kỳ để theo dõi kết quả. Quản trị viên xét duyệt thủ công bằng cách đối chiếu giấy tờ với cổng thông tin năng lực hành nghề xây dựng của cơ quan nhà nước, sau đó duyệt hoặc từ chối kèm lý do. Khi bị từ chối, người dùng xem được lý do và có thể nộp lại hồ sơ với giấy tờ mới; khi được duyệt, tài khoản được gắn cờ môi giới đã xác minh. Mỗi bước trong quy trình đều phát thông báo tương ứng: quản trị viên nhận thông báo khi có hồ sơ mới, còn người đăng ký nhận thông báo khi hồ sơ được duyệt hoặc bị từ chối.
 
