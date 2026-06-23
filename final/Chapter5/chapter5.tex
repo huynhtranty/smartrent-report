@@ -378,7 +378,24 @@ Người dùng mới đăng ký bằng họ tên, email và mật khẩu (có ô
 
 \subsubsection{Tin tức và thông báo}
 
-Chuyên mục tin tức cung cấp danh sách bài viết có lọc theo chuyên mục, tìm kiếm theo từ khóa, bài nổi bật, khối ``xem nhiều nhất'' và trang chi tiết bài viết (kết xuất SSR).
+Chuyên mục tin tức cung cấp danh sách bài viết về thị trường bất động sản, được phân loại theo chuyên mục (tin tức, blog, chính sách, thị trường, dự án\ldots) với thanh tab lọc nhanh và ô tìm kiếm theo từ khóa. Trang danh sách làm nổi một bài viết tiêu biểu ở đầu trang, kèm cột bên ``bài viết đọc nhiều nhất'' để gợi mở nội dung được quan tâm (Hình~\ref{fig:news}a). Mỗi bài viết có trang chi tiết được kết xuất phía máy chủ (SSR) nhằm tối ưu tốc độ hiển thị và SEO, trình bày tiêu đề, thông tin tác giả, thời điểm đăng, lượt xem và nội dung kèm hình ảnh (Hình~\ref{fig:news}b). Ngoài ra, các bài viết mới nhất còn được tổng hợp thành một khối riêng ngay trên trang chủ để người dùng tiếp cận thông tin thị trường mà không cần vào chuyên mục (Hình~\ref{fig:news}c).
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{news-listing-page}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{news-detail-page}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.7\textwidth}\centering
+\includegraphics[width=\linewidth]{news-homepage}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Chuyên mục tin tức: (a) trang danh sách bài viết với tab lọc chuyên mục, tìm kiếm và cột bài đọc nhiều nhất; (b) trang chi tiết bài viết kết xuất phía máy chủ; (c) khối tin tức mới nhất trên trang chủ}
+\label{fig:news}
+\end{figure}
 
 Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thông báo thời gian thực} qua WebSocket, kèm chỉ báo số thông báo chưa đọc và danh sách thông báo gần nhất khi mở chuông thông báo (Hình~\ref{fig:notification}). Phía máy chủ, mỗi thông báo được lưu lại rồi đẩy ngay tới đúng người nhận: hệ thống dùng giao thức STOMP trên một điểm kết nối WebSocket (\texttt{/ws}, có cơ chế dự phòng SockJS), mỗi người dùng lắng nghe trên kênh riêng theo định danh (\texttt{/topic/notifications/\{recipientId\}}) nên chỉ nhận thông báo của chính mình. Các sự kiện sinh thông báo bao gồm: kết quả kiểm duyệt tin đăng (được duyệt, bị từ chối, yêu cầu chỉnh sửa, bị gỡ hay đăng lại); vòng đời tin đăng như cảnh báo sắp hết hạn ở các mốc trước 7, 3 và 1 ngày; tiến trình đăng ký môi giới (đã tiếp nhận, được duyệt, bị từ chối); diễn biến tố cáo tin đăng; và thông báo khi một người dùng đang được theo dõi đăng tin mới. Quản trị viên cũng nhận các thông báo nghiệp vụ tương ứng (có tin mới bị tố cáo, có hồ sơ môi giới chờ duyệt\ldots) trên cùng cơ chế.
 
