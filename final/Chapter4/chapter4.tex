@@ -816,18 +816,20 @@ Giao diện dành cho quản trị viên được thiết kế theo dạng bản
 
 \subsection{Giao diện chatbot AI}
 
-Giao diện chatbot AI được thiết kế dưới dạng một cửa sổ hội thoại nổi đặt tại góc phải bên dưới của màn hình webapp dành cho người thuê trọ. Giao diện này cung cấp trải nghiệm tương tác liền mạch, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang. Cấu trúc thiết kế của widget chatbot AI bao gồm:
+Giao diện chatbot AI được thiết kế dưới dạng một cửa sổ hội thoại nổi đặt tại góc phải bên dưới của màn hình webapp dành cho người thuê trọ, như minh họa trong Hình~\ref{fig:design-ai-chatbot}. Giao diện này cung cấp trải nghiệm tương tác liền mạch, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=7.5cm]{AI-chatbox-ui}
+  \caption{Bố cục thiết kế giao diện của widget chatbot AI hỗ trợ tìm phòng trọ}
+  \label{fig:design-ai-chatbot}
+\end{figure}
+
+Cấu trúc thiết kế của widget chatbot AI bao gồm:
 \begin{itemize}
     \item \textbf{Thanh tiêu đề:} Chứa avatar của trợ lý AI, tên trợ lý, nút thu nhỏ/mở rộng cửa sổ chat, và nút xóa lịch sử hội thoại để bắt đầu phiên làm việc mới.
     \item \textbf{Khung nội dung trò chuyện:} Hiển thị các bong bóng chat phân biệt màu sắc giữa câu hỏi của người dùng và câu trả lời của trợ lý. Trạng thái phản hồi dạng luồng của mô hình ngôn ngữ lớn được biểu diễn sinh động qua một con trỏ nhấp nháy. Khi mô hình thực hiện các tác vụ tính toán ẩn, một chỉ báo tiến trình gọi công cụ sẽ hiển thị (ví dụ: ``Đang tìm kiếm tin đăng...'', ``Đang so sánh phòng trọ...'') để người dùng biết hệ thống đang hoạt động.
     \item \textbf{Khối tin đăng gợi ý:} Khi trợ lý AI gợi ý các phòng trọ phù hợp, các thẻ tin thu gọn (chứa ảnh đại diện, giá, diện tích, địa chỉ) sẽ được hiển thị ngay bên dưới bong bóng chat dưới dạng một hàng ngang có thể trượt qua lại.
     \item \textbf{Hộp thoại xem chi tiết tin đăng:} Khi người dùng nhấp vào một thẻ tin đăng trong khung chat, một hộp thoại (shadcn/ui) sẽ mở ra hiển thị đầy đủ thông tin chi tiết và album ảnh của phòng trọ đó mà không làm đóng cửa sổ chat hay chuyển hướng trang, giúp duy trì mạch hội thoại của người dùng.
 \end{itemize}
-Thiết kế giao diện của widget chatbot AI được phác thảo cụ thể trong Hình~\ref{fig:design-ai-chatbot}.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.45\textwidth]{AI-chatbox-ui}
-  \caption{Bố cục thiết kế giao diện của widget chatbot AI hỗ trợ tìm phòng trọ}
-  \label{fig:design-ai-chatbot}
-\end{figure}
