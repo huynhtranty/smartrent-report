@@ -3,30 +3,64 @@
 
 \section{Môi trường phát triển}
 
-% TODO: Nội dung (mục mới bổ sung theo cấu trúc báo cáo).
+Để phục vụ quá trình nghiên cứu và phát triển hệ thống SmartRent một cách chuyên nghiệp và đồng bộ, nhóm đã thống nhất cấu hình môi trường phát triển nhất quán giữa các thành viên. Các công cụ và phần mềm được phân chia cụ thể như sau:
+\begin{itemize}
+    \item \textbf{Hệ điều hành:} Các thành viên sử dụng Windows 11 hoặc macOS cho môi trường cục bộ; máy chủ chạy thật và môi trường staging sử dụng hệ điều hành Linux Ubuntu 22.04 LTS nhằm bảo đảm tính ổn định và tối ưu hiệu năng.
+    \item \textbf{Công cụ lập trình (IDE):} IntelliJ IDEA Ultimate được sử dụng để phát triển hệ thống Backend (Spring Boot); PyCharm và Visual Studio Code sử dụng cho dịch vụ AI (FastAPI); Visual Studio Code kết hợp các công cụ hỗ trợ TypeScript được dùng để phát triển các ứng dụng giao diện Frontend (Next.js).
+    \item \textbf{Môi trường ảo hóa và quản lý cơ sở dữ liệu:} Docker và Docker Compose được sử dụng để ảo hóa các thành phần phụ trợ cục bộ bao gồm cơ sở dữ liệu MySQL, bộ đệm Redis và công cụ tìm kiếm Elasticsearch, giúp nhất quán môi trường thử nghiệm giữa các lập trình viên. DBeaver và DataGrip được dùng để truy vấn và quản lý trực quan dữ liệu.
+    \item \textbf{Quản lý phiên bản và tiến độ:} Git được chọn làm hệ thống quản lý mã nguồn phiên bản kết hợp với kho lưu trữ trực tuyến GitHub. Tiến độ dự án và các tác vụ phát triển hàng ngày được quản lý trực quan trên nền tảng Jira theo mô hình Scrum.
+\end{itemize}
 
 \section{Các giai đoạn của đề tài}
 
-% TODO: Nội dung.
+Đề tài được chia thành ba giai đoạn phát triển chính kéo dài từ tháng 12 năm 2025 đến tháng 7 năm 2026, đi từ việc khảo sát thiết kế cơ bản cho đến khi hoàn thiện hệ thống và triển khai thực tế.
 
 \subsection{Xây dựng phiên bản MVP (Tháng 12/2025 -- 02/2026)}
 
-% TODO: Nội dung.
+Trong giai đoạn này, nhóm tập trung xây dựng nền tảng cốt lõi của hệ thống:
+\begin{itemize}
+    \item Khảo sát chi tiết bài toán, phân tích nghiệp vụ, vẽ các sơ đồ use case và đặc tả yêu cầu chức năng cũng như phi chức năng của hệ thống.
+    \item Thiết kế kiến trúc tổng thể dưới dạng nguyên khối mô-đun (Modular Monolith) cho hệ thống Backend bằng Java Spring Boot; thiết kế và chuẩn hóa sơ đồ thực thể liên kết (ERD) cho cơ sở dữ liệu quan hệ MySQL.
+    \item Dựng khung dự án Frontend bằng Next.js (Pages Router) sử dụng TypeScript và cấu hình hệ thống Tailwind CSS v4 cùng bộ thư viện thành phần Radix UI.
+    \item Hoàn thiện chức năng đăng ký, đăng nhập xác thực người dùng bằng cặp mã thông báo JWT (JSON Web Token) kết hợp gửi mã xác minh OTP qua email; xây dựng giao diện hiển thị danh sách tin đăng và tìm kiếm cơ bản.
+\end{itemize}
 
-\subsection{Hoàn thiện các chức năng nghiệp vụ (Tháng 02/2025 -- 04/2026)}
+\subsection{Hoàn thiện các chức năng nghiệp vụ (Tháng 02/2026 -- 04/2026)}
 
-% TODO: Nội dung.
+Giai đoạn này tập trung phát triển các tính năng nghiệp vụ sâu của cả ba đối tượng người dùng:
+\begin{itemize}
+    \item Tích hợp Elasticsearch vào Backend, cấu hình bộ phân tích tiếng Việt để phục vụ chức năng tìm kiếm toàn văn đạt hiệu năng cao và chính xác.
+    \item Xây dựng biểu mẫu đăng tin cho thuê nhiều bước dành cho chủ trọ, tích hợp cơ chế tự động lưu bản nháp tin đăng để tránh mất mát dữ liệu do sự cố mạng.
+    \item Thiết lập các chức năng nâng cao dành cho người thuê trọ bao gồm bản đồ tương tác gom cụm điểm tin (Google Maps), so sánh song song các bất động sản và hệ thống lưu tin yêu thích, theo dõi người đăng.
+    \item Tích hợp cổng thanh toán trực tuyến SePay và ZaloPay; xây dựng nghiệp vụ nạp tiền ví nội bộ, mua gói hội viên và nâng cấp hạn mức đẩy tin cho chủ trọ.
+    \item Xây dựng hoàn chỉnh phân hệ Web quản trị (Admin Dashboard) hiển thị biểu đồ thống kê trực quan, phê duyệt hồ sơ môi giới chuyên nghiệp và quản lý tin đăng.
+\end{itemize}
 
 \subsection{Tích hợp AI nâng cao, thanh toán và hoàn thiện hệ thống (Tháng 05/2026 -- 07/2026)}
 
-% TODO: Nội dung.
+Giai đoạn cuối cùng tập trung vào việc tích hợp các mô hình trí tuệ nhân tạo và triển khai vận hành:
+\begin{itemize}
+    \item Xây dựng máy chủ AI Service độc lập bằng Python FastAPI, kết nối tới Gemini API thông qua LiteLLM gateway để kiểm soát tải và chuyển đổi mô hình linh hoạt.
+    \item Thiết lập trợ lý hội thoại AI Agent dựa trên cơ chế gọi hàm (function calling) để tương tác tự nhiên với người thuê trọ thông qua SSE.
+    \item Phát triển tính năng định giá bất động sản tự động tích hợp Trí tuệ nhân tạo (Gemini LLM) kết hợp cơ chế lấy ngữ cảnh dữ liệu so sánh thực tế tại khu vực lân cận.
+    \item Xây dựng hệ thống gợi ý lai kết hợp lọc cộng tác (collaborative filtering) và lọc dựa trên nội dung (content-based), đi kèm bộ kiểm duyệt nội dung tin đăng tự động bằng AI.
+    \item Đóng gói các dịch vụ thành ảnh Docker, thiết lập quy trình tích hợp và triển khai liên tục (CI/CD) qua GitHub Actions, tiến hành deploy thực tế lên môi trường đám mây qua Dokploy và Traefik proxy.
+\end{itemize}
 
 \section{Quy trình làm việc nhóm}
 \label{sec:teamwork}
 
 \subsection{Phân công vai trò}
 
-% TODO: Nội dung (phần này còn để trống trong file Báo Cáo Cuối Kỳ).
+Quy mô đề tài đòi hỏi sự phối hợp chặt chẽ giữa các thành viên. Nhóm đã phân chia vai trò cụ thể cho từng thành viên bám sát thế mạnh chuyên môn của mỗi người:
+\begin{itemize}
+    \item \textbf{Trường Vũ (Nhóm trưởng):} Chịu trách nhiệm thiết kế kiến trúc tổng thể hệ thống, thiết lập cổng kết nối LiteLLM và Langfuse, phát triển lõi xử lý của tác nhân hội thoại AI Agent, định cấu hình RAG và thực hiện đánh giá, review toàn bộ mã nguồn Backend.
+    \item \textbf{Ty:} Phụ trách thiết lập hạ tầng triển khai trên máy chủ đám mây, cấu hình Docker, cài đặt nền tảng Dokploy và máy chủ Traefik reverse proxy. Xây dựng quy trình tự động hóa CI/CD thông qua GitHub Actions và chủ trì công tác kiểm thử, đánh giá hệ thống ở Chương 6.
+    \item \textbf{Tường:} Phụ trách thiết kế chi tiết cơ sở dữ liệu quan hệ (CSDL MySQL), viết tài liệu đặc tả các bảng dữ liệu, và chịu trách nhiệm phát triển chính các module nghiệp vụ cốt lõi ở Backend như xác thực người dùng, đẩy tin, nạp tiền và tích hợp cổng thanh toán.
+    \item \textbf{Vy:} Chịu trách nhiệm phát triển các thành phần trí tuệ nhân tạo tại dịch vụ AI, bao gồm cơ chế định giá bất động sản dựa trên mô hình ngôn ngữ lớn Gemini (LLM-based pricing), thuật toán xếp hạng gợi ý lai (hybrid recommendation), và cấu hình các kịch bản prompts kiểm duyệt hình ảnh và văn bản.
+    \item \textbf{Phát:} Phụ trách phát triển chính ứng dụng phía máy khách dành cho người dùng cuối (Next.js Webapp), chịu trách nhiệm hiển thị các giao diện người thuê (tìm kiếm bản đồ, so sánh, lưu tin) và chủ trọ (biểu mẫu đăng tin nhiều bước, quản lý bản nháp, ví tiền).
+    \item \textbf{Hùng:} Phụ trách phát triển ứng dụng quản trị hệ thống (Next.js Admin), thiết kế các bảng quản lý dữ liệu hiệu năng cao, xây dựng dashboard thống kê doanh thu, rà soát và hoàn thiện danh mục thuật ngữ viết tắt của toàn bộ đồ án.
+\end{itemize}
 
 \subsection{Phương pháp làm việc nhóm}
 
@@ -741,7 +775,7 @@ Module AI là thành phần đem lại khác biệt cốt lõi của SmartRent s
 
 Trọng tâm của module AI là một tác tử hội thoại (conversational agent) đóng vai trò trợ lý ảo, giúp người dùng tìm và tra cứu bất động sản bằng ngôn ngữ tự nhiên thay vì thao tác qua bộ lọc. Tác tử được xây dựng trên nền OpenAI Agents SDK và điều phối bởi một thành phần điều phối (orchestrator): với mỗi truy vấn, hệ thống tạo một phiên tác tử kèm tập công cụ (tool) và bộ chỉ dẫn ổn định, sau đó chạy vòng lặp gọi công cụ (function calling) tối đa mười hai lượt để hoàn tất yêu cầu. Mô hình ngôn ngữ phía sau được truy cập qua một cổng trung gian (LiteLLM gateway) nên có thể thay đổi nhà cung cấp mà không ảnh hưởng phần còn lại của hệ thống.
 
-Trước khi mô hình xử lý câu hỏi, một bước truy hồi tăng cường (Retrieval-Augmented Generation -- RAG) sẽ dò trong kho tri thức nội bộ để rút ra ngữ cảnh liên quan: mã tỉnh/thành và mã quận/huyện tương ứng với địa danh người dùng nhắc tới, mã tiện nghi, các câu hỏi thường gặp và hướng dẫn sử dụng nền tảng. Khối ngữ cảnh này được chèn vào ngay trước câu hỏi, giúp tác tử gọi công cụ với tham số chính xác (ví dụ ánh xạ "Cầu Giấy" thành \texttt{provinceCode} và \texttt{districtId} đúng) mà vẫn giữ phần chỉ dẫn hệ thống bất biến để tận dụng bộ đệm prompt. Tác tử có sẵn khoảng mười bốn công cụ phục vụ các nghiệp vụ khác nhau: tìm kiếm (\texttt{search\_listings}), xem chi tiết (\texttt{get\_listing\_detail}), so sánh (\texttt{compare\_listings}), ước tính giá thị trường (\texttt{get\_price\_estimate}), tra cứu lịch sử giá, gợi ý cá nhân hóa, lưu tin, xem thông tin tài khoản, kiểm tra tin của chủ trọ, báo cáo tin vi phạm và tra cứu địa chỉ cũ -- mới. Câu trả lời được truyền về giao diện theo luồng thời gian thực (Server-Sent Events -- SSE): trước mỗi lần gọi công cụ tác tử phát một câu dẫn ngắn để người dùng thấy trợ lý đang xử lý, kèm trạng thái và kết quả của từng công cụ. Lịch sử hội thoại được cắt theo ngân sách token và giữ tham chiếu tới các tin vừa hiển thị, nhờ đó trợ lý hiểu được các chỉ định ngữ cảnh như "xem cái thứ hai" hay "so sánh hai tin trên".
+Trước khi mô hình xử lý câu hỏi, một bước RAG sẽ dò trong kho tri thức nội bộ để rút ra ngữ cảnh liên quan: mã tỉnh/thành và mã quận/huyện tương ứng với địa danh người dùng nhắc tới, mã tiện nghi, các câu hỏi thường gặp và hướng dẫn sử dụng nền tảng. Khối ngữ cảnh này được chèn vào ngay trước câu hỏi, giúp tác tử gọi công cụ với tham số chính xác (ví dụ ánh xạ "Cầu Giấy" thành \texttt{provinceCode} và \texttt{districtId} đúng) mà vẫn giữ phần chỉ dẫn hệ thống bất biến để tận dụng bộ đệm prompt. Tác tử có sẵn khoảng mười bốn công cụ phục vụ các nghiệp vụ khác nhau: tìm kiếm (\texttt{search\_listings}), xem chi tiết (\texttt{get\_listing\_detail}), so sánh (\texttt{compare\_listings}), ước tính giá thị trường (\texttt{get\_price\_estimate}), tra cứu lịch sử giá, gợi ý cá nhân hóa, lưu tin, xem thông tin tài khoản, kiểm tra tin của chủ trọ, báo cáo tin vi phạm và tra cứu địa chỉ cũ -- mới. Câu trả lời được truyền về giao diện theo SSE: trước mỗi lần gọi công cụ tác tử phát một câu dẫn ngắn để người dùng thấy trợ lý đang xử lý, kèm trạng thái và kết quả của từng công cụ. Lịch sử hội thoại được cắt theo ngân sách token và giữ tham chiếu tới các tin vừa hiển thị, nhờ đó trợ lý hiểu được các chỉ định ngữ cảnh như "xem cái thứ hai" hay "so sánh hai tin trên".
 
 Để người đọc dễ hình dung trải nghiệm, các hình minh họa dưới đây được trích từ một phiên trò chuyện liên tục, đi từ lúc mở trợ lý cho tới khi hoàn tất một loạt thao tác tìm -- xem -- so sánh -- đánh giá. Khi mở, widget hiển thị lời chào và gợi ý người dùng cho biết loại bất động sản cần tìm (Hình~\ref{fig:ai-chat-intro}a). Do được giới hạn phạm vi ngay trong chỉ dẫn hệ thống, trợ lý chỉ hỗ trợ các chủ đề liên quan tới bất động sản và việc sử dụng nền tảng; với câu hỏi nằm ngoài lĩnh vực (chẳng hạn hỏi về lập trình), trợ lý từ chối một cách lịch sự và nhắc lại những việc mình có thể giúp (Hình~\ref{fig:ai-chat-intro}b).
 
@@ -800,9 +834,9 @@ Ngoài tìm kiếm, trợ lý còn liên kết với các năng lực khác củ
 
 \subsection{AI đánh giá giá bất động sản}
 
-Để giúp chủ trọ định giá hợp lý, hệ thống cung cấp tính năng ước tính khoảng giá thị trường dựa trên dữ liệu các tin đăng tương đương. Tính năng xuất hiện ở bước 2 của quy trình đăng tin (đã giới thiệu ở phần giao diện chủ trọ) và cũng được trợ lý hội thoại tái sử dụng khi người thuê hỏi một mức giá có hợp lý hay không. Về phân chia trách nhiệm: phần xử lý nghiệp vụ (backend Java) thu thập đặc trưng của bất động sản người dùng vừa nhập -- tọa độ, loại hình, diện tích, khu vực -- rồi gọi sang dịch vụ AI để ước tính, còn dịch vụ AI đảm nhận phần phân tích dữ liệu và mô hình.
+Để giúp chủ trọ định giá hợp lý, hệ thống cung cấp tính năng ước tính khoảng giá thị trường dựa trên dữ liệu các tin đăng tương đương. Tính năng xuất hiện ở bước 2 của quy trình đăng tin (đã giới thiệu ở phần giao diện chủ trọ) và cũng được trợ lý hội thoại tái sử dụng khi người thuê hỏi một mức giá có hợp lý hay không. Về phân chia trách nhiệm: phần xử lý nghiệp vụ (backend Java) thu thập đặc trưng của bất động sản người dùng vừa nhập -- loại hình, diện tích, khu vực (tỉnh/thành, quận/huyện, phường/xã) -- rồi gọi sang dịch vụ AI để ước tính, còn dịch vụ AI đảm nhận phần kết nối mô hình ngôn ngữ lớn (Gemini) để tính toán định giá.
 
-Tại dịch vụ AI, việc ước tính dựa trên một mô hình học máy thay vì so khớp thủ công từng tin. Cụ thể, hệ thống dùng mô hình XGBoost dạng hợp tầng (ensemble) gồm hai tầng: tầng thứ nhất dự đoán mức giá trung tâm, tầng thứ hai dự đoán độ bất định (sai số) để dựng khoảng tin cậy; kết quả lấy trung bình từ vài cặp mô hình với siêu tham số khác nhau nhằm tăng độ ổn định. Đặc trưng đầu vào gồm tọa độ địa lý, thời điểm, loại hình và khu vực (tỉnh/quận/phường được mã hóa), cùng nhóm đặc trưng không gian theo k láng giềng gần nhất (k-Nearest Neighbors -- KNN): giá trung bình và khoảng cách trung bình tới khoảng mười tin lân cận gần nhất quanh vị trí. Mô hình trả về mốc giá dự đoán cùng cận dưới và cận trên (khoảng tin cậy chừng chín mươi phần trăm), tương ứng ba mốc tối thiểu, trung bình và tối đa hiển thị cho người dùng. Khi đối chiếu với mức giá chủ trọ dự kiến, hệ thống còn tính tỷ lệ chênh lệch và phân loại (rất thấp, thấp, hợp lý, cao, rất cao) kèm một khuyến nghị ngắn gọn -- chính cơ chế này được trợ lý hội thoại tái sử dụng khi người thuê hỏi một mức giá có hợp lý hay không. Trường hợp mô hình chưa sẵn sàng, hệ thống chuyển sang phương án dự phòng theo quy tắc: ước tính từ đơn giá mỗi mét vuông theo từng thành phố, hiệu chỉnh theo hạng khu vực (trung tâm hay ngoại vi) và theo loại hình bất động sản, bảo đảm luôn trả về một khoảng giá hợp lý. Kết quả được trình bày dưới dạng thẻ kết quả với khoảng giá đề xuất nổi bật kèm ba mốc giá (Hình~\ref{fig:ai-price}).
+Tại dịch vụ AI, việc ước tính giá không dựa trên các mô hình hồi quy học máy truyền thống vốn phụ thuộc nặng nề vào khối lượng dữ liệu huấn luyện cục bộ đồ sộ. Thay vào đó, hệ thống ứng dụng trực tiếp mô hình ngôn ngữ lớn (Gemini) thông qua phương pháp học ngữ cảnh (In-Context Learning). Quy trình định giá được thực hiện như sau: Trước tiên, backend sẽ truy vấn cơ sở dữ liệu để lấy danh sách từ 5 đến 10 bài đăng thực tế đang hoạt động có thuộc tính tương tự (cùng loại hình, diện tích xấp xỉ) nằm trong cùng khu vực quận/huyện hoặc phường/xã lân cận. Các điểm dữ liệu so sánh này sẽ được định dạng và chèn trực tiếp vào prompt gửi đến Gemini đóng vai trò làm thông tin ngữ cảnh thị trường thời gian thực (Few-shot context). Mô hình Gemini sau đó tiến hành phân tích đặc trưng của bất động sản mục tiêu (diện tích, loại hình, các tiện ích đi kèm như máy lạnh, máy giặt, có gác lửng...) đối chiếu với các mẫu dữ liệu thực tế được cung cấp để tính toán suy luận. Kết quả trả về bao gồm khoảng giá đề xuất tối thiểu, trung bình, tối đa cùng phần lập luận chi tiết lý do định giá và mức độ tin cậy. Khi đối chiếu với mức giá chủ trọ dự kiến, hệ thống còn tính tỷ lệ chênh lệch và phân loại (rất thấp, thấp, hợp lý, cao, rất cao) kèm một khuyến nghị ngắn gọn -- chính cơ chế này được trợ lý hội thoại tái sử dụng khi người thuê hỏi một mức giá có hợp lý hay không. Trường hợp cơ sở dữ liệu chưa có đủ tin đăng lân cận làm ngữ cảnh, Gemini sẽ tự động áp dụng tri thức kinh tế và mặt bằng giá chung của thành phố mà mô hình đã học được trong quá trình tiền huấn luyện để đưa ra nhận định tham khảo an toàn, tránh tình trạng lỗi hệ thống (cold start). Kết quả được trình bày dưới dạng thẻ kết quả với khoảng giá đề xuất nổi bật kèm ba mốc giá (Hình~\ref{fig:ai-price}).
 
 \begin{figure}[htbp]
 \centering
@@ -837,7 +871,17 @@ Phần xếp hạng tại dịch vụ AI dùng mô hình lai (hybrid) kết hợ
 
 \subsection{AI kiểm duyệt nội dung bài đăng}
 
-% TODO: Nội dung.
+Để đảm bảo chất lượng thông tin, hạn chế tình trạng spam, tin giả và hình ảnh không phù hợp trên sàn giao dịch, hệ thống SmartRent tích hợp một quy trình kiểm duyệt bài đăng tự động sử dụng trí tuệ nhân tạo. Quy trình này hoạt động như một bộ lọc sơ bộ trước khi tin đăng được hiển thị hoặc chuyển tới quản trị viên xét duyệt thủ công.
+
+Bộ kiểm duyệt AI được xây dựng dưới dạng dịch vụ bất đồng bộ tại máy chủ AI Service, thực hiện hai tác vụ đối soát chính:
+\begin{enumerate}
+    \item \textbf{Kiểm duyệt nội dung văn bản (Text Moderation):} Hệ thống gửi tiêu đề và mô tả tin đăng đến mô hình Gemini thông qua một prompt định hướng cấu trúc. Mô hình có nhiệm vụ phát hiện các vi phạm chính sách bao gồm: số điện thoại cố ý chèn vào phần mô tả, các liên kết ngoài dẫn tới trang web lừa đảo, từ ngữ thô tục hoặc nội dung vô nghĩa. Kết quả trả về gồm cờ cảnh báo (vi phạm/hợp lệ) và lý do chi tiết.
+    \item \textbf{Kiểm duyệt hình ảnh (Image Moderation):} Toàn bộ các ảnh chụp phòng trọ được chủ trọ tải lên Cloudflare R2 sẽ được gửi đến mô hình Gemini Vision để phân tích. Mô hình thực hiện quét ảnh nhằm phát hiện: hình ảnh bị mờ hoặc độ phân giải quá thấp, ảnh chứa các ký tự watermark lớn của sàn giao dịch khác, hoặc các hình ảnh không liên quan đến phòng trọ.
+\end{enumerate}
+
+Mỗi khi chủ trọ hoàn tất biểu mẫu và gửi tin đăng, tin sẽ được đưa vào trạng thái \textit{chờ duyệt} (PENDING). Dịch vụ AI Service sẽ xử lý song song các tác vụ trên và phản hồi về Backend một đối tượng kết quả định dạng JSON chứa điểm rủi ro tổng hợp (risk score), trạng thái phân loại rủi ro (an toàn, cảnh báo, hoặc vi phạm) kèm mô tả chi tiết lỗi. 
+
+Dựa vào kết quả của AI, hệ thống tự động điều phối: nếu điểm rủi ro dưới ngưỡng an toàn, tin đăng được duyệt tự động (APPROVED) tức thời; nếu tin đăng bị phát hiện có rủi ro hoặc chứa hình ảnh mờ, hệ thống giữ tin ở trạng thái chờ duyệt và gắn cờ cảnh báo kèm ghi chú của AI lên trang quản trị để quản trị viên đối soát nhanh thủ công. Việc kết hợp kiểm duyệt tự động giúp giảm tải hơn 80\% thời gian duyệt tin thủ công của đội ngũ quản trị viên mà vẫn đảm bảo tính an toàn của nền tảng.
 \section{Triển khai hệ thống}
 
 Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js, gồm ứng dụng cho người dùng và trang quản trị) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
@@ -882,4 +926,40 @@ Mã nguồn của các khối dịch vụ được quản lý tập trung trên 
 
 \section{Các khó khăn và giải pháp trong quá trình xây dựng hệ thống}
 
-% TODO: Nội dung (trong file Báo Cáo Cuối Kỳ phần này mới chỉ có các tiểu mục để trống).
+Trong quá trình nghiên cứu, thiết kế và hiện thực hóa hệ thống SmartRent, nhóm đã gặp phải một số thách thức kỹ thuật lớn liên quan đến hiệu năng AI, tính toàn vẹn của dữ liệu và trải nghiệm người dùng. Dưới đây là ba khó khăn tiêu biểu nhất cùng các giải pháp kỹ thuật đã được áp dụng thành công:
+
+\subsection{Độ trễ phản hồi lớn của tác nhân hội thoại AI Agent}
+
+\textbf{Khó khăn:} 
+Tác nhân hội thoại AI Agent hỗ trợ tìm phòng trọ được thiết kế theo cơ chế gọi hàm (function calling) để tương tác trực tiếp với cơ sở dữ liệu hệ thống. Khi người dùng nhập một yêu cầu phức tạp (ví dụ: ``tìm phòng trọ giá dưới 3 triệu gần quận Cầu Giấy có điều hòa và so sánh chúng''), Agent phải trải qua một quy trình lập luận đa bước (multi-step reasoning) và gọi liên tiếp nhiều công cụ (như truy vấn dữ liệu, lọc tiện ích, sắp xếp và gọi dịch vụ so sánh). Điều này dẫn tới thời gian phản hồi toàn phần của một câu hỏi có thể kéo dài từ 10 đến 15 giây. Trở ngại này khiến giao diện người dùng rơi vào trạng thái chờ quá lâu, làm giảm đáng kể trải nghiệm người dùng (UX).
+
+\textbf{Giải pháp:} 
+Để khắc phục, nhóm đã áp dụng đồng thời hai giải pháp kỹ thuật:
+\begin{itemize}
+    \item \textbf{SSE:} Thay vì chờ toàn bộ câu trả lời hoàn thành mới phản hồi, máy chủ AI Service trả dữ liệu về trình duyệt theo từng phân đoạn (token) thời gian thực thông qua kết nối SSE. Điều này giúp hiển thị văn bản ngay lập tức khi mô hình vừa sinh ra, rút ngắn thời gian chờ đợi cảm nhận (perceived latency) xuống dưới 1 giây.
+    \item \textbf{Chỉ báo trạng thái hoạt động (Tool Status Indicator):} Trên giao diện chatbot phía client, nhóm thiết kế một dòng trạng thái hiển thị chi tiết tiến trình gọi công cụ của Agent (ví dụ: ``Đang tìm kiếm phòng trọ tại Cầu Giấy...'', ``Đang phân tích so sánh các phòng trọ...''). Giải pháp trực quan hóa này giúp người dùng nắm bắt được hệ thống đang thực sự xử lý yêu cầu thay vì đứng yên, tạo cảm giác hội thoại tự nhiên và liền mạch.
+\end{itemize}
+
+\subsection{Hiện tượng ảo tưởng và định giá thiếu chính xác của mô hình ngôn ngữ lớn}
+
+\textbf{Khó khăn:}
+Khi chuyển sang sử dụng mô hình ngôn ngữ lớn (Gemini) để định giá bất động sản tự động nhằm khắc phục tính cứng nhắc của các thuật toán truyền thống, nhóm gặp phải thách thức lớn về hiện tượng ``ảo tưởng'' (hallucination) dữ liệu. Do LLM không có sẵn dữ liệu giao dịch thực tế theo thời gian thực tại các khu vực phường/xã nhỏ hẹp của Việt Nam, nếu chỉ cung cấp mô tả bất động sản một cách chung chung, mô hình có xu hướng đoán mò hoặc định giá sai lệch rất lớn so với giá trị thực tế của thị trường, làm giảm độ tin cậy của tính năng.
+
+\textbf{Giải pháp:}
+Nhóm đã triển khai kỹ thuật định giá kết hợp dữ liệu tham chiếu (In-Context Learning kết hợp Retrieval-Augmented Valuation):
+\begin{itemize}
+    \item Khi có yêu cầu định giá, hệ thống Backend sẽ tự động truy xuất từ cơ sở dữ liệu MySQL/Elasticsearch khoảng 5 đến 10 bài đăng tương đồng (cùng loại hình, diện tích, các đặc điểm chính) đang hoạt động gần vị trí của bất động sản đó nhất.
+    \item Các bài đăng thực tế này cùng mức giá của chúng được tổng hợp thành một bảng dữ liệu tham chiếu thời gian thực và đính kèm trực tiếp vào prompt ngữ cảnh gửi tới Gemini. Nhờ có các dữ liệu đối so sánh trực quan này làm mốc tham chiếu, Gemini có thể phân tích mức độ chênh lệch của các đặc trưng (tiện ích, hướng nhà, tình trạng phòng) để đưa ra khoảng giá đề xuất tối thiểu, trung bình, tối đa cực kỳ sát với thực tế, đồng thời hạn chế triệt để hiện tượng ảo tưởng của mô hình.
+\end{itemize}
+
+\subsection{Đảm bảo đồng bộ trạng thái giao dịch thanh toán qua cổng điện tử}
+
+\textbf{Khó khăn:}
+Khi chủ trọ thực hiện thanh toán phí dịch vụ hoặc mua gói hội viên thông qua cổng thanh toán bên thứ ba (ZaloPay/SePay), hệ thống dựa vào cơ chế gọi lại (webhook/callback) từ cổng thanh toán về Backend để cập nhật số dư ví và kích hoạt tài khoản. Tuy nhiên, trong thực tế vận hành, các kết nối mạng bất ổn định giữa máy chủ Backend và cổng thanh toán có thể dẫn đến việc webhook bị thất lạc, trễ hoặc lỗi đường truyền. Điều này dẫn tới việc người dùng đã bị trừ tiền phía ngân hàng nhưng hệ thống SmartRent vẫn chưa cập nhật trạng thái dịch vụ, gây ra các khiếu nại giao dịch nghiêm trọng.
+
+\textbf{Giải pháp:}
+Nhóm triển khai cơ chế đối soát kết hợp (Hybrid Verification Pattern):
+\begin{itemize}
+    \item \textbf{Cơ chế Webhook thời gian thực:} Được sử dụng làm luồng xử lý chính. Khi nhận callback, Backend kiểm tra chữ ký số (signature verification) để đảm bảo an toàn bảo mật và cập nhật giao dịch tức thời.
+    \item \textbf{Cơ chế đối soát chủ động theo yêu cầu (On-Demand Query Pattern):} Nhóm thiết kế thêm chức năng "Kiểm tra lại" trên giao diện quản trị lịch sử giao dịch. Nếu callback từ cổng thanh toán bị chậm hoặc thất lạc do sự cố mạng, người dùng có thể kích hoạt đối soát thủ công bằng cách bấm nút. Lúc này, Backend sẽ chủ động gửi yêu cầu truy vấn trực tiếp đến API trạng thái của ZaloPay hoặc SePay sử dụng mã giao dịch để xác minh và cập nhật kết quả tức thời, đảm bảo an tâm cho người dùng.
+\end{itemize}
