@@ -1,6 +1,6 @@
 flowchart TB
     User(["Người dùng<br/><small>trình duyệt web</small>"])
-    Vercel["Frontend --- Next.js<br/><small>webapp + admin · triển khai trên Vercel</small>"]
+    Vercel["Frontend --- Next.js<br/><small>triển khai trên Vercel</small>"]
 
     subgraph VM["Máy chủ DigitalOcean Droplet --- Dokploy (Ubuntu, 2 vCPU / 4 GB)"]
         Traefik["Traefik<br/><small>reverse proxy · HTTPS · cổng 80/443</small>"]

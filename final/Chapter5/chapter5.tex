@@ -921,7 +921,7 @@ Dựa vào kết quả của AI, hệ thống tự động điều phối: nếu
 
 \section{Triển khai hệ thống}
 
-Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js, gồm ứng dụng cho người dùng và trang quản trị) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
+Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
 
 \begin{figure}[H]
 \centering
