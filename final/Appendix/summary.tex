@@ -1,4 +1,21 @@
 \chapter*{Tóm tắt}
 \label{summary}
 
-% TODO: Viết phần tóm tắt đồ án (trong file Báo Cáo Cuối Kỳ phần này còn để trống).
+Trong bối cảnh đô thị hóa diễn ra nhanh chóng tại Việt Nam, nhu cầu tìm kiếm nhà trọ, căn hộ cho thuê tại các đô thị lớn ngày càng gia tăng mạnh mẽ. Tuy nhiên, thị trường cho thuê truyền thống đang đối mặt với nhiều bất cập lớn như thông tin phân tán, thiếu tính minh bạch về giá cả, tin đăng ảo và quy trình kiểm duyệt thủ công tốn kém. Đề tài khóa luận tốt nghiệp ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' hướng đến xây dựng SmartRent --- một nền tảng tìm kiếm và quản lý bất động sản cho thuê toàn diện, ứng dụng sâu sắc các giải pháp Trí tuệ nhân tạo (AI) hiện đại nhằm nâng cao trải nghiệm người dùng và tính minh bạch của thị trường.
+
+Hệ thống được thiết kế và hiện thực hóa thông qua sự phối hợp đồng bộ giữa ba phân hệ chính:
+\begin{itemize}
+    \item \textbf{Phân hệ Frontend (Next.js 15):} Xây dựng bằng Next.js (Pages Router), TypeScript và Tailwind CSS v4, cung cấp giao diện người dùng tối ưu hóa SEO, tích hợp bản đồ Google Maps tương tác gom cụm tin đăng, tính năng so sánh bất động sản và trang điều khiển dành cho chủ trọ (SellerNet) cùng quản trị viên (Admin).
+    \item \textbf{Phân hệ Backend (Spring Boot 3.4.0):} Hiện thực theo kiến trúc nguyên khối mô-đun (Modular Monolith) an toàn, tích hợp xác thực JWT, cơ chế OTP qua Brevo Email Service và cổng thanh toán tự động qua SePay/ZaloPay với mô hình đối soát chủ động (On-Demand Query Pattern).
+    \item \textbf{Phân hệ Dịch vụ AI (FastAPI):} Được thiết kế theo kiến trúc sạch (Clean Architecture) kết nối qua LiteLLM gateway và giám sát bởi Langfuse.
+\end{itemize}
+
+Các tính năng AI nổi bật được phát triển trong hệ thống bao gồm:
+\begin{itemize}
+    \item \textbf{AI Agent:} Trợ lý hội thoại thông minh hỗ trợ tìm phòng bằng ngôn ngữ tự nhiên, hoạt động theo cơ chế ReAct loop (suy luận tối đa 12 bước) kết hợp 14 công cụ nghiệp vụ và truyền dữ liệu thời gian thực dạng luồng (SSE).
+    \item \textbf{Định giá bất động sản bằng AI:} Sử dụng mô hình ngôn ngữ lớn Gemini kết hợp phương pháp học ngữ cảnh (In-Context Learning) đối chiếu với các tin đăng lân cận thời gian thực để đưa ra khoảng giá đề xuất và đánh giá giá thuê.
+    \item \textbf{Kiểm duyệt nội dung tự động:} Ứng dụng mô hình đa phương tiện (Gemini Multimodal) để đánh giá tính hợp lệ của bài đăng thông qua hình ảnh, video và văn bản.
+    \item \textbf{Hệ thống gợi ý lai:} Khớp hành vi người dùng thông qua thuật toán Collaborative Filtering kết hợp Content-based Filtering nâng cao.
+\end{itemize}
+
+Toàn bộ hệ thống được đóng gói bằng Docker và triển khai thực tế trên hạ tầng điện toán đám mây thông qua Dokploy và Traefik proxy. Kết quả thực nghiệm cho thấy hệ thống hoạt động ổn định, đạt hiệu năng xử lý tốt và mang lại giá trị thực tiễn cao cho cả người thuê trọ, chủ nhà và đội ngũ quản trị viên.
