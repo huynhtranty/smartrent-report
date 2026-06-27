@@ -451,6 +451,24 @@ Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thô
 \label{fig:notification}
 \end{figure}
 
+\subsubsection{Báo cáo tin đăng}
+
+Để giữ chất lượng nội dung và độ tin cậy của dữ liệu, người thuê có thể báo cáo các vấn đề gặp phải ngay trên trang chi tiết tin đăng thông qua một hộp thoại báo cáo. Hộp thoại tổ chức các loại vấn đề thành hai nhóm chọn nhanh bằng ô đánh dấu. Nhóm \textit{vấn đề về tin đăng} (Hình~\ref{fig:report}a) tập hợp các sai lệch về nội dung như thông tin giá, diện tích, mô tả không chính xác, tin trùng với tin rao khác, tin không có thật, địa chỉ bất động sản sai, ảnh không đúng, không liên lạc được hoặc bất động sản đã bán. Nhóm \textit{vấn đề về bản đồ} (Hình~\ref{fig:report}b) ghi nhận các phản ánh liên quan tới định vị như vị trí bất động sản hoặc tiện ích chưa chính xác, bản đồ lỗi và tốc độ tải chậm. Người báo cáo có thể bổ sung mô tả chi tiết ở ô phản hồi tùy chọn; phần thông tin người báo cáo được điền sẵn họ tên và thư điện tử từ phiên đăng nhập, chỉ yêu cầu nhập thêm số điện thoại liên hệ.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{report-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}\centering
+\includegraphics[width=\linewidth]{report-2}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Hộp thoại báo cáo tin đăng: (a) nhóm vấn đề về tin đăng; (b) nhóm vấn đề về bản đồ}
+\label{fig:report}
+\end{figure}
+
+Mỗi báo cáo được chuyển tới quản trị viên để xem xét và xử lý; diễn biến kết quả xử lý được phản hồi lại cho người dùng qua kênh thông báo thời gian thực đã trình bày ở trên. Cơ chế này tạo thành một vòng phản hồi giữa người thuê và đội ngũ vận hành, giúp phát hiện sớm các tin sai lệch và duy trì chất lượng dữ liệu của nền tảng.
+
 \subsubsection{Trải nghiệm đa thiết bị và đa ngôn ngữ}
 
 Toàn bộ các trang trên đều được thiết kế đáp ứng cho cả máy tính và thiết bị di động, hỗ trợ song ngữ Việt -- Anh và chuyển đổi tức thời. Việc chuyển đổi ngôn ngữ chỉ thay đổi nội dung chữ hiển thị (nhãn, thông báo, văn bản), còn giá tin đăng vẫn giữ nguyên đơn vị tiền đồng. Các yếu tố như chỉ báo tiến trình tải trang, khung chờ khi tải dữ liệu và trạng thái rỗng có hướng dẫn rõ ràng góp phần tạo nên trải nghiệm liền mạch và chuyên nghiệp cho người thuê.
@@ -903,7 +921,7 @@ Dựa vào kết quả của AI, hệ thống tự động điều phối: nếu
 
 \section{Triển khai hệ thống}
 
-Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js, gồm ứng dụng cho người dùng và trang quản trị) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
+Sau khi thiết kế kiến trúc ở Chương~\ref{Chapter4}, phần này trình bày cách hệ thống được đưa vào vận hành thực tế cùng các thành phần hạ tầng hỗ trợ. Ở mức vận hành, hệ thống SmartRent gồm ba khối dịch vụ chạy độc lập --- \textbf{Backend} (Spring Boot), \textbf{Frontend} (Next.js) và \textbf{dịch vụ AI} (SmartRent AI) --- cùng một loạt dịch vụ hạ tầng được quản lý: lưu trữ đối tượng, cơ sở dữ liệu, cổng truy cập mô hình ngôn ngữ và cổng thanh toán. Các dịch vụ bên ngoài mà Backend phụ thuộc đã được tổng hợp ở Hình~\ref{fig:be-integrations}, còn Hình~\ref{fig:deployment} minh họa tổng thể cách các thành phần được bố trí và liên kết khi vận hành. Các mục dưới đây mô tả lần lượt từng thành phần hạ tầng cốt lõi và quy trình đưa hệ thống lên môi trường chạy thật.
 
 \begin{figure}[H]
 \centering
