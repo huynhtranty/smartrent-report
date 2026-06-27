@@ -514,17 +514,23 @@ Toàn bộ các trang chức năng dùng chung một bố cục điều hướng
 
 \begin{figure}[htbp]
 \centering
-\begin{minipage}[b]{0.64\textwidth}\centering
-\includegraphics[width=\linewidth]{giao-dien-chu-tro-desktop}\\[3pt]{\small (a)}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-nguoi-dung}\\[3pt]{\small (a)}
 \end{minipage}\hfill
-\begin{minipage}[b]{0.30\textwidth}\centering
-\includegraphics[width=\linewidth]{giao-dien-chu-tro-mobile}\\[3pt]{\small (b)}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-tin-dang}\\[3pt]{\small (b)}
 \end{minipage}
-\caption{Bố cục điều hướng của kênh chủ trọ: (a) thanh điều hướng dọc bên trái trên máy tính; (b) thanh tab ở cạnh dưới với nút đăng tin ở giữa trên thiết bị di động}
+
+\vspace{8pt}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-doanh-thu}\\[3pt]{\small (c)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-bao-cao}\\[3pt]{\small (d)}
+\end{minipage}
+\caption{Màn hình giám sát hệ thống của quản trị viên: (a) thống kê người dùng; (b) thống kê tin đăng; (c) thống kê doanh thu; (d) thống kê báo cáo vi phạm}
 \label{fig:owner-layout}
 \end{figure}
-
-\subsubsection{Bảng điều khiển và thống kê hiệu suất}
 
 Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại (đã trình bày ở mục gói hội viên, Hình~\ref{fig:membership-dashboard}) và hiệu suất tin đăng. Phần thống kê hiệu suất gồm hai khối phân tích bổ trợ -- lượt bấm xem số điện thoại và lượt lưu tin -- giúp chủ trọ nắm được mức độ quan tâm thực tế của người dùng đối với từng tin và toàn bộ danh mục tin của mình.
 
@@ -775,25 +781,131 @@ Hồ sơ đi qua bốn trạng thái: \textit{chưa đăng ký}, \textit{chờ d
 
 Sau khi được xác minh, tài khoản môi giới được làm nổi bật xuyên suốt nền tảng: một huy hiệu xác minh hiển thị trên ảnh đại diện ở thẻ tin, trang chi tiết và trang hồ sơ công khai của người bán; đồng thời người thuê có thể dùng bộ lọc \textit{môi giới chuyên nghiệp} để chỉ xem tin từ những người bán đã được xác minh. Nhờ đó, cơ chế xác minh môi giới vừa nâng uy tín cho người đăng tin nghiêm túc, vừa giúp người thuê an tâm hơn khi lựa chọn.
 
+% Hùng: Chức năng dành cho quản trị viên
 \subsection{Chức năng dành cho quản trị viên}
 
-% TODO: Nội dung.
+Kênh quản trị của SmartRent được tổ chức như một không gian vận hành riêng cho đội ngũ kiểm soát hệ thống, trong đó các tác vụ giám sát, phân quyền, kiểm duyệt và đối soát tài chính được gom thành các màn hình chuyên biệt nhưng vẫn dùng chung một bố cục điều hướng nhất quán. Giao diện ưu tiên khả năng tra cứu nhanh, thao tác theo từng dòng dữ liệu và phản hồi tức thời, nhờ đó quản trị viên có thể xử lý khối lượng công việc lớn mà không phải chuyển qua nhiều công cụ rời rạc. Phân hệ giám sát và phân tích được chia thành các khối thống kê theo chủ đề; trong khi đó, các nghiệp vụ vận hành trực tiếp như người dùng, vai trò, tin đăng, báo cáo vi phạm và giao dịch thanh toán được triển khai dưới dạng bảng dữ liệu có lọc, phân trang và hộp thoại tác vụ.
 
+% Hùng: Thống kê \& Giám sát Hệ thống
 \subsubsection{Thống kê \& Giám sát Hệ thống}
 
-% TODO: Nội dung.
+Phân hệ giám sát của giao diện quản trị không dồn mọi chỉ số vào một màn hình duy nhất mà tách thành các khối quan sát theo ngữ cảnh. Ở lớp tổng quan, hệ thống hiển thị các thẻ KPI như tổng doanh thu, tổng giao dịch, số gói hội viên đang hoạt động và số người dùng mới trong kỳ; đồng thời kết hợp biểu đồ diện tích cho doanh thu theo thời gian, biểu đồ tròn cho cơ cấu gói hội viên và các biểu đồ đường cho tăng trưởng người dùng, số báo cáo vi phạm và số tin đăng mới. Với riêng luồng thanh toán, màn hình tổng quan giao dịch cung cấp thêm các thẻ thống kê tổng doanh thu, tổng giao dịch, giao dịch thành công, thất bại, chờ xử lý và hoàn tiền, tỷ lệ thành công cùng giá trị giao dịch thành công trung bình; bên dưới là biểu đồ doanh thu theo kỳ được vẽ dạng thanh ngang để dễ so sánh giữa các mốc thời gian.
 
+Bộ lọc thời gian được thiết kế theo hai lớp: các trang phân tích dùng bộ chọn khoảng ngày tái sử dụng với các mốc dựng sẵn như hôm nay, hôm qua, trong bảy ngày gần đây, trong ba mươi ngày gần đây, tháng này và tháng trước; riêng màn hình giao dịch có thêm các nút chọn nhanh theo tuần, tháng và quý để chuyển bối cảnh thống kê tức thời. Dữ liệu của các biểu đồ được tải lại khi khoảng thời gian thay đổi, không có cơ chế đồng bộ nền liên tục, nhờ đó giao diện giữ được nhịp phản hồi gọn và ổn định. Phía sau lớp hiển thị, các khối thống kê lấy dữ liệu từ dịch vụ dashboard và dịch vụ giao dịch, trong đó truy vấn giao dịch được lưu đệm bởi React Query để giảm số lần gọi lại khi người dùng quay về cùng một khoảng lọc.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-nguoi-dung}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-tin-dang}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-doanh-thu}\\[3pt]{\small (c)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-bao-cao}\\[3pt]{\small (d)}
+\end{minipage}
+\caption{Màn hình giám sát hệ thống của quản trị viên: (a) thống kê người dùng; (b) thống kê tin đăng; (c) thống kê doanh thu; (d) thống kê báo cáo vi phạm}
+\label{fig:admin-system-monitoring}
+\end{figure}
+
+% Hùng: Quản lý Người dùng \& Phân quyền
 \subsubsection{Quản lý Người dùng \& Phân quyền}
 
-% TODO: Nội dung.
+Các màn hình quản lý người dùng, quản trị viên và vai trò được xây dựng trên cùng một lớp bảng dữ liệu dùng chế độ truy vấn qua API, nhờ đó mọi thao tác tìm kiếm và phân trang đều bám theo dữ liệu thật ở máy chủ. Trang người dùng hiển thị mã người dùng, họ tên, loại tài khoản, ngày tham gia, số tin đăng và trạng thái, trong đó cột số tin và trạng thái được dùng như các chỉ báo tham khảo để nhận diện tài khoản hoạt động bất thường hoặc tài khoản cần chú ý. Trang quản trị viên hiển thị mã quản trị viên, tên, email, các vai trò đang gắn và ngày tạo; còn trang vai trò chỉ tập trung vào mã vai trò và tên vai trò để phục vụ việc điều chỉnh danh mục phân quyền.
 
+Ở mức thao tác, quản trị viên có thể tạo mới, sửa hoặc xóa người dùng, quản trị viên và vai trò thông qua các hộp thoại riêng. Riêng với trang người dùng, còn có nút gỡ quyền môi giới dành cho các tài khoản đã được xác nhận làm broker, giúp quản trị viên thu hồi trạng thái môi giới mà không cần thao tác thủ công ở nhiều nơi. Bộ lọc trên bảng người dùng cho phép tìm theo tên, email, số điện thoại và loại người dùng; còn bảng quản trị viên hỗ trợ tìm theo họ tên, email, số điện thoại và chọn nhiều vai trò cùng lúc bằng các mã SA, UA, CM, SPA, FA và MA. Các bảng này không có thao tác hàng loạt, nên quy trình xử lý vẫn giữ được tính kiểm soát ở từng bản ghi.
+
+Về mặt hạ tầng giao diện, trang quản trị được bọc trong layout riêng có sidebar, header và breadcrumb, đồng thời được bảo vệ bởi lớp kiểm tra đăng nhập trước khi hiển thị nội dung. Mỗi request API đều đi qua interceptor để tự động gắn access token, làm mới token khi hết hạn và đính kèm mã định danh quản trị viên từ JWT, qua đó bảo đảm các thao tác quản trị luôn được backend nhận diện đúng người thực hiện.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.31\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-quan-ly-nguoi-dung}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.31\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-quan-ly-quan-tri-vien}\\[3pt]{\small (b)}
+\end{minipage}\hfill
+\begin{minipage}{0.31\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-quan-ly-vai-tro}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Các màn hình quản lý định danh và phân quyền: (a) danh sách người dùng với bộ lọc và thao tác gỡ quyền môi giới; (b) danh sách quản trị viên theo vai trò; (c) danh mục vai trò hệ thống}
+\label{fig:admin-user-role}
+\end{figure}
+
+% Hùng: Quản lý tin đăng và kiểm duyệt nội dung
 \subsubsection{Quản lý tin đăng và kiểm duyệt nội dung}
 
-% TODO: Nội dung.
+Phân hệ kiểm duyệt tin đăng tập trung vào hàng đợi chờ duyệt của các bài đăng mới và các bài đăng được gửi lại sau khi chỉnh sửa. Bảng dữ liệu hiển thị ảnh đại diện, tiêu đề, mã tin, người đăng, loại bất động sản, giá, thời điểm đăng, trạng thái kiểm duyệt và nút xem xét chi tiết; khi cần lọc nhanh, quản trị viên có thể thu hẹp danh sách theo tiêu đề, chủ đăng, ngày đăng, ngày hết hạn, trạng thái kiểm duyệt, loại sản phẩm, loại tin, hạng VIP, khoảng giá, diện tích, số phòng ngủ và số phòng tắm. Mặc định màn hình mở ở trạng thái chờ duyệt để đội ngũ vận hành có thể xử lý luồng tin mới ngay khi phát sinh.
 
+Khi mở một tin, hệ thống tải đầy đủ chi tiết trong hộp thoại review rồi cho phép duyệt, từ chối hoặc yêu cầu chỉnh sửa. Hai nhánh từ chối và yêu cầu chỉnh sửa đều yêu cầu nhập lý do; sau khi xác nhận, hệ thống ghi nhận quyết định và gửi thông báo ngược về chủ tin, trong đó nhánh từ chối còn có thể gắn thêm thời hạn để chủ tin gửi lại nội dung đã hiệu chỉnh. Trong cùng hộp thoại, khối phân tích AI được gắn như một lớp hỗ trợ mang tính khuyến nghị: nó hiển thị điểm đánh giá, trạng thái đề xuất, độ tin cậy, mô tả lý do tổng hợp, các cờ cảnh báo như ảnh mờ, thông tin không nhất quán, watermark hoặc số điện thoại trong ảnh, ảnh stock, danh sách mã vi phạm, cùng các thẻ kiểm tra riêng cho ảnh, video, nội dung và độ đầy đủ của tin. Khối này được trình bày như một tín hiệu hỗ trợ quyết định, còn phán quyết cuối cùng vẫn thuộc về quản trị viên (Hình~\ref{fig:ai-moderation}).
+
+Trang báo cáo vi phạm đi theo cùng một triết lý vận hành: phần đầu trang hiển thị số lượng báo cáo tổng, đang chờ xử lý, đã xử lý và đã từ chối; bên dưới là bảng các tin bị báo cáo kèm thông tin tin đăng, người báo cáo, lý do đầu tiên, thời điểm tạo, trạng thái và nút xem xét. Từ cửa sổ review, quản trị viên có thể đánh dấu đã xử lý, từ chối hoặc yêu cầu sửa để người đăng nhận thông báo tương ứng. Với hồ sơ môi giới chờ duyệt, danh sách kiểm duyệt thể hiện thông tin định danh, email, số điện thoại, ngày đăng ký và tài liệu đính kèm; quản trị viên có thể duyệt, từ chối hoặc gỡ quyền môi giới khi tài khoản đã được xác nhận nhưng cần thu hồi trạng thái.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-tin-dang}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-bao-cao}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Luồng kiểm duyệt nội dung: (a) hàng đợi tin đăng và hộp thoại review; (b) bảng báo cáo vi phạm và cửa sổ xử lý quyết định}
+\label{fig:admin-content-moderation}
+\end{figure}
+
+% Hùng: Quản lý doanh thu và thanh toán
 \subsubsection{Quản lý doanh thu và thanh toán}
 
-% TODO: Nội dung.
+Kênh doanh thu và thanh toán của quản trị viên gồm ba lớp làm việc bổ trợ cho nhau: trang danh sách giao dịch, trang tổng quan giao dịch và trang chi tiết giao dịch. Trang danh sách hiển thị mã giao dịch, mã giao dịch cổng thanh toán, hóa đơn hoặc phòng liên quan, khách hàng, chủ trọ, loại thanh toán, cổng thanh toán, số tiền, trạng thái và thời điểm tạo; phía trên là bộ lọc theo từ khóa, trạng thái, cổng thanh toán, khoảng thời gian bắt đầu/kết thúc và nút xuất dữ liệu CSV để phục vụ đối soát ngoài hệ thống. Mỗi dòng chỉ có một hành động chính là mở chi tiết, nhờ đó bảng giữ được mật độ thông tin cao nhưng vẫn dễ quét bằng mắt.
+
+Màn hình tổng quan giao dịch cung cấp các thẻ thống kê tổng doanh thu, tổng giao dịch, giao dịch thành công, thất bại, chờ xử lý, hoàn tiền, tỷ lệ thành công và giá trị thành công trung bình. Bên cạnh đó là biểu đồ doanh thu theo kỳ với các nút chọn nhanh theo tuần, tháng và quý; khi quản trị viên đổi khoảng thời gian, toàn bộ thống kê và biểu đồ được nạp lại theo bộ lọc mới. Dữ liệu giao dịch và doanh thu được lấy qua các hook React Query, trong đó danh sách giao dịch, thống kê và chuỗi doanh thu đều có khóa truy vấn riêng để bảo đảm các lần mở lại cùng điều kiện vẫn nhận được phản hồi ổn định.
+
+Trang chi tiết giao dịch đi sâu vào từng bản ghi với các khối thông tin về giao dịch, số tiền, thời điểm tạo và hoàn tất, thông tin khách hàng, thông tin chủ trọ, hóa đơn, phòng, mã cổng thanh toán và phản hồi từ nhà cung cấp. Nếu giao dịch thất bại, giao diện hiển thị thêm lý do lỗi; nếu có lịch sử xử lý, bảng tiến trình ở cuối trang cho biết từng mốc trạng thái do hệ thống, cổng thanh toán, quản trị viên hoặc khách hàng tạo ra. Cách trình bày này giúp việc truy vết và đối soát trở nên rõ ràng hơn so với chỉ xem danh sách rút gọn.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-doanh-thu-giao-dich-danh-sach}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-doanh-thu-giao-dich-tong-quan}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.82\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-doanh-thu-giao-dich-chi-tiet}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Quản lý doanh thu và thanh toán: (a) danh sách giao dịch với bộ lọc và xuất dữ liệu; (b) màn hình tổng quan giao dịch với KPI và biểu đồ doanh thu; (c) trang chi tiết giao dịch phục vụ đối soát}
+\label{fig:admin-revenue-payments}
+\end{figure}
+
+% Hùng: Quản lý tin tức và tạo tin tức
+\subsubsection{Quản lý tin tức và tạo tin tức}
+
+Phân hệ tin tức trong kênh quản trị được dùng để xây dựng, biên tập và xuất bản các nội dung cập nhật cho người dùng cuối, bao gồm bài viết thị trường, blog tư vấn, chính sách, dự án và các chuyên mục tin tức khác. Trang danh sách hiển thị thẻ tin theo dạng bảng dữ liệu với ảnh thu nhỏ, tiêu đề, đường dẫn rút gọn, tác giả, số lượt xem, ngày tạo, ngày xuất bản, chuyên mục và trạng thái; từ đó quản trị viên có thể nhanh chóng phân biệt giữa bản nháp, nội dung đã xuất bản và bài đã lưu trữ. Trên cùng là nút **Tạo tin** để mở trình soạn thảo mới; mỗi dòng dữ liệu có ba hành động chính là xem trước, chỉnh sửa và xóa, đủ cho quy trình duyệt nội dung nội bộ mà không cần chuyển sang công cụ khác.
+
+Bộ lọc của bảng tin tức được tổ chức theo các tiêu chí bám sát cách biên tập nội dung: tiêu đề, phần tóm tắt, trạng thái, chuyên mục và thẻ. Cách tổ chức này cho phép quản trị viên khoanh vùng nhanh các bài đang cần xử lý, chẳng hạn các bài nháp chưa hoàn thiện, các bài đã đăng nhưng cần biên tập lại, hoặc nhóm bài cùng chuyên mục để rà soát đồng bộ. Thành phần thống kê tin tức cũng đã có trong mã nguồn nhưng hiện được ẩn theo cấu hình giao diện, do đó màn hình chính của phân hệ này tập trung vào danh sách quản trị và luồng biên tập.
+
+Màn hình soạn thảo được xây dựng như một trình biên tập nội dung đầy đủ chức năng. Khu vực chính dùng Tiptap với các tiện ích như chèn ảnh, liên kết, gạch chân, canh lề, danh sách việc cần làm, bảng biểu, tô sáng, màu chữ, chỉ số trên/dưới và đếm ký tự; nhờ vậy quản trị viên có thể soạn bài có cấu trúc gần với một trình soạn thảo chuyên nghiệp. Cột bên phải gom các thiết lập nội dung gồm slug, chuyên mục, trạng thái, tóm tắt, thẻ, ảnh đại diện và nhóm thông tin SEO với meta title, meta description và meta keywords. Slug được tự sinh theo tiêu đề ở chế độ tạo mới, ảnh đại diện được tải lên riêng rồi chèn vào trường thumbnail, còn ảnh trong thân bài được nạp trực tiếp vào nội dung đang biên tập.
+
+Trải nghiệm biên tập còn có chế độ xem trước để đối chiếu bố cục bài viết trước khi lưu. Khi lưu, hệ thống gửi dữ liệu qua các lời gọi API riêng cho tạo mới, cập nhật, xuất bản, hủy xuất bản và lưu trữ; vì vậy một bài có thể được tạo ở trạng thái nháp rồi chuyển sang xuất bản sau khi hoàn tất nội dung. Cách tách riêng danh sách quản lý và trình biên tập giúp đội ngũ nội dung vừa kiểm soát được vòng đời bài viết, vừa tối ưu thao tác soạn thảo và cập nhật mà không cần rời khỏi kênh quản trị.
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-quan-ly-tin-tuc-danh-sach}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-quan-ly-tin-tuc-bien-tap}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Quản lý tin tức của quản trị viên: (a) bảng danh sách bài viết với bộ lọc, xem trước, chỉnh sửa và xóa; (b) trình soạn thảo nội dung với các thiết lập chuyên mục, trạng thái và SEO}
+\label{fig:admin-news-management}
+\end{figure}
 
 
 \section{Xây dựng module AI}
