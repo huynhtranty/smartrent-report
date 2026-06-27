@@ -774,48 +774,102 @@ Bảng \texttt{transactions} (Bảng~\ref{tab:col-transactions}) ghi nhận toà
 
 \section{Thiết kế giao diện}
 
-Giao diện của SmartRent được phác thảo trước dưới dạng \textit{wireframe} trên Figma cho cả ba nhóm người dùng -- người thuê, chủ trọ và quản trị viên -- trước khi bước vào hiện thực. Mục này mô tả ý tưởng bố cục và các thành phần chính của từng nhóm giao diện ở mức khái quát; các bản wireframe Figma tương ứng sẽ được bổ sung minh họa, còn kết quả giao diện thực tế được trình bày ở Chương~\ref{Chapter5}.
+Giao diện của SmartRent được phác thảo trước dưới dạng \textit{wireframe} trên Figma cho cả ba nhóm người dùng -- người thuê, chủ trọ và quản trị viên -- trước khi bước vào hiện thực. Kết quả giao diện thực tế được trình bày ở Chương~\ref{Chapter5}.
 
 \subsection{Giao diện người thuê}
 
-Giao diện dành cho người thuê lấy người tìm trọ làm trung tâm và được phác thảo đáp ứng trên mọi kích thước màn hình. Bố cục chung dùng lại cho hầu hết các trang gồm: thanh điều hướng trên cùng chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
+Giao diện dành cho người thuê lấy người tìm trọ làm trung tâm và được phác thảo đáp ứng trên mọi kích thước màn hình. Bố cục chung dùng lại cho hầu hết các trang gồm: thanh điều hướng trên cùng chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu.
 
-Một số nguyên tắc thiết kế được áp dụng xuyên suốt khu vực người thuê: phản hồi trạng thái rõ ràng cho mỗi thao tác (đang tải, thông báo lỗi thân thiện, trạng thái rỗng có hướng dẫn); bố cục thích ứng theo kích thước màn hình (màn hình lớn dùng nhiều cột, thiết bị di động thu gọn bộ lọc vào hộp thoại trượt); và hỗ trợ song ngữ Việt -- Anh chuyển đổi tức thời. Các màn hình chính -- trang chủ, danh sách và tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, theo dõi người đăng và tin tức -- đều tuân theo cùng bộ nguyên tắc trên.
-
-% TODO: chèn wireframe Figma cho giao diện người thuê (ảnh bổ sung sau)
+Một số nguyên tắc thiết kế được áp dụng xuyên suốt khu vực người thuê: phản hồi trạng thái rõ ràng cho mỗi thao tác; bố cục thích ứng theo kích thước màn hình; và hỗ trợ song ngữ Việt -- Anh chuyển đổi tức thời. Các màn hình chính bao gồm trang chủ, danh sách và tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, theo dõi người đăng và tin tức.
 
 \subsection{Giao diện chủ trọ}
 
-Giao diện dành cho chủ trọ và môi giới được thiết kế tối giản, tập trung vào việc quản lý tin đăng hiệu quả. Các thành phần chính bao gồm:
-\begin{itemize}
-    \item \textbf{Trang tổng quan:} hiển thị trực quan các chỉ số hiệu suất tin đăng như lượt xem tin, lượt lưu tin và lượt yêu cầu liên hệ, giúp chủ trọ đánh giá mức độ hấp dẫn của bài đăng.
-    \item \textbf{Biểu mẫu đăng tin nhiều bước:} chia luồng đăng tin thành các bước tuần tự -- nhập thông tin và vị trí bất động sản, xem giá tham khảo, tải hình ảnh, viết mô tả (có hỗ trợ sinh tự động bằng AI) và chọn gói hiển thị kèm thanh toán -- giúp chủ trọ tạo tin đầy đủ và dễ dàng.
-    \item \textbf{Quản lý bản nháp:} cho phép lưu lại tin đang soạn để tiếp tục về sau, tránh mất dữ liệu khi chưa hoàn tất.
-    \item \textbf{Quản lý khách hàng tiềm năng:} tổng hợp danh sách người thuê đã quan tâm, lưu tin hoặc gửi liên hệ, hỗ trợ chủ trọ chủ động chăm sóc khách.
-\end{itemize}
+Giao diện dành cho chủ trọ và môi giới được thiết kế tối giản, tập trung vào việc quản lý tin đăng hiệu quả, với trang tổng quan theo dõi hiệu suất, biểu mẫu đăng tin nhiều bước, quản lý bản nháp và quản lý khách hàng tiềm năng.
 
-% TODO: chèn wireframe Figma cho giao diện chủ trọ (ảnh bổ sung sau)
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.95\textwidth]{wireframe-chủ-trọ}
+\caption{Wireframe màn hình quản lý danh sách tin đăng của chủ trọ}
+\label{fig:wf-chu-tro}
+\end{figure}
+
+Luồng đăng tin được tổ chức thành sáu bước kế tiếp như minh họa ở Hình~\ref{fig:wf-post-overview}:
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{wireframe-choosing-step}
+\caption{Tổng quan quy trình tạo tin đăng với sáu bước kế tiếp}
+\label{fig:wf-post-overview}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step-1-1}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step-1-2}\\[3pt]{\small (b)}
+\end{minipage}
+
+\vspace{8pt}
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step-1-3}\\[3pt]{\small (c)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step-1-4}\\[3pt]{\small (d)}
+\end{minipage}
+\caption{Bước 1 -- Thông tin bất động sản: (a) loại tin và định vị bản đồ; (b) chi tiết và thông số bất động sản; (c) giá tiện ích và cấu trúc nhà; (d) thông tin liên hệ và sinh nội dung tự động bằng AI}
+\label{fig:wf-step1}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.56\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step2}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.41\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step-3}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{(a) Bước 2 -- Định giá AI thông minh: khoảng giá đề xuất và biểu đồ so sánh khu vực; (b) Bước 3 -- Tải lên hình ảnh và video minh họa}
+\label{fig:wf-step2-3}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.47\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step4}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.47\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-đăng-bài-step5}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{(a) Bước 4 -- Chọn gói hiển thị, thời hạn và lịch đăng tin; (b) Bước 5 -- Tóm tắt đơn hàng và xác nhận thanh toán}
+\label{fig:wf-step4-5}
+\end{figure}
 
 \subsection{Giao diện quản trị}
 
-Giao diện dành cho quản trị viên được thiết kế theo dạng bảng quản lý dữ liệu, tối ưu cho các tác vụ kiểm tra và phê duyệt. Các khối tính năng bao gồm:
-\begin{itemize}
-    \item \textbf{Bảng điều khiển trung tâm:} thống kê tổng số bài đăng, số người dùng hoạt động và doanh thu từ việc bán gói hội viên cùng dịch vụ đẩy tin.
-    \item \textbf{Kiểm duyệt bài đăng:} danh sách tin đăng mới kèm khuyến nghị của AI (tin trùng lặp, ảnh mờ, thông tin sai lệch) để quản trị viên đưa ra quyết định duyệt hoặc từ chối nhanh chóng.
-    \item \textbf{Xét duyệt hồ sơ môi giới chuyên nghiệp:} hiển thị song song thông tin đăng ký và giấy tờ của môi giới để đối soát trước khi cấp huy hiệu xác minh.
-\end{itemize}
+Giao diện dành cho quản trị viên được thiết kế theo dạng bảng quản lý dữ liệu, tối ưu cho các tác vụ kiểm tra và phê duyệt, gồm bảng điều khiển trung tâm, kiểm duyệt bài đăng tích hợp AI và xét duyệt hồ sơ môi giới chuyên nghiệp.
 
-% TODO: chèn wireframe Figma cho giao diện quản trị (ảnh bổ sung sau)
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-admin}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{wireframe-admin-violent-management}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Wireframe kênh quản trị: (a) màn hình kiểm duyệt bài đăng; (b) màn hình quản lý báo cáo vi phạm}
+\label{fig:wf-admin}
+\end{figure}
 
 \subsection{Giao diện chatbot AI}
 
-Giao diện chatbot AI được phác thảo dưới dạng một cửa sổ hội thoại nổi đặt ở góc phải bên dưới màn hình của người thuê, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang. Cấu trúc của cửa sổ trò chuyện gồm:
-\begin{itemize}
-    \item \textbf{Thanh tiêu đề:} chứa hình đại diện và tên trợ lý, nút thu nhỏ hoặc mở rộng cửa sổ, và nút xóa lịch sử để bắt đầu phiên trò chuyện mới.
-    \item \textbf{Khung nội dung trò chuyện:} hiển thị các bong bóng chat phân biệt giữa câu hỏi của người dùng và câu trả lời của trợ lý, kèm chỉ báo cho biết trợ lý đang xử lý (ví dụ ``Đang tìm kiếm tin đăng\ldots'', ``Đang so sánh phòng trọ\ldots'').
-    \item \textbf{Khối tin đăng gợi ý:} các thẻ tin thu gọn (ảnh đại diện, giá, diện tích, địa chỉ) hiển thị ngay dưới bong bóng chat dưới dạng một hàng ngang có thể trượt qua lại.
-    \item \textbf{Xem chi tiết tin đăng:} khi người dùng chọn một thẻ tin, hệ thống mở hộp thoại hiển thị đầy đủ thông tin và album ảnh của phòng trọ ngay trong cửa sổ chat, giúp duy trì mạch hội thoại.
-\end{itemize}
+Giao diện chatbot AI được phác thảo dưới dạng một cửa sổ hội thoại nổi đặt ở góc phải bên dưới màn hình của người thuê, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang. Cấu trúc gồm thanh tiêu đề với hình đại diện trợ lý, khung nội dung trò chuyện kèm chỉ báo tiến trình gọi công cụ, khối thẻ tin gợi ý dạng băng chuyền ngang, và hộp thoại xem chi tiết tin đăng ngay trong cửa sổ chat.
 
-% TODO: chèn wireframe Figma cho giao diện chatbot AI (ảnh bổ sung sau)
+\begin{figure}[htbp]
+\centering
+\includegraphics[height=9cm]{wireframe-chatbox-AI}
+\caption{Wireframe widget trợ lý hội thoại AI hỗ trợ tìm phòng trọ}
+\label{fig:wf-chatbot}
+\end{figure}
 
