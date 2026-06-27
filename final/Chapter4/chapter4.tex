@@ -774,62 +774,48 @@ Bảng \texttt{transactions} (Bảng~\ref{tab:col-transactions}) ghi nhận toà
 
 \section{Thiết kế giao diện}
 
-Hệ thống giao diện của SmartRent được thiết kế nhất quán nhằm mang lại trải nghiệm tối ưu cho cả ba đối tượng người dùng. Để bảo đảm tính đồng bộ về thẩm mỹ và hiệu năng, toàn bộ các ứng dụng giao diện đều tuân thủ một hệ thống thiết kế chuẩn hóa được định nghĩa thông qua các token ngữ nghĩa trong Tailwind CSS v4. Các quy chuẩn về bảng màu (như \texttt{bg-background}, \texttt{text-foreground}, \texttt{bg-card}, \texttt{text-muted-foreground}), kiểu chữ (như \texttt{text-display}, \texttt{text-title}, \texttt{text-body}), bo góc và khoảng cách lề được tập trung hóa để giữ tính đồng nhất về mặt thị giác. Hệ thống hỗ trợ hoàn hảo hai chế độ sáng/tối và giao tiếp đa ngôn ngữ Việt -- Anh tức thời mà không cần tải lại trang.
+Giao diện của SmartRent được phác thảo trước dưới dạng \textit{wireframe} trên Figma cho cả ba nhóm người dùng -- người thuê, chủ trọ và quản trị viên -- trước khi bước vào hiện thực. Mục này mô tả ý tưởng bố cục và các thành phần chính của từng nhóm giao diện ở mức khái quát; các bản wireframe Figma tương ứng sẽ được bổ sung minh họa, còn kết quả giao diện thực tế được trình bày ở Chương~\ref{Chapter5}.
 
 \subsection{Giao diện người thuê}
 
-Giao diện dành cho người thuê được thiết kế đáp ứng trên mọi kích thước màn hình, lấy người tìm trọ làm trung tâm của hành trình trải nghiệm. Toàn bộ giao diện kế thừa một hệ thống thiết kế thống nhất: bảng màu, kiểu chữ, bo góc và khoảng cách đều được khai báo dưới dạng \textit{token ngữ nghĩa} thông qua các biến CSS trong \texttt{styles/globals.css}, thay vì gán giá trị màu cứng tại từng thành phần. Nhờ đó, hệ thống hỗ trợ sẵn hai chế độ sáng/tối chỉ bằng cách hoán đổi nhóm biến, và giữ được sự đồng nhất về thị giác giữa các trang cũng như giữa các thành viên phát triển.
+Giao diện dành cho người thuê lấy người tìm trọ làm trung tâm và được phác thảo đáp ứng trên mọi kích thước màn hình. Bố cục chung dùng lại cho hầu hết các trang gồm: thanh điều hướng trên cùng chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
 
-Về kiểu chữ, ứng dụng dùng bộ phông hỗ trợ tốt cả tiếng Việt lẫn tiếng Anh (Be~Vietnam~Pro làm phông chính, Inter và Plus~Jakarta~Sans cho tiêu đề), tải qua cơ chế tối ưu phông của Next.js để tránh hiện tượng nhấp nháy khi tải. Các thành phần giao diện được xây trên nền shadcn/ui kết hợp Tailwind CSS v4, bảo đảm khả năng truy cập và tính nhất quán của nút bấm, biểu mẫu, hộp thoại, thẻ thông tin\ldots
+Một số nguyên tắc thiết kế được áp dụng xuyên suốt khu vực người thuê: phản hồi trạng thái rõ ràng cho mỗi thao tác (đang tải, thông báo lỗi thân thiện, trạng thái rỗng có hướng dẫn); bố cục thích ứng theo kích thước màn hình (màn hình lớn dùng nhiều cột, thiết bị di động thu gọn bộ lọc vào hộp thoại trượt); và hỗ trợ song ngữ Việt -- Anh chuyển đổi tức thời. Các màn hình chính -- trang chủ, danh sách và tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, theo dõi người đăng và tin tức -- đều tuân theo cùng bộ nguyên tắc trên.
 
-Bố cục chung của khu vực người thuê được gói trong một \textit{layout} dùng lại cho hầu hết các trang, gồm: thanh điều hướng trên cùng chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang (footer) với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu. Cách bố trí này giúp người dùng luôn truy cập nhanh các chức năng cốt lõi ở bất kỳ trang nào.
-
-Một số nguyên tắc thiết kế giao diện được áp dụng xuyên suốt khu vực người thuê:
-
-\begin{itemize}
-\item \textbf{Phản hồi trạng thái rõ ràng.} Mỗi thao tác bất đồng bộ đều có trạng thái tương ứng: khung chờ dạng \textit{skeleton} khi đang tải dữ liệu, chỉ báo tiến trình khi chuyển trang, thông báo lỗi thân thiện và \textit{trạng thái rỗng} có hướng dẫn khi không có kết quả.
-\item \textbf{Tải động thành phần nặng.} Các khối tốn tài nguyên như bản đồ, biểu đồ lịch sử giá và danh sách tin tương tự được tải động kèm khung chờ, giúp nội dung chính hiển thị nhanh mà không bị chặn.
-\item \textbf{Bố cục thích ứng.} Trên màn hình lớn, trang danh sách tin dùng bố cục hai cột; trên thiết bị di động, bộ lọc thu gọn vào hộp thoại trượt để tiết kiệm không gian.
-\item \textbf{Đa ngôn ngữ.} Mọi nhãn, thông báo và văn bản hiển thị đều đi qua lớp đa ngôn ngữ Việt~--~Anh, cho phép chuyển đổi tức thời mà không cần tải lại trang; việc đổi ngôn ngữ chỉ thay đổi nội dung chữ, không đổi đơn vị tiền tệ của giá.
-\end{itemize}
-
-Các màn hình chính của người thuê -- trang chủ, danh sách/tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, trang theo dõi người đăng và tin tức -- đều tuân theo cùng bộ nguyên tắc trên; kết quả hiện thực cụ thể của từng màn hình được trình bày ở Chương~\ref{Chapter5} (phần kết quả giao diện dành cho người thuê).
+% TODO: chèn wireframe Figma cho giao diện người thuê (ảnh bổ sung sau)
 
 \subsection{Giao diện chủ trọ}
 
-Giao diện dành cho chủ trọ và môi giới (nằm trong phân hệ SellerNet và khu vực làm việc của người bán \texttt{/seller/*}) được thiết kế tối giản, tập trung vào hiệu suất quản lý tin đăng và tối ưu hóa chuyển đổi. Các thành phần chính bao gồm:
+Giao diện dành cho chủ trọ và môi giới được thiết kế tối giản, tập trung vào việc quản lý tin đăng hiệu quả. Các thành phần chính bao gồm:
 \begin{itemize}
-    \item \textbf{Trang tổng quan:} Hiển thị các chỉ số đo lường hiệu suất tin đăng trực quan qua biểu đồ Recharts như lượt xem tin, lượt lưu tin, lượt yêu cầu liên hệ, giúp chủ trọ đánh giá mức độ hấp dẫn của bài đăng.
-    \item \textbf{Biểu mẫu đăng tin đa bước:} Thiết kế chia luồng đăng tin phức tạp thành 5 bước tuần tự: (1) Nhập địa chỉ cụ thể và vị trí bản đồ; (2) Chọn danh mục và nhập thông tin cơ bản (giá, diện tích, số phòng); (3) Tải ảnh/video chất lượng cao lên Cloudflare R2 qua URL ký trước; (4) Nhập mô tả tin đăng và sử dụng AI sinh mô tả tự động; (5) Chọn gói dịch vụ hiển thị (tin thường, tin VIP) và tiến hành thanh toán qua ZaloPay/SePay.
-    \item \textbf{Quản lý bản nháp:} Hệ thống tự động lưu bản nháp sau mỗi thay đổi của chủ trọ, tránh mất dữ liệu khi gặp sự cố mạng.
-    \item \textbf{Quản lý khách hàng tiềm năng:} Bảng thống kê danh sách người thuê quan tâm, lưu tin hoặc gửi liên hệ, hỗ trợ chủ trọ chủ động tương tác.
+    \item \textbf{Trang tổng quan:} hiển thị trực quan các chỉ số hiệu suất tin đăng như lượt xem tin, lượt lưu tin và lượt yêu cầu liên hệ, giúp chủ trọ đánh giá mức độ hấp dẫn của bài đăng.
+    \item \textbf{Biểu mẫu đăng tin nhiều bước:} chia luồng đăng tin thành các bước tuần tự -- nhập thông tin và vị trí bất động sản, xem giá tham khảo, tải hình ảnh, viết mô tả (có hỗ trợ sinh tự động bằng AI) và chọn gói hiển thị kèm thanh toán -- giúp chủ trọ tạo tin đầy đủ và dễ dàng.
+    \item \textbf{Quản lý bản nháp:} cho phép lưu lại tin đang soạn để tiếp tục về sau, tránh mất dữ liệu khi chưa hoàn tất.
+    \item \textbf{Quản lý khách hàng tiềm năng:} tổng hợp danh sách người thuê đã quan tâm, lưu tin hoặc gửi liên hệ, hỗ trợ chủ trọ chủ động chăm sóc khách.
 \end{itemize}
+
+% TODO: chèn wireframe Figma cho giao diện chủ trọ (ảnh bổ sung sau)
 
 \subsection{Giao diện quản trị}
 
-Giao diện dành cho quản trị viên được thiết kế theo dạng bảng quản lý dữ liệu hiệu năng cao, tối ưu cho các tác vụ kiểm tra và phê duyệt. Các khối tính năng bao gồm:
+Giao diện dành cho quản trị viên được thiết kế theo dạng bảng quản lý dữ liệu, tối ưu cho các tác vụ kiểm tra và phê duyệt. Các khối tính năng bao gồm:
 \begin{itemize}
-    \item \textbf{Bảng điều khiển trung tâm:} Thống kê tổng số bài đăng, số lượng người dùng hoạt động, doanh thu thực tế từ việc bán gói hội viên và dịch vụ đẩy tin.
-    \item \textbf{Hệ thống kiểm duyệt bài đăng tích hợp AI:} Danh sách tin đăng mới được phân loại theo mức độ rủi ro dựa trên cờ cảnh báo của AI kiểm duyệt tự động. Quản trị viên có thể xem trực quan nhận xét của AI (tin trùng lặp, ảnh mờ, thông tin sai lệch) để đưa ra quyết định duyệt hoặc từ chối tin nhanh chóng.
-    \item \textbf{Xét duyệt hồ sơ môi giới chuyên nghiệp:} Giao diện hiển thị song song thông tin đăng ký của môi giới và ảnh chụp chứng chỉ hành nghề/căn cước công dân để đối soát thủ công trước khi phê duyệt cấp huy hiệu xác minh.
+    \item \textbf{Bảng điều khiển trung tâm:} thống kê tổng số bài đăng, số người dùng hoạt động và doanh thu từ việc bán gói hội viên cùng dịch vụ đẩy tin.
+    \item \textbf{Kiểm duyệt bài đăng:} danh sách tin đăng mới kèm khuyến nghị của AI (tin trùng lặp, ảnh mờ, thông tin sai lệch) để quản trị viên đưa ra quyết định duyệt hoặc từ chối nhanh chóng.
+    \item \textbf{Xét duyệt hồ sơ môi giới chuyên nghiệp:} hiển thị song song thông tin đăng ký và giấy tờ của môi giới để đối soát trước khi cấp huy hiệu xác minh.
 \end{itemize}
+
+% TODO: chèn wireframe Figma cho giao diện quản trị (ảnh bổ sung sau)
 
 \subsection{Giao diện chatbot AI}
 
-Giao diện chatbot AI được thiết kế dưới dạng một cửa sổ hội thoại nổi đặt tại góc phải bên dưới của màn hình webapp dành cho người thuê trọ, như minh họa trong Hình~\ref{fig:design-ai-chatbot}. Giao diện này cung cấp trải nghiệm tương tác liền mạch, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[height=7.5cm]{AI-chatbox-ui}
-  \caption{Bố cục thiết kế giao diện của widget chatbot AI hỗ trợ tìm phòng trọ}
-  \label{fig:design-ai-chatbot}
-\end{figure}
-
-Cấu trúc thiết kế của widget chatbot AI bao gồm:
+Giao diện chatbot AI được phác thảo dưới dạng một cửa sổ hội thoại nổi đặt ở góc phải bên dưới màn hình của người thuê, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang. Cấu trúc của cửa sổ trò chuyện gồm:
 \begin{itemize}
-    \item \textbf{Thanh tiêu đề:} Chứa avatar của trợ lý AI, tên trợ lý, nút thu nhỏ/mở rộng cửa sổ chat, và nút xóa lịch sử hội thoại để bắt đầu phiên làm việc mới.
-    \item \textbf{Khung nội dung trò chuyện:} Hiển thị các bong bóng chat phân biệt màu sắc giữa câu hỏi của người dùng và câu trả lời của trợ lý. Trạng thái phản hồi dạng luồng của mô hình ngôn ngữ lớn được biểu diễn sinh động qua một con trỏ nhấp nháy. Khi mô hình thực hiện các tác vụ tính toán ẩn, một chỉ báo tiến trình gọi công cụ sẽ hiển thị (ví dụ: ``Đang tìm kiếm tin đăng...'', ``Đang so sánh phòng trọ...'') để người dùng biết hệ thống đang hoạt động.
-    \item \textbf{Khối tin đăng gợi ý:} Khi trợ lý AI gợi ý các phòng trọ phù hợp, các thẻ tin thu gọn (chứa ảnh đại diện, giá, diện tích, địa chỉ) sẽ được hiển thị ngay bên dưới bong bóng chat dưới dạng một hàng ngang có thể trượt qua lại.
-    \item \textbf{Hộp thoại xem chi tiết tin đăng:} Khi người dùng nhấp vào một thẻ tin đăng trong khung chat, một hộp thoại (shadcn/ui) sẽ mở ra hiển thị đầy đủ thông tin chi tiết và album ảnh của phòng trọ đó mà không làm đóng cửa sổ chat hay chuyển hướng trang, giúp duy trì mạch hội thoại của người dùng.
+    \item \textbf{Thanh tiêu đề:} chứa hình đại diện và tên trợ lý, nút thu nhỏ hoặc mở rộng cửa sổ, và nút xóa lịch sử để bắt đầu phiên trò chuyện mới.
+    \item \textbf{Khung nội dung trò chuyện:} hiển thị các bong bóng chat phân biệt giữa câu hỏi của người dùng và câu trả lời của trợ lý, kèm chỉ báo cho biết trợ lý đang xử lý (ví dụ ``Đang tìm kiếm tin đăng\ldots'', ``Đang so sánh phòng trọ\ldots'').
+    \item \textbf{Khối tin đăng gợi ý:} các thẻ tin thu gọn (ảnh đại diện, giá, diện tích, địa chỉ) hiển thị ngay dưới bong bóng chat dưới dạng một hàng ngang có thể trượt qua lại.
+    \item \textbf{Xem chi tiết tin đăng:} khi người dùng chọn một thẻ tin, hệ thống mở hộp thoại hiển thị đầy đủ thông tin và album ảnh của phòng trọ ngay trong cửa sổ chat, giúp duy trì mạch hội thoại.
 \end{itemize}
+
+% TODO: chèn wireframe Figma cho giao diện chatbot AI (ảnh bổ sung sau)
 
