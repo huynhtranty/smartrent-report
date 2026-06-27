@@ -1,6 +1,6 @@
 flowchart TB
  Client(["FE / Admin<br/><small>REST + WebSocket</small>"])
- subgraph API["API Layer — controller (54)"]
+ subgraph API["API Layer- controller (54)"]
  Ctrl["@RestController /v1/*<br/><small>Listing · Auth · Payment · Ai · News</small>"]
  end
  subgraph Sec["Cross-cutting"]
@@ -8,10 +8,10 @@ flowchart TB
  CB["Resilience4j<br/><small>Circuit Breaker + Retry</small>"]
  Cache["Redis Cache"]
  end
- subgraph Svc["Service Layer — service (40 domain)"]
+ subgraph Svc["Service Layer- service (40 domain)"]
  SvcI["Interface + Impl<br/><small>business logic</small>"]
  end
- subgraph Map["Mapper (14) — MapStruct"]
+ subgraph Map["Mapper (14)- MapStruct"]
  Mapper["Entity ⇄ DTO"]
  end
  subgraph DTO["dto"]

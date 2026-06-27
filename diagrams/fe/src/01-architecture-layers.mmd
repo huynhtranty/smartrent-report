@@ -1,8 +1,8 @@
 flowchart TB
- subgraph Routing["Routing Layer — src/pages"]
+ subgraph Routing["Routing Layer- src/pages"]
  Pages["Pages Router<br/><small>_app · index · seller/* · listing-detail/*</small>"]
  end
- subgraph UI["UI Layer — components · Atomic Design"]
+ subgraph UI["UI Layer- components · Atomic Design"]
  direction LR
  Templates["templates/ (28)"] --> Organisms["organisms/ (29)"] --> Molecules["molecules/ (106)"] --> Atoms["atoms/ (71)<br/><small>Radix + Tailwind</small>"]
  end
@@ -12,11 +12,11 @@ flowchart TB
  Contexts["contexts/ (10)<br/><small>auth · theme · i18n</small>"]
  Store["store/<br/><small>Zustand</small>"]
  end
- subgraph Data["Data Access — src/api"]
+ subgraph Data["Data Access- src/api"]
  Services["services/ (30)"]
  Types["types/ (33)"]
  end
- subgraph Infra["Infrastructure — configs · utils"]
+ subgraph Infra["Infrastructure- configs · utils"]
  Axios["configs/axios<br/><small>interceptors · refresh-token</small>"]
  Utils["utils/ (20)"]
  I18n["messages/<br/><small>vi · en</small>"]

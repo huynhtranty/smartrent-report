@@ -1,13 +1,13 @@
 flowchart TB
  Comp["Components"]
- subgraph Server["Server State — TanStack Query"]
+ subgraph Server["Server State- TanStack Query"]
  RQ["useQuery / useMutation · 36 hooks<br/><small>cache + persist + auto refetch</small>"]
  end
- subgraph Client["Client State — Zustand"]
+ subgraph Client["Client State- Zustand"]
  Z1["store/auth"]
  Z2["store/compare"]
  end
- subgraph App["App / UI State — React Context"]
+ subgraph App["App / UI State- React Context"]
  CX["auth · authDialog · theme · switchLanguage<br/>createPost · updatePost · list · location · news"]
  end
  Comp --> RQ

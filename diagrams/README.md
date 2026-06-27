@@ -1,14 +1,14 @@
-# Diagrams — Sơ đồ kiến trúc SmartRent
+# Diagrams- Sơ đồ kiến trúc SmartRent
 
 Sơ đồ tổ chức mã nguồn hệ thống SmartRent viết bằng **Mermaid**, render sẵn ra **PDF vector** để nhúng vào báo cáo LaTeX. Chia theo 3 thành phần:
 
 ```
 diagrams/
-├── fe/                 # Frontend — smartrent-fe (Next.js)
+├── fe/                 # Frontend- smartrent-fe (Next.js)
 │   ├── src/  pdf/  png/
-├── be/                 # Backend — smartrent-backend (Spring Boot)
+├── be/                 # Backend- smartrent-backend (Spring Boot)
 │   ├── src/  pdf/  png/
-├── ai/                 # AI — smartrent-ai (FastAPI · Agents SDK)
+├── ai/                 # AI- smartrent-ai (FastAPI · Agents SDK)
 │   ├── src/  pdf/  png/
 ├── mermaid.config.json # cấu hình theme/font dùng chung
 ├── render.sh           # render lại toàn bộ (hoặc fe / be / ai)
@@ -17,7 +17,7 @@ diagrams/
 
 Mỗi phần: `src/` = nguồn `.mmd` (sửa ở đây) · `pdf/` = vector cho LaTeX · `png/` = xem nhanh / chèn Word.
 
-## Frontend — `fe/` (Next.js 15 · React 19 · TanStack Query · Zustand)
+## Frontend- `fe/` (Next.js 15 · React 19 · TanStack Query · Zustand)
 
 | File | Nội dung |
 |------|----------|
@@ -29,7 +29,7 @@ Mỗi phần: `src/` = nguồn `.mmd` (sửa ở đây) · `pdf/` = vector cho L
 | `06-routing` | Bản đồ route (Pages Router) |
 | `07-state-management` | TanStack Query / Zustand / Context |
 
-## Backend — `be/` (Spring Boot 3.4 · JPA · MySQL · Redis)
+## Backend- `be/` (Spring Boot 3.4 · JPA · MySQL · Redis)
 
 | File | Nội dung |
 |------|----------|
@@ -39,7 +39,7 @@ Mỗi phần: `src/` = nguồn `.mmd` (sửa ở đây) · `pdf/` = vector cho L
 | `04-domain-modules` | 40 nhóm domain service (listing, auth, payment, ai…) |
 | `05-external-integrations` | Tích hợp ngoài: MySQL, Redis, S3, Google, Brevo, ZaloPay/SePay, AI |
 
-## AI — `ai/` (FastAPI · OpenAI Agents SDK · LiteLLM · Gemini 2.5 Flash)
+## AI- `ai/` (FastAPI · OpenAI Agents SDK · LiteLLM · Gemini 2.5 Flash)
 
 | File | Nội dung |
 |------|----------|
@@ -61,15 +61,15 @@ bash render.sh ai       # chỉ AI
 
 ## Nhúng vào LaTeX
 
-> **LaTeX không render Mermaid trực tiếp** — ta nhúng file PDF đã render sẵn (vector, sắc nét khi in).
+> **LaTeX không render Mermaid trực tiếp**- ta nhúng file PDF đã render sẵn (vector, sắc nét khi in).
 
-**Cách 1 — thêm đường dẫn vào `graphicspath`** (trong `final/main.tex`, dòng 39):
+**Cách 1- thêm đường dẫn vào `graphicspath`** (trong `final/main.tex`, dòng 39):
 
 ```latex
 \graphicspath{ {Images/} {../diagrams/fe/pdf/} {../diagrams/be/pdf/} }
 ```
 
-rồi trong chapter chỉ cần tên file (không trùng tên giữa fe/be vì khác thư mục — nếu trùng, dùng Cách 2):
+rồi trong chapter chỉ cần tên file (không trùng tên giữa fe/be vì khác thư mục- nếu trùng, dùng Cách 2):
 
 ```latex
 \begin{figure}[H]
@@ -80,7 +80,7 @@ rồi trong chapter chỉ cần tên file (không trùng tên giữa fe/be vì k
 \end{figure}
 ```
 
-**Cách 2 — đường dẫn tương đối trực tiếp** (rõ ràng, tránh trùng tên — khuyến nghị):
+**Cách 2- đường dẫn tương đối trực tiếp** (rõ ràng, tránh trùng tên- khuyến nghị):
 
 ```latex
 \includegraphics[width=\textwidth]{../diagrams/be/pdf/01-architecture-layers.pdf}
@@ -88,10 +88,10 @@ rồi trong chapter chỉ cần tên file (không trùng tên giữa fe/be vì k
 ```
 
 > Đường dẫn `../diagrams/...` tính từ `final/` (nơi chứa `main.tex`).
-> Cần `\usepackage{float}` để dùng `[H]` (ghim vị trí hình) — kiểm tra preamble nếu báo lỗi.
+> Cần `\usepackage{float}` để dùng `[H]` (ghim vị trí hình)- kiểm tra preamble nếu báo lỗi.
 
 ## Lưu ý
 
-- Sửa nội dung ở `*/src/*.mmd` rồi chạy `render.sh` — **không** sửa tay file PDF/PNG.
+- Sửa nội dung ở `*/src/*.mmd` rồi chạy `render.sh`- **không** sửa tay file PDF/PNG.
 - File FE và BE có cùng số thứ tự (`01-architecture-layers`) nên khi nhúng nên dùng Cách 2 hoặc đặt label/caption rõ FE/BE.
 - PDF vector zoom/in không vỡ; ưu tiên PDF cho LaTeX, PNG chỉ xem nhanh hoặc chèn Word.

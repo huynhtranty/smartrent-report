@@ -1,7 +1,7 @@
 # Phân công viết báo cáo LaTeX
 
 Bộ LaTeX đã được dựng đủ khung 6 chương theo mục lục của Báo Cáo Cuối Kỳ.
-Mỗi mục cần viết đều có sẵn dòng `% TODO: Nội dung` — gõ nội dung ngay bên dưới
+Mỗi mục cần viết đều có sẵn dòng `% TODO: Nội dung`- gõ nội dung ngay bên dưới
 và **xóa dòng TODO** khi viết xong.
 
 ## Quy ước chung (mọi người đọc trước)
@@ -11,7 +11,7 @@ và **xóa dòng TODO** khi viết xong.
 - Thêm tài liệu tham khảo vào `References/references.bib` rồi trích dẫn bằng `\cite{key}`.
 - Gặp thuật ngữ/viết tắt mới thì thêm một dòng vào `Appendix/appendix1.tex`.
 - Build lại theo thứ tự: `pdflatex` -> `biber` -> `pdflatex` -> `pdflatex`.
-- Phần 4.3.2 và 4.3.3 (quy trình làm việc nhóm) ĐÃ có nội dung — không cần viết lại.
+- Phần 4.3.2 và 4.3.3 (quy trình làm việc nhóm) ĐÃ có nội dung- không cần viết lại.
 
 ## Bảng phân công
 
@@ -52,8 +52,8 @@ Nguyên tắc chia: mỗi người viết phần báo cáo đúng với phần m
 
 | File | Nội dung | Trạng thái | Người |
 |---|---|---|---|
-| `Appendix/thanks.tex` | Lời cảm ơn | ✅ Đã có | — |
-| `Appendix/commitment.tex` | Lời cam đoan | ✅ Đã có | — |
+| `Appendix/thanks.tex` | Lời cảm ơn | ✅ Đã có |- |
+| `Appendix/commitment.tex` | Lời cam đoan | ✅ Đã có |- |
 | `Appendix/summary.tex` | Tóm tắt toàn đồ án | ⏳ Cần viết | **Vũ** |
 | `Appendix/appendix1.tex` | Bảng từ viết tắt / thuật ngữ | ⏳ Bổ sung dần khi viết | **Tất cả** (Hùng tổng hợp, rà cuối) |
 | `Appendix/advisor.tex` | Nhận xét GVHD | 📄 Chờ PDF giáo vụ | bỏ comment khi có PDF |
@@ -80,4 +80,4 @@ Nguyên tắc: ai phụ trách mục nào thì tự chụp/vẽ hình cho mục 
 
 - `Appendix/proposal.tex`: chèn `proposal.pdf` khi có (bỏ comment dòng `\includepdf`).
 - Nhận xét GVHD/GVPB trong `main.tex`: đang comment, bỏ comment khi có PDF từ giáo vụ.
-- `Chapter3` §3.4 có 2 mục trùng tên "Hệ thống gợi ý cá nhân hóa" (theo file gốc) — cần rà lại.
+- `Chapter3` §3.4 có 2 mục trùng tên "Hệ thống gợi ý cá nhân hóa" (theo file gốc)- cần rà lại.

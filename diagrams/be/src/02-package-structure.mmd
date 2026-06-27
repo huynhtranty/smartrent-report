@@ -10,7 +10,7 @@ flowchart TB
  direction TB
  service["service (40)<br/><small>interface + impl</small>"] ~~~ mapper["mapper (14)<br/><small>MapStruct</small>"]
  end
- subgraph L3["Data — infra"]
+ subgraph L3["Data- infra"]
  direction TB
  repo["repository (51)<br/><small>Spring Data JPA</small>"] ~~~ conn["connector (5)"] ~~~ stor["storage · S3"]
  end
