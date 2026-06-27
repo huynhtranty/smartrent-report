@@ -441,7 +441,6 @@ Chuyên mục tin tức cung cấp danh sách bài viết về thị trường b
 \caption{Chuyên mục tin tức: (a) trang danh sách bài viết với tab lọc chuyên mục, tìm kiếm và cột bài đọc nhiều nhất; (b) trang chi tiết bài viết kết xuất phía máy chủ; (c) khối tin tức mới nhất trên trang chủ}
 \label{fig:news}
 \end{figure}
-\end{figure}
 
 Bên cạnh đó, người dùng đã đăng nhập nhận được \textit{thông báo thời gian thực} qua WebSocket, kèm chỉ báo số thông báo chưa đọc và danh sách thông báo gần nhất khi mở chuông thông báo (Hình~\ref{fig:notification}). Phía máy chủ, mỗi thông báo được lưu lại rồi đẩy ngay tới đúng người nhận: hệ thống dùng giao thức STOMP trên một điểm kết nối WebSocket (\texttt{/ws}, có cơ chế dự phòng SockJS), mỗi người dùng lắng nghe trên kênh riêng theo định danh (\texttt{/topic/notifications/\{recipientId\}}) nên chỉ nhận thông báo của chính mình. Các sự kiện sinh thông báo bao gồm: kết quả kiểm duyệt tin đăng (được duyệt, bị từ chối, yêu cầu chỉnh sửa, bị gỡ hay đăng lại); vòng đời tin đăng như cảnh báo sắp hết hạn ở các mốc trước 7, 3 và 1 ngày; tiến trình đăng ký môi giới (đã tiếp nhận, được duyệt, bị từ chối); diễn biến tố cáo tin đăng; và thông báo khi một người dùng đang được theo dõi đăng tin mới. Quản trị viên cũng nhận các thông báo nghiệp vụ tương ứng (có tin mới bị tố cáo, có hồ sơ môi giới chờ duyệt\ldots) trên cùng cơ chế.
 
@@ -530,6 +529,9 @@ Toàn bộ các trang chức năng dùng chung một bố cục điều hướng
 \includegraphics[width=\linewidth]{admin-thong-ke-giam-sat-bao-cao}\\[3pt]{\small (d)}
 \end{minipage}
 \caption{Màn hình giám sát hệ thống của quản trị viên: (a) thống kê người dùng; (b) thống kê tin đăng; (c) thống kê doanh thu; (d) thống kê báo cáo vi phạm}
+\label{fig:owner-layout}
+\end{figure}
+
 Bảng điều khiển là điểm vào của kênh chủ trọ, cung cấp cái nhìn tổng quan về tình trạng gói hội viên hiện tại (đã trình bày ở mục gói hội viên, Hình~\ref{fig:membership-dashboard}) và hiệu suất tin đăng. Phần thống kê hiệu suất gồm hai khối phân tích bổ trợ -- lượt bấm xem số điện thoại và lượt lưu tin -- giúp chủ trọ nắm được mức độ quan tâm thực tế của người dùng đối với từng tin và toàn bộ danh mục tin của mình.
 
 Khối \textit{phân tích lượt click số điện thoại} tổng hợp ba chỉ số chính cho tin đang chọn: tổng lượt bấm xem số điện thoại, tổng lượt xem tin và tỷ lệ chuyển đổi (tỷ lệ lượt bấm xem số trên lượt xem tin); kèm theo là biểu đồ đường thể hiện lượt click theo thời gian, có ô chọn tin đăng, bộ chọn khoảng thời gian (7, 30, 90 ngày\ldots) và thanh trượt thu phóng để khảo sát chi tiết một giai đoạn (Hình~\ref{fig:owner-stats-click}a). Bên dưới là bảng tổng quan toàn bộ tin đăng kèm tổng lượt click của từng tin, có ô tìm theo tiêu đề, phân trang và nút mở phân tích chi tiết cho từng tin, giúp chủ trọ nhanh chóng xác định đâu là tin thu hút nhiều liên hệ nhất (Hình~\ref{fig:owner-stats-click}b).
