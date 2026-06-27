@@ -39,12 +39,12 @@ và **xóa dòng TODO** khi viết xong.
 
 | Người | Vai trò trong hệ thống | Phần báo cáo phụ trách |
 |---|---|---|
-| **Trường Vũ** | Nhóm trưởng – Backend + AI | Ch1, Ch3.1 (kiến trúc), Ch3.4 (AI, cùng Vy), Ch4 (quản lý dự án), Ch5.3 (kết quả AI, cùng Vy), Ch6, `summary.tex`, review backend |
+| **Trường Vũ** | Nhóm trưởng - Backend + AI | Ch1, Ch3.1 (kiến trúc), Ch3.4 (AI, cùng Vy), Ch4 (quản lý dự án), Ch5.3 (kết quả AI, cùng Vy), Ch6, `summary.tex`, review backend |
 | **Ty** | Backend + AI / DevOps | Ch3.3 (backend, cùng Tường), Ch3.4 (review AI), Ch3.5 (hạ tầng → nay là §5.7 Triển khai), **Ch6 Kiểm thử và đánh giá** |
 | **Tường** | Backend | Ch3.3 (backend, cùng Ty), Ch3.6 (CSDL) |
 | **Vy** | AI | Ch2 (khoảng trống AI), Ch3.4 (AI, cùng Vũ), Ch5.3 (kết quả AI, cùng Vũ) |
-| **Phát** | Web – Webapp người thuê | Ch2 (hỗ trợ phần web), Ch3.2 (web, cùng Hùng), Ch5.1 (kết quả người thuê) |
-| **Hùng** | Web – Frontend Admin | Ch3.2 (web, cùng Phát), Ch5.2 (kết quả quản trị viên), tổng hợp bảng từ viết tắt |
+| **Phát** | Web - Webapp người thuê | Ch2 (hỗ trợ phần web), Ch3.2 (web, cùng Hùng), Ch5.1 (kết quả người thuê) |
+| **Hùng** | Web - Frontend Admin | Ch3.2 (web, cùng Phát), Ch5.2 (kết quả quản trị viên), tổng hợp bảng từ viết tắt |
 
 Nguyên tắc chia: mỗi người viết phần báo cáo đúng với phần mình đã code, để mô tả chính xác và tránh giẫm chân. Trường Vũ (nhóm trưởng) ôm các chương chung/quản lý + tổng hợp; backend do Ty + Tường viết chính (Vũ review), CSDL giao Tường; AI gồm Vy, Vũ, Ty (Vy + Vũ viết chính, Ty review).
 
