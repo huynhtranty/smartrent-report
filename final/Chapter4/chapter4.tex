@@ -787,27 +787,26 @@ Giao diện của SmartRent được phác thảo trước dưới dạng \texti
 
 \subsection{Giao diện người thuê}
 
-Giao diện dành cho người thuê lấy người tìm trọ làm trung tâm và được phác thảo đáp ứng trên mọi kích thước màn hình. Bố cục chung dùng lại cho hầu hết các trang gồm: thanh điều hướng trên cùng chứa logo, thanh tìm kiếm, bộ chuyển ngôn ngữ, chuông thông báo và khu vực tài khoản; phần nội dung ở giữa; chân trang với các liên kết phụ trợ; và một thanh nổi so sánh hiển thị khi người dùng đang chọn tin để đối chiếu.
-
-Một số nguyên tắc thiết kế được áp dụng xuyên suốt khu vực người thuê: phản hồi trạng thái rõ ràng cho mỗi thao tác; bố cục thích ứng theo kích thước màn hình; và hỗ trợ song ngữ Việt -- Anh chuyển đổi tức thời. Các màn hình chính bao gồm trang chủ, danh sách và tìm kiếm tin, chi tiết tin đăng, bản đồ, so sánh, tin đã lưu, theo dõi người đăng và tin tức.
-
-Hình~\ref{fig:wf-nguoi-thue} minh họa wireframe trang chi tiết tin đăng -- một trong những màn hình trung tâm của hành trình người thuê -- được phác thảo trên Figma với hai vùng nội dung chính: phần trên tập trung vào hình ảnh, giá và thông tin liên hệ; phần dưới trình bày thông số kỹ thuật, tiện ích, mô tả và bản đồ vị trí.
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.78\textwidth]{wireframe-homepage-nguoi-thue}
+\caption{Wireframe trang chủ khu vực người thuê}
+\label{fig:wf-homepage}
+\end{figure}
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.47\textwidth}\centering
+\begin{minipage}{0.48\textwidth}\centering
 \includegraphics[width=\linewidth]{wireframe-nguoi-thue}\\[3pt]{\small (a)}
 \end{minipage}\hfill
-\begin{minipage}{0.47\textwidth}\centering
+\begin{minipage}{0.48\textwidth}\centering
 \includegraphics[width=\linewidth]{wireframe-nguoi-thue-2}\\[3pt]{\small (b)}
 \end{minipage}
-\caption{Wireframe trang chi tiết tin đăng dành cho người thuê: (a) thư viện ảnh, giá, lịch sử giá và thẻ liên hệ chủ trọ; (b) thông số bất động sản, tiện ích, mô tả và bản đồ vị trí}
+\caption{Wireframe trang chi tiết tin đăng: (a) thư viện ảnh, giá, lịch sử giá và thẻ liên hệ chủ trọ; (b) thông số bất động sản, tiện ích, mô tả và bản đồ vị trí}
 \label{fig:wf-nguoi-thue}
 \end{figure}
 
 \subsection{Giao diện chủ trọ}
-
-Giao diện dành cho chủ trọ và môi giới được thiết kế tối giản, tập trung vào việc quản lý tin đăng hiệu quả, với trang tổng quan theo dõi hiệu suất, biểu mẫu đăng tin nhiều bước, quản lý bản nháp và quản lý khách hàng tiềm năng.
 
 \begin{figure}[H]
 \centering
@@ -816,7 +815,6 @@ Giao diện dành cho chủ trọ và môi giới được thiết kế tối gi
 \label{fig:wf-chu-tro}
 \end{figure}
 
-Luồng đăng tin được tổ chức thành sáu bước kế tiếp như minh họa ở Hình~\ref{fig:wf-post-overview}:
 
 \begin{figure}[H]
 \centering
@@ -871,23 +869,17 @@ Luồng đăng tin được tổ chức thành sáu bước kế tiếp như min
 
 \subsection{Giao diện quản trị}
 
-Giao diện dành cho quản trị viên được thiết kế theo dạng bảng quản lý dữ liệu, tối ưu cho các tác vụ kiểm tra và phê duyệt, gồm bảng điều khiển trung tâm, kiểm duyệt bài đăng tích hợp AI và xét duyệt hồ sơ môi giới chuyên nghiệp.
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{wireframe-admin}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}{0.48\textwidth}\centering
-\includegraphics[width=\linewidth]{wireframe-admin-violent-management}\\[3pt]{\small (b)}
-\end{minipage}
+\includegraphics[width=0.82\textwidth]{wireframe-admin}\\[4pt]{\small (a)}\\[10pt]
+\includegraphics[width=0.82\textwidth]{wireframe-admin-violent-management}\\[4pt]{\small (b)}
 \caption{Wireframe kênh quản trị: (a) màn hình kiểm duyệt bài đăng; (b) màn hình quản lý báo cáo vi phạm}
 \label{fig:wf-admin}
 \end{figure}
 
 \subsection{Giao diện chatbot AI}
 
-Giao diện chatbot AI được phác thảo dưới dạng một cửa sổ hội thoại nổi đặt ở góc phải bên dưới màn hình của người thuê, cho phép người dùng trò chuyện tìm phòng mà không cần chuyển trang. Cấu trúc gồm thanh tiêu đề với hình đại diện trợ lý, khung nội dung trò chuyện kèm chỉ báo tiến trình gọi công cụ, khối thẻ tin gợi ý dạng băng chuyền ngang, và hộp thoại xem chi tiết tin đăng ngay trong cửa sổ chat.
 
 \begin{figure}[H]
 \centering
