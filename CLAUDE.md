@@ -32,7 +32,9 @@ Mục tiêu: báo cáo học thuật **sạch, nhất quán, tự nhiên** — k
 - **webapp (FE) và trang quản trị (admin) dùng chung kiến trúc kỹ thuật** -- admin được fork từ webapp rồi điều chỉnh nội dung và phong cách giao diện. Được phép viết rằng chúng "dùng chung kiến trúc". **Không** viết rằng chúng hoàn toàn độc lập về cơ sở mã hoặc quy ước kỹ thuật.
 
 ### 4. Văn phong & nhất quán
-- Tiếng Việt học thuật, ngôi trung lập; thuật ngữ kỹ thuật kèm bản gốc trong ngoặc lần đầu xuất hiện: "kết xuất phía máy chủ (Server-Side Rendering -- SSR)".
+- Tiếng Việt học thuật, ngôi trung lập.
+- Thuật ngữ kỹ thuật: nếu có từ tiếng Việt thông dụng thì **dùng tiếng Việt** trong câu (ví dụ: "kết xuất phía máy chủ", "cơ sở dữ liệu", "máy chủ"), **không** kèm tiếng Anh trong ngoặc. Nếu **không** có từ tiếng Việt tương đương tự nhiên (tên sản phẩm/thư viện, viết tắt, khái niệm chuyên biệt) thì giữ nguyên tiếng Anh trong câu. Trong cả hai trường hợp, phần đối chiếu/giải nghĩa Việt -- Anh được đưa vào bảng "Danh mục từ viết tắt và thuật ngữ" (`Appendix/appendix1.tex`), không chú thích rải rác trong câu.
+- Ngoại lệ: vẫn được kèm tiếng Anh trong ngoặc khi nó đang **định nghĩa chính chữ viết tắt** (ví dụ RAG: "Truy xuất (Retrieve)", "Tăng cường (Augment)", "Tạo sinh (Generate)").
 - Hình/Bảng luôn có `\caption` và `\label`, tham chiếu bằng `Hình~\ref{...}` / `Bảng~\ref{...}` (có `~` chống xuống dòng).
 - Dùng `--` cho dấu gạch ngang câu, `\ldots` cho dấu ba chấm.
 

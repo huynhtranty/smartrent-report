@@ -3,7 +3,7 @@
 
 \section{Kiến trúc tổng thể hệ thống}
 
-Để đáp ứng các yêu cầu phi chức năng về tính sẵn sàng cao, hiệu năng xử lý tối ưu và khả năng mở rộng linh hoạt, hệ thống SmartRent được thiết kế theo mô hình kiến trúc phân lớp kết hợp hướng dịch vụ (SOA). Kiến trúc này tách biệt rõ ràng giữa các thành phần giao diện, máy chủ xử lý nghiệp vụ chính và dịch vụ xử lý trí tuệ nhân tạo (AI) chuyên biệt. Sự phân tách này giúp các nhóm phát triển có thể làm việc độc lập trên từng cơ sở mã nguồn riêng biệt, giảm thiểu xung đột, đồng thời tối ưu hóa tài nguyên phần cứng bằng cách cho phép co giãn độc lập các dịch vụ theo tải thực tế.
+Để đáp ứng các yêu cầu phi chức năng về tính sẵn sàng cao, hiệu năng xử lý tối ưu và khả năng mở rộng linh hoạt, hệ thống SmartRent được thiết kế theo mô hình kiến trúc phân lớp kết hợp hướng dịch vụ. Kiến trúc này tách biệt rõ ràng giữa các thành phần giao diện, máy chủ xử lý nghiệp vụ chính và dịch vụ xử lý trí tuệ nhân tạo chuyên biệt. Sự phân tách này giúp các nhóm phát triển có thể làm việc độc lập trên từng cơ sở mã nguồn riêng biệt, giảm thiểu xung đột, đồng thời tối ưu hóa tài nguyên phần cứng bằng cách cho phép co giãn độc lập các dịch vụ theo tải thực tế.
 
 \subsection{Mô hình kiến trúc hệ thống}
 
@@ -29,20 +29,20 @@ Hệ thống SmartRent bao gồm các thành phần cốt lõi sau phối hợp 
 \begin{enumerate}
     \item \textbf{Ứng dụng Web người dùng cuối (Next.js Webapp):} Được xây dựng trên Next.js 15 (Pages Router) kết hợp React 19 và TypeScript. Ứng dụng này phục vụ hai đối tượng người dùng chính là người thuê trọ (tìm kiếm, so sánh, tương tác trợ lý AI, thanh toán) và chủ trọ/môi giới (đăng tin, quản lý tin đăng, theo dõi khách hàng).
     \item \textbf{Ứng dụng Web quản trị (Next.js Admin):} Ứng dụng độc lập giúp quản trị viên giám sát hệ thống, kiểm duyệt bài đăng, phê duyệt hồ sơ môi giới chuyên nghiệp và quản lý tài chính/doanh thu.
-    \item \textbf{Máy chủ Backend nghiệp vụ (Spring Boot):} Viết bằng Java Spring Boot, áp dụng kiến trúc nguyên khối mô-đun (Modular Monolith) để chia tách rõ ràng các nghiệp vụ (\texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, \texttt{recommendation}) bên dưới một ứng dụng chạy duy nhất, giúp bảo trì dễ dàng và sẵn sàng tách thành các dịch vụ nhỏ (microservices) khi cần.
+    \item \textbf{Máy chủ Backend nghiệp vụ (Spring Boot):} Viết bằng Java Spring Boot, áp dụng kiến trúc nguyên khối mô-đun để chia tách rõ ràng các nghiệp vụ (\texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, \texttt{recommendation}) bên dưới một ứng dụng chạy duy nhất, giúp bảo trì dễ dàng và sẵn sàng tách thành các dịch vụ nhỏ khi cần.
     \item \textbf{Máy chủ Dịch vụ AI (FastAPI):} Viết bằng Python FastAPI, tích hợp các mô hình ngôn ngữ lớn (Gemini, Llama) qua cổng LiteLLM gateway để phục vụ trợ lý hội thoại AI Agent, tự động tạo mô tả bài đăng và kiểm duyệt tự động.
     \item \textbf{Hệ cơ sở dữ liệu và lưu trữ (MySQL, Redis, Cloudflare R2):} MySQL lưu trữ dữ liệu có cấu trúc ổn định; Redis làm bộ đệm tăng tốc độ truy vấn và quản lý phiên; Cloudflare R2 lưu trữ các tệp đa phương tiện (ảnh, video) thông qua luồng tải lên bằng URL ký trước để tối ưu băng thông máy chủ chính.
 \end{enumerate}
 
 \section{Thiết kế nền tảng Web}
 
-Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập: ứng dụng web cho người dùng cuối (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và trang quản trị (admin -- dành cho quản trị viên). Hai ứng dụng dùng chung kiến trúc kỹ thuật -- trang quản trị được khởi tạo bằng cách tách nhánh (fork) từ webapp rồi điều chỉnh nội dung, bố cục và phong cách giao diện cho phù hợp với nghiệp vụ quản trị. Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
+Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập: ứng dụng web cho người dùng cuối (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và trang quản trị (admin -- dành cho quản trị viên). Hai ứng dụng dùng chung kiến trúc kỹ thuật -- trang quản trị được khởi tạo bằng cách tách nhánh từ webapp rồi điều chỉnh nội dung, bố cục và phong cách giao diện cho phù hợp với nghiệp vụ quản trị. Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
 
-Webapp được xây dựng trên Next.js 15 (theo mô hình Pages Router) cùng React 19 và TypeScript, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ (Server-Side Rendering -- SSR) đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
+Webapp được xây dựng trên Next.js 15 (theo mô hình Pages Router) cùng React 19 và TypeScript, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
 
 \subsection{Tổ chức mã nguồn}
 
-Mã nguồn được tổ chức theo nguyên tắc \textit{tách bạch mối quan tâm} (separation of concerns) và \textit{thiết kế nguyên tử} (Atomic Design), với mục tiêu để mỗi tính năng có thể phát triển độc lập, dễ kiểm thử và dễ bảo trì. Toàn bộ mã nguồn nằm dưới thư mục \texttt{src/}, được phân chia thành các nhóm chính như Bảng~\ref{tab:webapp-structure}.
+Mã nguồn được tổ chức theo nguyên tắc \textit{tách bạch mối quan tâm} và \textit{thiết kế nguyên tử}, với mục tiêu để mỗi tính năng có thể phát triển độc lập, dễ kiểm thử và dễ bảo trì. Toàn bộ mã nguồn nằm dưới thư mục \texttt{src/}, được phân chia thành các nhóm chính như Bảng~\ref{tab:webapp-structure}.
 
 \begin{table}[H]
 \centering
@@ -69,7 +69,7 @@ Mã nguồn được tổ chức theo nguyên tắc \textit{tách bạch mối q
 \end{tabular}
 \end{table}
 
-Cây giao diện tuân thủ nghiêm ngặt thứ tự phân lớp \texttt{atoms $\to$ molecules $\to$ organisms $\to$ templates $\to$ pages}, trong đó lớp dưới không bao giờ được phép nhập (import) từ lớp trên. Cụ thể, \texttt{atoms} là các nguyên tử giao diện cơ bản (nút bấm, ô nhập liệu, hộp thoại\ldots) được chuẩn hóa theo shadcn/ui; \texttt{molecules} ghép các nguyên tử thành các khối nhỏ như trường biểu mẫu, thẻ lọc; \texttt{organisms} là các khối tính năng hiểu biết về dữ liệu và quy tắc nghiệp vụ (thẻ tin đăng, hộp thoại đăng nhập, widget trợ lý AI\ldots); \texttt{templates} là bố cục đầy đủ của một họ trang; còn \texttt{pages} chỉ đóng vai trò lắp ráp. Mỗi thư mục thành phần đều cung cấp một tệp \texttt{index} làm điểm xuất khẩu tập trung (barrel export), giúp việc nhập khẩu nhất quán và che giấu cấu trúc nội bộ.
+Cây giao diện tuân thủ nghiêm ngặt thứ tự phân lớp \texttt{atoms $\to$ molecules $\to$ organisms $\to$ templates $\to$ pages}, trong đó lớp dưới không bao giờ được phép nhập từ lớp trên. Cụ thể, \texttt{atoms} là các nguyên tử giao diện cơ bản (nút bấm, ô nhập liệu, hộp thoại\ldots) được chuẩn hóa theo shadcn/ui; \texttt{molecules} ghép các nguyên tử thành các khối nhỏ như trường biểu mẫu, thẻ lọc; \texttt{organisms} là các khối tính năng hiểu biết về dữ liệu và quy tắc nghiệp vụ (thẻ tin đăng, hộp thoại đăng nhập, widget trợ lý AI\ldots); \texttt{templates} là bố cục đầy đủ của một họ trang; còn \texttt{pages} chỉ đóng vai trò lắp ráp. Mỗi thư mục thành phần đều cung cấp một tệp \texttt{index} làm điểm xuất khẩu tập trung, giúp việc nhập khẩu nhất quán và che giấu cấu trúc nội bộ.
 
 Song song với cây giao diện, logic được tách theo \textit{nghiệp vụ}: mỗi miền dữ liệu có một module dịch vụ (\texttt{*.service.ts}) chịu trách nhiệm gọi API và một nhóm hook (\texttt{use*}) bao bọc dịch vụ đó. Nhờ vậy, logic nghiệp vụ nằm ở hook và context, việc lấy dữ liệu nằm ở tầng dịch vụ, còn component chỉ lo phần hiển thị. Cách phân tách này giúp giảm thiểu sự phụ thuộc chéo và cho phép nhiều thành viên cùng phát triển các tính năng khác nhau mà ít xảy ra xung đột.
 
@@ -87,17 +87,17 @@ Hình~\ref{fig:webapp-source-org} tổng hợp cách tổ chức mã nguồn web
 Ứng dụng web không tự chứa dữ liệu mà kết nối tới nhiều dịch vụ phía sau thông qua các kênh giao tiếp được chuẩn hóa:
 
 \begin{itemize}
-\item \textbf{Giao tiếp HTTP với Backend chính.} Mọi yêu cầu REST đi qua một thể hiện \texttt{axios} duy nhất được cấu hình tập trung tại \texttt{src/configs/axios}. Thể hiện này gắn sẵn URL gốc của Backend (biến môi trường \texttt{URL\_API\_BASE}), tiêu đề mặc định và bộ chặn (interceptor) xử lý xác thực. Toàn bộ phản hồi được chuẩn hóa về một kiểu \texttt{ApiResponse} thống nhất để các tầng phía trên xử lý nhất quán.
+\item \textbf{Giao tiếp HTTP với Backend chính.} Mọi yêu cầu REST đi qua một thể hiện \texttt{axios} duy nhất được cấu hình tập trung tại \texttt{src/configs/axios}. Thể hiện này gắn sẵn URL gốc của Backend (biến môi trường \texttt{URL\_API\_BASE}), tiêu đề mặc định và bộ chặn xử lý xác thực. Toàn bộ phản hồi được chuẩn hóa về một kiểu \texttt{ApiResponse} thống nhất để các tầng phía trên xử lý nhất quán.
 
-\item \textbf{Xác thực bằng JWT và cơ chế làm mới token.} Bộ chặn yêu cầu tự động đính kèm access token vào tiêu đề \texttt{Authorization}. Khi token sắp hết hạn hoặc máy chủ trả về lỗi 401, hệ thống tự động gọi refresh token để lấy token mới rồi phát lại yêu cầu ban đầu một cách trong suốt với người dùng. Cơ chế này còn khử trùng lặp (deduplication) để nhiều yêu cầu đồng thời chỉ kích hoạt đúng một lần làm mới, tránh tình trạng đua tranh (race condition).
+\item \textbf{Xác thực bằng JWT và cơ chế làm mới token.} Bộ chặn yêu cầu tự động đính kèm access token vào tiêu đề \texttt{Authorization}. Khi token sắp hết hạn hoặc máy chủ trả về lỗi 401, hệ thống tự động gọi refresh token để lấy token mới rồi phát lại yêu cầu ban đầu một cách trong suốt với người dùng. Cơ chế này còn khử trùng lặp để nhiều yêu cầu đồng thời chỉ kích hoạt đúng một lần làm mới, tránh tình trạng đua tranh.
 
-\item \textbf{Cổng chặn truy cập (middleware).} Tệp \texttt{src/middleware.ts} đóng vai trò cổng kiểm soát: nó cho phép một danh sách các tuyến công khai (trang chủ, danh sách tin, chi tiết tin, tin tức, bản đồ\ldots) và chặn các tuyến cá nhân khi người dùng chưa đăng nhập. Khi đó, người dùng được chuyển hướng kèm tham số \texttt{returnUrl} để sau khi đăng nhập có thể quay lại đúng trang đang truy cập.
+\item \textbf{Cổng chặn truy cập.} Tệp \texttt{src/middleware.ts} đóng vai trò cổng kiểm soát: nó cho phép một danh sách các tuyến công khai (trang chủ, danh sách tin, chi tiết tin, tin tức, bản đồ\ldots) và chặn các tuyến cá nhân khi người dùng chưa đăng nhập. Khi đó, người dùng được chuyển hướng kèm tham số \texttt{returnUrl} để sau khi đăng nhập có thể quay lại đúng trang đang truy cập.
 
 \item \textbf{Bộ nhớ đệm dữ liệu máy chủ.} Toàn bộ trạng thái lấy từ máy chủ được quản lý bởi TanStack Query, giúp tự động lưu đệm, làm mới nền và đồng bộ dữ liệu giữa các thành phần. Một số dữ liệu thống kê ổn định theo ngày (ví dụ thống kê tin theo tỉnh thành) còn được lưu bền vào \texttt{localStorage} để tồn tại qua các lần tải lại trang.
 
 \item \textbf{Kết nối dịch vụ AI bằng luồng SSE.} Trợ lý hội thoại AI kết nối tới một dịch vụ AI riêng (biến môi trường \texttt{URL\_API\_AI}) và nhận câu trả lời theo thời gian thực qua kỹ thuật Server-Sent Events -- SSE (sử dụng thư viện \texttt{fetch-event-source}). Nhờ đó nội dung trả lời hiện dần theo từng đoạn, kèm theo trạng thái công cụ mà AI đang thực thi, và người dùng có thể hủy luồng đang chạy.
 
-\item \textbf{Thông báo thời gian thực qua WebSocket.} Các thông báo (tin được duyệt, có người quan tâm\ldots) được đẩy theo thời gian thực qua giao thức STOMP trên SockJS, kết hợp với cơ chế hỏi vòng (polling) dự phòng khi mất kết nối.
+\item \textbf{Thông báo thời gian thực qua WebSocket.} Các thông báo (tin được duyệt, có người quan tâm\ldots) được đẩy theo thời gian thực qua giao thức STOMP trên SockJS, kết hợp với cơ chế hỏi vòng dự phòng khi mất kết nối.
 
 \item \textbf{Tích hợp dịch vụ bên thứ ba.} Bản đồ tin đăng tích hợp Google Maps; luồng thanh toán điều hướng sang cổng thanh toán rồi nhận lại kết quả qua một trang callback công khai để cổng có thể chuyển hướng về.
 \end{itemize}
@@ -132,7 +132,7 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm r
 \begin{itemize}
 \item \textbf{Dễ bảo trì và mở rộng.} Kiến trúc Atomic Design phân lớp rõ ràng cùng việc tách logic theo nghiệp vụ giúp định vị và sửa đổi mã nhanh chóng; thêm một tính năng mới thường chỉ cần bổ sung một template, một dịch vụ và một nhóm hook tương ứng mà không ảnh hưởng phần còn lại.
 \item \textbf{An toàn kiểu dữ liệu.} Việc dùng TypeScript trên toàn dự án, giới hạn kiểu \texttt{any} chỉ trong tầng định nghĩa dữ liệu truyền tải, giúp phát hiện sớm lỗi ngay khi biên dịch.
-\item \textbf{Hiệu năng và trải nghiệm tốt.} Kết hợp SSR cho các trang trọng yếu về SEO, tải động (lazy loading) các thành phần nặng như bản đồ và biểu đồ, cùng cơ chế lưu đệm của TanStack Query giúp trang hiển thị nhanh và mượt.
+\item \textbf{Hiệu năng và trải nghiệm tốt.} Kết hợp SSR cho các trang trọng yếu về SEO, tải động các thành phần nặng như bản đồ và biểu đồ, cùng cơ chế lưu đệm của TanStack Query giúp trang hiển thị nhanh và mượt.
 \item \textbf{Nhất quán về giao diện.} Hệ thống thiết kế tập trung (typography, khoảng cách, màu sắc theo token ngữ nghĩa) cùng các quy tắc lint riêng bảo đảm giao diện đồng nhất giữa các trang và giữa các thành viên phát triển.
 \item \textbf{Thuận lợi cho cộng tác nhóm.} Quy ước thư mục, barrel export và các cổng kiểm soát chất lượng (lint, kiểm tra kiểu, kiểm tra khóa đa ngôn ngữ) tạo nền tảng để nhiều người cùng làm việc trên cùng mã nguồn mà vẫn giữ được chất lượng ổn định.
 \end{itemize}
@@ -222,7 +222,7 @@ Cấu trúc gói nói trên được minh họa trực quan ở Hình~\ref{fig:b
 
 \subsection{Luồng dữ liệu}
 
-Hình~\ref{fig:be-request-flow} minh họa luồng xử lý một yêu cầu có xác thực. Yêu cầu kèm \textit{Bearer token} trước hết đi qua bộ lọc bảo mật để \texttt{CustomJwtDecoder} kiểm tra token; controller kiểm tra hợp lệ DTO rồi gọi service. Service ưu tiên đọc từ bộ đệm Redis, chỉ truy vấn cơ sở dữ liệu khi \textit{cache miss} và ghi lại kết quả vào đệm; sau đó dùng mapper chuyển thực thể sang DTO phản hồi và trả về cho client dưới dạng \texttt{ApiResponse} JSON.
+Hình~\ref{fig:be-request-flow} minh họa luồng xử lý một yêu cầu có xác thực. Yêu cầu kèm \textit{Bearer token} trước hết đi qua bộ lọc bảo mật để \texttt{CustomJwtDecoder} kiểm tra token; controller kiểm tra hợp lệ DTO rồi gọi dịch vụ. Dịch vụ ưu tiên đọc từ bộ đệm Redis, chỉ truy vấn cơ sở dữ liệu khi \textit{cache miss} và ghi lại kết quả vào đệm; sau đó dùng mapper chuyển thực thể sang DTO phản hồi và trả về cho máy khách dưới dạng \texttt{ApiResponse} JSON.
 
 \begin{figure}[H]
 \centering
@@ -245,9 +245,9 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \section{Thiết kế kiến trúc AI}
 
-Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt nhằm cô lập phần phụ thuộc nặng về học máy và mô hình ngôn ngữ khỏi khối Backend nghiệp vụ, đồng thời cho phép mở rộng quy mô (scale) hai phần một cách riêng rẽ.
+Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt nhằm cô lập phần phụ thuộc nặng về học máy và mô hình ngôn ngữ khỏi khối Backend nghiệp vụ, đồng thời cho phép mở rộng quy mô hai phần một cách riêng rẽ.
 
-Các tác tử hội thoại được xây trên OpenAI Agents SDK; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường (Retrieval-Augmented Generation -- RAG) cho trợ lý hội thoại; LLM đa phương thức cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát (observability) và một lớp truy cập Backend dùng chung.
+Các tác tử hội thoại được xây trên OpenAI Agents SDK; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường cho trợ lý hội thoại; LLM đa phương thức cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát và một lớp truy cập Backend dùng chung.
 
 \subsection{Kiến trúc tích hợp AI}
 
@@ -294,9 +294,9 @@ Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên: yêu
 
 \subsection{Luồng xử lý AI Chatbot}
 
-Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận -- hành động (ReAct) \cite{ReActPaper}: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events -- SSE.
+Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận -- hành động \cite{ReActPaper}: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events -- SSE.
 
-Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối (\texttt{AgentOrchestrator}) cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn -- mã tỉnh/thành, mã quận/huyện, mã tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng -- từ bốn cơ sở tri thức dạng JSON; việc đối sánh dựa trên từ khóa, có chuẩn hóa loại bỏ dấu tiếng Việt và mở rộng từ đồng nghĩa, hoàn toàn ở bộ nhớ nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng, tách khỏi chỉ dẫn hệ thống để chỉ dẫn hệ thống giữ nguyên byte qua mọi yêu cầu, tận dụng được cơ chế lưu đệm tiền tố (prefix cache) của mô hình.
+Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối (\texttt{AgentOrchestrator}) cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn -- mã tỉnh/thành, mã quận/huyện, mã tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng -- từ bốn cơ sở tri thức dạng JSON; việc đối sánh dựa trên từ khóa, có chuẩn hóa loại bỏ dấu tiếng Việt và mở rộng từ đồng nghĩa, hoàn toàn ở bộ nhớ nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng, tách khỏi chỉ dẫn hệ thống để chỉ dẫn hệ thống giữ nguyên byte qua mọi yêu cầu, tận dụng được cơ chế lưu đệm tiền tố của mô hình.
 
 Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho \texttt{Runner} của Agents SDK chạy vòng lặp gọi công cụ (tối đa 12 lượt). Trong mỗi lượt, mô hình có thể phát ra một hay nhiều lời gọi công cụ; các công cụ được thực thi và đẩy dữ liệu tin đăng thô vào \texttt{ToolContext} để bộ điều phối dựng phần kết quả trả về giao diện sau khi kết thúc. Trợ lý được trang bị 14 công cụ phủ các nhóm nghiệp vụ ở Bảng~\ref{tab:ai-tools}, từ tìm kiếm, xem chi tiết, so sánh, ước tính giá tới các thao tác cá nhân hóa như lưu tin, quản lý tin của chủ trọ và báo cáo tin vi phạm.
 
@@ -332,14 +332,14 @@ Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiệ
 
 \subsection{Luồng gợi ý phòng trọ}
 
-Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung (Content-Based Filtering -- CBF), lọc cộng tác (Collaborative Filtering -- CF) \cite{CFSurvey} và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
+Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung, lọc cộng tác \cite{CFSurvey} và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
 
 Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Trước hết, mỗi tin đăng được biểu diễn thành một vector đặc trưng: giá, diện tích và số phòng ngủ được chuẩn hóa MinMax, kết hợp các đặc trưng phân loại one-hot cho loại bất động sản, loại tin và mã tỉnh. Từ lịch sử tương tác, hệ thống dựng một vector hồ sơ người dùng bằng trung bình có trọng số. Điểm CBF là độ tương đồng cosine giữa hồ sơ (hoặc tin mục tiêu) và ứng viên; điểm CF dựa trên mức đồng xuất hiện item-item trên toàn bộ tương tác. Quy trình tính toán chi tiết điểm số cuối cùng để xếp hạng tin đăng ứng viên được thực hiện qua ba bước định lượng sau:
 
 Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i$ đối với người dùng được tính toán theo quy trình sau:
 \begin{enumerate}
-    \item \textbf{Tính điểm lai cơ sở (Base Hybrid Score):}
-    Điểm số cơ sở $S_{\text{base}}(i)$ được kết hợp từ điểm lọc cộng tác $S_{\text{CF}}(i)$ và điểm lọc dựa trên nội dung $S_{\text{CBF}}(i)$ theo phương pháp lai trọng số (weighted hybrid) \cite{BurkeHybrid}:
+    \item \textbf{Tính điểm lai cơ sở:}
+    Điểm số cơ sở $S_{\text{base}}(i)$ được kết hợp từ điểm lọc cộng tác $S_{\text{CF}}(i)$ và điểm lọc dựa trên nội dung $S_{\text{CBF}}(i)$ theo phương pháp lai trọng số \cite{BurkeHybrid}:
     \begin{equation}
         S_{\text{base}}(i) = 
         \begin{cases}
@@ -353,7 +353,7 @@ Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i
     \end{equation}
     Điểm số này sau đó được chuẩn hóa MinMax về đoạn $[0.1, 1.0]$ để thu được điểm cơ sở chuẩn hóa $S_{\text{base\_norm}}(i)$.
 
-    \item \textbf{Áp dụng hệ số suy giảm địa lý (Geospatial Decay):}
+    \item \textbf{Áp dụng hệ số suy giảm địa lý:}
     Điểm số sau khi hiệu chỉnh địa lý $S_{\text{geo}}(i)$ được tính bằng cách nhân điểm cơ sở đã chuẩn hóa với hệ số suy giảm mũ theo khoảng cách địa lý \cite{YeGeodistance}:
     \begin{equation}
         S_{\text{geo}}(i) = S_{\text{base\_norm}}(i) \cdot e^{-k \cdot d_i}
@@ -364,7 +364,7 @@ Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i
     \end{equation}
     Với $A_{\text{pref}}$ là điểm neo ưa thích (Preferred Anchor - nơi người dùng có nhiều tương tác nhất trong lịch sử), $A_{\text{disc}}$ là điểm neo khám phá (Discovery Anchor - vị trí mới nhất người dùng đang tìm kiếm khi thỏa mãn điều kiện dịch chuyển vùng), và $d(i, A)$ là khoảng cách vật lý tính bằng công thức Haversine (nếu cả hai điểm đều có tọa độ GPS) hoặc khoảng cách ảo dựa trên cấp hành chính. Hệ số suy giảm $k = \frac{\ln(2)}{10}$ bảo đảm điểm số giảm đi một nửa sau mỗi 10 km.
 
-    \item \textbf{Tính điểm số cuối cùng (Final Score):}
+    \item \textbf{Tính điểm số cuối cùng:}
     Điểm số cuối cùng $S_{\text{final}}(i)$ dùng để xếp hạng được tính bằng cách nhân thêm các hệ số tăng cường:
     \begin{equation}
         S_{\text{final}}(i) = S_{\text{geo}}(i) \cdot W_{\text{VIP}} \cdot (1.0 + W_{\text{fresh}} \cdot B_{\text{fresh}})
@@ -386,7 +386,7 @@ Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i
 
 \subsection{Tích hợp API AI}
 
-Dịch vụ AI phục vụ ba nhóm bên gọi và kết nối tới ba dịch vụ phía sau, như tóm tắt ở Hình~\ref{fig:ai-integrations}. Về phía bên gọi: nền tảng web kết nối trực tiếp tới điểm cuối hội thoại truyền luồng để hiển thị trợ lý theo thời gian thực; Backend chính gọi các điểm cuối kiểm duyệt tin đăng, gợi ý giá và sinh mô tả (completion); ngoài ra một máy chủ theo giao thức Model Context Protocol -- MCP chạy như tiến trình riêng, cho phép các trợ lý AI bên ngoài truy vấn kho tin đăng qua kênh stdio. Về phía sau: mọi lời gọi mô hình đi tới Vertex AI Gemini qua LiteLLM; lớp quan sát ghi vết (trace) và quản lý prompt qua Langfuse; còn dữ liệu nghiệp vụ thật luôn được lấy từ Backend chính qua \texttt{httpx}, giữ Backend là nguồn dữ liệu duy nhất đáng tin.
+Dịch vụ AI phục vụ ba nhóm bên gọi và kết nối tới ba dịch vụ phía sau, như tóm tắt ở Hình~\ref{fig:ai-integrations}. Về phía bên gọi: nền tảng web kết nối trực tiếp tới điểm cuối hội thoại truyền luồng để hiển thị trợ lý theo thời gian thực; Backend chính gọi các điểm cuối kiểm duyệt tin đăng, gợi ý giá và sinh mô tả (completion); ngoài ra một máy chủ theo giao thức Model Context Protocol -- MCP chạy như tiến trình riêng, cho phép các trợ lý AI bên ngoài truy vấn kho tin đăng qua kênh stdio. Về phía sau: mọi lời gọi mô hình đi tới Vertex AI Gemini qua LiteLLM; lớp quan sát ghi vết và quản lý prompt qua Langfuse; còn dữ liệu nghiệp vụ thật luôn được lấy từ Backend chính qua \texttt{httpx}, giữ Backend là nguồn dữ liệu duy nhất đáng tin.
 
 Bên cạnh trợ lý hội thoại, hai bề mặt LLM khác cũng do Backend gọi qua API. Kiểm duyệt tin đăng dùng khả năng đa phương thức của Gemini: ảnh và video của tin được tải về và phân tích cùng phần văn bản mô tả để phát hiện sai lệch (ví dụ ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa. Ước tính giá là một bề mặt lai: công cụ \texttt{get\_price\_estimate} trong trợ lý dùng mô hình XGBoost khi có sẵn artefact đã huấn luyện, còn lại lùi về ước tính theo luật dựa trên đơn giá mỗi mét vuông theo khu vực; điểm cuối gợi ý giá độc lập thì dùng một tác tử LLM truy vấn các tin tương tự để suy ra khoảng giá thị trường, kèm cơ chế dự phòng theo luật khi tác tử thất bại.
 
@@ -421,15 +421,15 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 
 \section{Thiết kế cơ sở dữ liệu}
 
-Cơ sở dữ liệu là trung tâm lưu trữ và bảo toàn tính nhất quán cho toàn bộ nghiệp vụ của hệ thống. Phần này trình bày lựa chọn công nghệ lưu trữ, các nguyên tắc thiết kế lược đồ (schema), sơ đồ thực thể -- quan hệ (Entity--Relationship -- ER) của hệ thống chính và mô tả chi tiết các bảng dữ liệu.
+Cơ sở dữ liệu là trung tâm lưu trữ và bảo toàn tính nhất quán cho toàn bộ nghiệp vụ của hệ thống. Phần này trình bày lựa chọn công nghệ lưu trữ, các nguyên tắc thiết kế lược đồ, sơ đồ thực thể -- quan hệ của hệ thống chính và mô tả chi tiết các bảng dữ liệu.
 
 \subsection{Giới thiệu tổng quan}
 
 Hệ thống sử dụng MySQL 8.0 (storage engine InnoDB, bộ ký tự \texttt{utf8mb4}) làm cơ sở dữ liệu quan hệ chính -- nơi lưu trữ nguồn dữ liệu duy nhất đáng tin cậy cho mọi nghiệp vụ. Bên cạnh đó, Redis đảm nhiệm vai trò bộ nhớ đệm và lưu trạng thái tạm thời như mã xác thực OTP, danh sách token bị vô hiệu hóa và bộ đệm thống kê, giúp giảm tải ghi cho cơ sở dữ liệu quan hệ.
 
-Lược đồ cơ sở dữ liệu được quản lý theo phương pháp \textit{di trú phiên bản} bằng công cụ Flyway: mỗi thay đổi cấu trúc là một tệp \texttt{V\{n\}\_\_\{mô tả\}.sql} bất biến, được áp dụng tuần tự và tự động khi ứng dụng khởi động. Tới thời điểm hiện tại, lược đồ đã trải qua 90 phiên bản di trú (từ \texttt{V1} đến \texttt{V90}), phản ánh quá trình tiến hóa liên tục của nghiệp vụ: thêm cột, đổi tên, mở rộng kiểu liệt kê (enum), tạo chỉ mục và tái cấu trúc bảng. Cách tiếp cận này bảo đảm lược đồ giữa các môi trường phát triển, kiểm thử và vận hành luôn đồng nhất và có thể truy vết.
+Lược đồ cơ sở dữ liệu được quản lý theo phương pháp \textit{di trú phiên bản} bằng công cụ Flyway: mỗi thay đổi cấu trúc là một tệp \texttt{V\{n\}\_\_\{mô tả\}.sql} bất biến, được áp dụng tuần tự và tự động khi ứng dụng khởi động. Tới thời điểm hiện tại, lược đồ đã trải qua 90 phiên bản di trú (từ \texttt{V1} đến \texttt{V90}), phản ánh quá trình tiến hóa liên tục của nghiệp vụ: thêm cột, đổi tên, mở rộng kiểu liệt kê, tạo chỉ mục và tái cấu trúc bảng. Cách tiếp cận này bảo đảm lược đồ giữa các môi trường phát triển, kiểm thử và vận hành luôn đồng nhất và có thể truy vết.
 
-Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ: (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi (telemetry). Một số nguyên tắc thiết kế được áp dụng xuyên suốt lược đồ. Về chiến lược khóa chính, các thực thể nhạy cảm hoặc cần định danh toàn cục dùng khóa dạng chuỗi sinh theo cơ chế Snowflake/UUID để tránh lộ quy mô dữ liệu, trong khi các bảng có lượng bản ghi lớn dùng khóa số nguyên tự tăng để tối ưu hiệu năng ghi. Toàn vẹn tham chiếu được bảo đảm bằng khóa ngoại với hành vi xóa phù hợp từng quan hệ -- xóa theo tầng cho dữ liệu phụ thuộc chặt, đặt về rỗng cho tham chiếu lỏng nhằm giữ lại lịch sử khi thực thể cha bị xóa. Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm để ghi lại mọi thay đổi trạng thái, bao gồm lịch sử giá, trạng thái giao dịch và luồng kiểm duyệt tin đăng. Một số cột phi chuẩn hóa cũng được bổ sung có chủ đích: văn bản chuẩn hóa bỏ dấu và mã ngữ âm phục vụ chỉ mục toàn văn của MySQL, bảng gộp lượt bấm theo ngày để dựng biểu đồ thống kê mà không cần quét bảng chi tiết. Ngoài ra, do cải cách đơn vị hành chính năm 2025 (từ ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cùng bảng ánh xạ trung gian để bảo đảm dữ liệu cũ vẫn dùng được sau cải cách.
+Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ: (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi. Một số nguyên tắc thiết kế được áp dụng xuyên suốt lược đồ. Về chiến lược khóa chính, các thực thể nhạy cảm hoặc cần định danh toàn cục dùng khóa dạng chuỗi sinh theo cơ chế Snowflake/UUID để tránh lộ quy mô dữ liệu, trong khi các bảng có lượng bản ghi lớn dùng khóa số nguyên tự tăng để tối ưu hiệu năng ghi. Toàn vẹn tham chiếu được bảo đảm bằng khóa ngoại với hành vi xóa phù hợp từng quan hệ -- xóa theo tầng cho dữ liệu phụ thuộc chặt, đặt về rỗng cho tham chiếu lỏng nhằm giữ lại lịch sử khi thực thể cha bị xóa. Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm để ghi lại mọi thay đổi trạng thái, bao gồm lịch sử giá, trạng thái giao dịch và luồng kiểm duyệt tin đăng. Một số cột phi chuẩn hóa cũng được bổ sung có chủ đích: văn bản chuẩn hóa bỏ dấu và mã ngữ âm phục vụ chỉ mục toàn văn của MySQL, bảng gộp lượt bấm theo ngày để dựng biểu đồ thống kê mà không cần quét bảng chi tiết. Ngoài ra, do cải cách đơn vị hành chính năm 2025 (từ ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cùng bảng ánh xạ trung gian để bảo đảm dữ liệu cũ vẫn dùng được sau cải cách.
 
 \subsection{Sơ đồ thiết kế cơ sở dữ liệu của hệ thống chính}
 
@@ -453,7 +453,7 @@ Như Hình~\ref{fig:db-overview} cho thấy, hai bảng \texttt{users} và \text
 \label{fig:db-er-user}
 \end{figure}
 
-\textbf{Nhóm tin đăng và nội dung cốt lõi.} Hình~\ref{fig:db-er-listing} đặt \texttt{listings} ở trung tâm: mỗi tin đăng thuộc về một người dùng, một danh mục (\texttt{categories}) và một địa chỉ (\texttt{addresses}); gắn với nhiều tiện ích qua bảng nối \texttt{listing\_amenities}; có nhiều tệp đa phương tiện (\texttt{media}, cùng hai bảng \texttt{images}/\texttt{videos} kế thừa từ thiết kế cũ) và toàn bộ lịch sử giá trong \texttt{pricing\_histories}. Quan hệ tự tham chiếu \texttt{parent\_listing\_id} phục vụ cơ chế tin bóng (shadow listing). Hai bảng \texttt{listing\_drafts} (bản nháp tự lưu) và \texttt{news} (tin tức/blog) cũng thuộc nhóm này.
+\textbf{Nhóm tin đăng và nội dung cốt lõi.} Hình~\ref{fig:db-er-listing} đặt \texttt{listings} ở trung tâm: mỗi tin đăng thuộc về một người dùng, một danh mục (\texttt{categories}) và một địa chỉ (\texttt{addresses}); gắn với nhiều tiện ích qua bảng nối \texttt{listing\_amenities}; có nhiều tệp đa phương tiện (\texttt{media}, cùng hai bảng \texttt{images}/\texttt{videos} kế thừa từ thiết kế cũ) và toàn bộ lịch sử giá trong \texttt{pricing\_histories}. Quan hệ tự tham chiếu \texttt{parent\_listing\_id} phục vụ cơ chế tin bóng. Hai bảng \texttt{listing\_drafts} (bản nháp tự lưu) và \texttt{news} (tin tức/blog) cũng thuộc nhóm này.
 
 \begin{figure}[H]
 \centering
@@ -766,7 +766,7 @@ Bảng \texttt{listings} (Bảng~\ref{tab:col-listings}) là thực thể trung 
 
 \subsubsection{Chi tiết bảng \texttt{transactions}}
 
-Bảng \texttt{transactions} (Bảng~\ref{tab:col-transactions}) ghi nhận toàn bộ giao dịch tài chính trong hệ thống. Thiết kế hỗ trợ nhiều loại giao dịch và nhiều cổng thanh toán; trường \texttt{idempotency\_key} bảo đảm một thao tác thanh toán không bị xử lý trùng, còn các cột ảnh chụp (snapshot) lưu lại thông tin tại thời điểm giao dịch để phục vụ đối soát về sau.
+Bảng \texttt{transactions} (Bảng~\ref{tab:col-transactions}) ghi nhận toàn bộ giao dịch tài chính trong hệ thống. Thiết kế hỗ trợ nhiều loại giao dịch và nhiều cổng thanh toán; trường \texttt{idempotency\_key} bảo đảm một thao tác thanh toán không bị xử lý trùng, còn các cột ảnh chụp lưu lại thông tin tại thời điểm giao dịch để phục vụ đối soát về sau.
 
 \begin{table}[H]
 \centering
