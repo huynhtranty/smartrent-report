@@ -334,7 +334,48 @@ Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiệ
 
 Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung (Content-Based Filtering -- CBF), lọc cộng tác (Collaborative Filtering -- CF) \cite{CFSurvey} và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
 
-Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Trước hết, mỗi tin đăng được biểu diễn thành một vector đặc trưng: giá, diện tích và số phòng ngủ được chuẩn hóa MinMax, kết hợp các đặc trưng phân loại one-hot cho loại bất động sản, loại tin và mã tỉnh. Từ lịch sử tương tác, hệ thống dựng một vector hồ sơ người dùng bằng trung bình có trọng số. Điểm CBF là độ tương đồng cosine giữa hồ sơ (hoặc tin mục tiêu) và ứng viên; điểm CF dựa trên mức đồng xuất hiện item-item trên toàn bộ tương tác. Hai điểm được trộn theo tỉ lệ $0{,}4$ CF và $0{,}6$ CBF khi có tín hiệu cộng tác. Cuối cùng, điểm được điều chỉnh bằng hệ số suy giảm theo khoảng cách địa lý (Haversine kết hợp suy giảm hàm mũ) rồi nhân thêm các boost theo hạng VIP và độ mới của tin trước khi xếp hạng và cắt lấy top phù hợp nhất.
+Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Trước hết, mỗi tin đăng được biểu diễn thành một vector đặc trưng: giá, diện tích và số phòng ngủ được chuẩn hóa MinMax, kết hợp các đặc trưng phân loại one-hot cho loại bất động sản, loại tin và mã tỉnh. Từ lịch sử tương tác, hệ thống dựng một vector hồ sơ người dùng bằng trung bình có trọng số. Điểm CBF là độ tương đồng cosine giữa hồ sơ (hoặc tin mục tiêu) và ứng viên; điểm CF dựa trên mức đồng xuất hiện item-item trên toàn bộ tương tác. Quy trình tính toán chi tiết điểm số cuối cùng để xếp hạng tin đăng ứng viên được thực hiện qua ba bước định lượng sau:
+
+Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i$ đối với người dùng được tính toán theo quy trình sau:
+\begin{enumerate}
+    \item \textbf{Tính điểm lai cơ sở (Base Hybrid Score):}
+    Điểm số cơ sở $S_{\text{base}}(i)$ được kết hợp từ điểm lọc cộng tác $S_{\text{CF}}(i)$ và điểm lọc dựa trên nội dung $S_{\text{CBF}}(i)$ theo phương pháp lai trọng số (weighted hybrid) \cite{BurkeHybrid}:
+    \begin{equation}
+        S_{\text{base}}(i) = 
+        \begin{cases}
+            0.4 \cdot S_{\text{CF}}(i) + 0.6 \cdot S_{\text{CBF}}(i) & \text{nếu } S_{\text{CF}}(i) > 0 \\
+            0.9 \cdot S_{\text{CBF}}(i) & \text{ngược lại}
+        \end{cases}
+    \end{equation}
+    Trong đó, $S_{\text{CBF}}(i)$ là độ tương đồng Cosine giữa vector hồ sơ người dùng $\vec{U}$ và vector đặc trưng của tin đăng ứng viên $\vec{V}_i$:
+    \begin{equation}
+        S_{\text{CBF}}(i) = \cos(\vec{U}, \vec{V}_i) = \frac{\vec{U} \cdot \vec{V}_i}{\|\vec{U}\| \|\vec{V}_i\|}
+    \end{equation}
+    Điểm số này sau đó được chuẩn hóa MinMax về đoạn $[0.1, 1.0]$ để thu được điểm cơ sở chuẩn hóa $S_{\text{base\_norm}}(i)$.
+
+    \item \textbf{Áp dụng hệ số suy giảm địa lý (Geospatial Decay):}
+    Điểm số sau khi hiệu chỉnh địa lý $S_{\text{geo}}(i)$ được tính bằng cách nhân điểm cơ sở đã chuẩn hóa với hệ số suy giảm mũ theo khoảng cách địa lý \cite{YeGeodistance}:
+    \begin{equation}
+        S_{\text{geo}}(i) = S_{\text{base\_norm}}(i) \cdot e^{-k \cdot d_i}
+    \end{equation}
+    Trong đó, $d_i$ là khoảng cách địa lý ngắn nhất từ tin đăng ứng viên $i$ tới các điểm neo vị trí của người dùng:
+    \begin{equation}
+        d_i = \min(d(i, A_{\text{pref}}), d(i, A_{\text{disc}}))
+    \end{equation}
+    Với $A_{\text{pref}}$ là điểm neo ưa thích (Preferred Anchor - nơi người dùng có nhiều tương tác nhất trong lịch sử), $A_{\text{disc}}$ là điểm neo khám phá (Discovery Anchor - vị trí mới nhất người dùng đang tìm kiếm khi thỏa mãn điều kiện dịch chuyển vùng), và $d(i, A)$ là khoảng cách vật lý tính bằng công thức Haversine (nếu cả hai điểm đều có tọa độ GPS) hoặc khoảng cách ảo dựa trên cấp hành chính. Hệ số suy giảm $k = \frac{\ln(2)}{10}$ bảo đảm điểm số giảm đi một nửa sau mỗi 10 km.
+
+    \item \textbf{Tính điểm số cuối cùng (Final Score):}
+    Điểm số cuối cùng $S_{\text{final}}(i)$ dùng để xếp hạng được tính bằng cách nhân thêm các hệ số tăng cường:
+    \begin{equation}
+        S_{\text{final}}(i) = S_{\text{geo}}(i) \cdot W_{\text{VIP}} \cdot (1.0 + W_{\text{fresh}} \cdot B_{\text{fresh}})
+    \end{equation}
+    Trong đó:
+    \begin{itemize}
+        \item $W_{\text{VIP}}$ là trọng số tài khoản VIP của người đăng tin (Diamond: 1.15, Gold: 1.10, Silver: 1.05, Normal: 1.0).
+        \item $W_{\text{fresh}} = 0.3$ là trọng số độ tươi mới tối đa của hệ thống.
+        \item $B_{\text{fresh}} = \max(0.0, 1.0 - 0.01 \cdot t_{\text{ago}})$ là hệ số độ tươi mới giảm dần theo thời gian, với $t_{\text{ago}}$ là số ngày kể từ khi bài đăng được tải lên.
+    \end{itemize}
+\end{enumerate}
 
 \begin{figure}[H]
 \centering
