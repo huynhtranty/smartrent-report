@@ -11,7 +11,7 @@ Sự phát triển vượt bậc của AI và LLM trong những năm gần đây
 
 Tuy nhiên, các nền tảng cho thuê bất động sản hiện tại tại Việt Nam phần lớn vẫn hoạt động theo mô hình truyền thống: đăng tin tìm kiếm theo bộ lọc và liên hệ qua điện thoại, chưa tận dụng tối đa sức mạnh của AI để cá nhân hóa trải nghiệm, xác thực thông tin và tăng tính minh bạch cho thị trường. Các nền tảng quốc tế như Zillow đã tích hợp AI mạnh mẽ (đánh giá giá Zestimate, bản đồ thông minh), nhưng không phù hợp với thị trường Việt Nam về mặt dữ liệu, pháp lý, thói quen người dùng và ngôn ngữ. Trong khi đó, các công cụ AI tổng quát như ChatGPT hay Gemini tuy mạnh về xử lý ngôn ngữ nhưng không được tích hợp trực tiếp vào nền tảng cho thuê và thiếu dữ liệu thị trường thực tế.
 
-Xuất phát từ thực trạng trên, nhóm nghiên cứu đề xuất giải pháp ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI''. Hệ thống này hướng đến xây dựng một nền tảng toàn diện kết nối người thuê và người cho thuê, được phát triển trên nền tảng web với kiến trúc hiện đại, tích hợp các tính năng AI tiên tiến, nổi bật là AI Agent có khả năng tìm phòng bằng ngôn ngữ tự nhiên với multi-step reasoning, hệ thống tự động phát hiện trùng lặp, đánh giá giá so với thị trường, gợi ý cá nhân hóa, và thông báo thông minh nhằm nâng cao trải nghiệm cho tất cả các bên tham gia. Bằng việc sử dụng các công nghệ lập trình hiện đại và các mô hình ngôn ngữ lớn, và đánh giá giá tự động, nhóm mong muốn xây dựng một sản phẩm thực tiễn, giải quyết các pain point thực sự của thị trường cho thuê nhà trọ tại Việt Nam, đồng thời tạo nền tảng có khả năng mở rộng cho các tính năng AI nâng cao trong tương lai.
+Xuất phát từ thực trạng trên, nhóm nghiên cứu đề xuất giải pháp ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI''. Hệ thống này hướng đến xây dựng một nền tảng toàn diện kết nối người thuê và người cho thuê, được phát triển trên nền tảng web với kiến trúc hiện đại, tích hợp các tính năng AI tiên tiến, nổi bật là AI Agent có khả năng tìm phòng bằng ngôn ngữ tự nhiên với multi-step reasoning, hệ thống tự động phát hiện trùng lặp, đánh giá giá so với thị trường, và gợi ý cá nhân hóa nhằm nâng cao trải nghiệm cho tất cả các bên tham gia. Bằng việc sử dụng các công nghệ lập trình hiện đại và các mô hình ngôn ngữ lớn, và đánh giá giá tự động, nhóm mong muốn xây dựng một sản phẩm thực tiễn, giải quyết các pain point thực sự của thị trường cho thuê nhà trọ tại Việt Nam, đồng thời tạo nền tảng có khả năng mở rộng cho các tính năng AI nâng cao trong tương lai.
 
 \section{Mục tiêu đề tài}
 
@@ -23,7 +23,6 @@ Xuất phát từ thực trạng trên, nhóm nghiên cứu đề xuất giải 
     \item \textbf{Tăng tính minh bạch về giá cả:} Hệ thống cung cấp thông tin tham khảo về giá bất động sản dựa trên dữ liệu lịch sử và các bài đăng trong cùng khu vực, giúp người thuê dễ dàng nhận biết mức giá phổ biến trên thị trường và hỗ trợ người cho thuê tham khảo khi định giá bài đăng.
     \item \textbf{Hỗ trợ người đăng tin tối ưu nội dung:} Sử dụng AI để tự động tạo mô tả bài đăng hấp dẫn, gợi ý giá phù hợp, và cung cấp công cụ quản lý khách hàng tiềm năng.
     \item \textbf{Đảm bảo chất lượng nội dung:} Xây dựng quy trình xác thực bài đăng kết hợp AI review, phát hiện tin trùng lặp/spam tự động, và kiểm duyệt bởi quản trị viên.
-    \item \textbf{Thông báo thông minh:} Hệ thống sử dụng AI để lọc và chỉ gửi những bài đăng thực sự phù hợp với hồ sơ và hành vi của từng người dùng.
     \item \textbf{Xây dựng hệ thống kinh doanh bền vững:} Thiết kế mô hình doanh thu với các gói hội viên, dịch vụ đẩy tin, và hệ thống thanh toán trực tuyến an toàn.
 \end{itemize}
 
@@ -38,7 +37,7 @@ Hệ thống được chia thành 6 nhóm chức năng chính:
     \item \textbf{Tìm kiếm thông minh:} Tìm kiếm phòng trọ đa tiêu chí, tìm kiếm trên bản đồ tương tác, hiển thị các địa điểm xung quanh và gợi ý tin đăng cá nhân hóa.
     \item \textbf{Đăng tin cho thuê:} Đăng tin cho thuê qua biểu mẫu nhiều bước, hỗ trợ AI tạo mô tả tin đăng và ước tính giá thị trường, lưu bản nháp, so sánh tin đăng, đẩy tin và quản lý danh sách tin của chủ trọ.
     \item \textbf{Doanh thu và thanh toán:} Quản lý các gói hội viên, hóa đơn giao dịch, nạp tiền và tích hợp cổng thanh toán trực tuyến.
-    \item \textbf{Giao tiếp và tương tác:} Trợ lý hội thoại tìm phòng trọ bằng ngôn ngữ tự nhiên, liên kết nhắn tin qua Zalo, thông báo thông minh và theo dõi người đăng tin.
+    \item \textbf{Giao tiếp và tương tác:} Trợ lý hội thoại tìm phòng trọ bằng ngôn ngữ tự nhiên, liên kết nhắn tin qua Zalo và theo dõi người đăng tin.
     \item \textbf{Phân tích và thống kê:} Trang tổng quan hiển thị biểu đồ người dùng, bài đăng, hiệu suất tin đăng và thống kê doanh thu dành cho quản trị viên.
 \end{enumerate}
 
@@ -60,107 +59,26 @@ Hệ thống phục vụ 3 nhóm đối tượng chính:
 
 \section{Phương pháp nghiên cứu}
 
-Trước khi triển khai thiết kế, nhóm đã tiến hành khảo sát các nền tảng cho thuê bất động sản (BĐS) hiện có trên thị trường Việt Nam và quốc tế để học hỏi ưu nhược điểm và xác định khoảng trống công nghệ.
+Để hoàn thành các mục tiêu đề ra, đề tài áp dụng các phương pháp nghiên cứu khoa học và kỹ thuật phần mềm cụ thể sau:
 
-\subsection{Khảo sát các nền tảng hiện có}
-
-\begin{itemize}
-    \item \textbf{Các nền tảng cho thuê bất động sản tại Việt Nam (Batdongsan.com.vn, Phongtro123):}
-    \begin{itemize}
-        \item \textit{Ưu điểm:} Có lượng tin đăng lớn, thương hiệu uy tín lâu năm, hệ thống gói dịch vụ đa dạng và tiếp cận được tập người dùng rộng rãi.
-        \item \textit{Nhược điểm:} Thiếu các tính năng trí tuệ nhân tạo (AI) hỗ trợ tìm kiếm cá nhân hóa, không tích hợp công cụ tự động đánh giá giá cả, khả năng hỗ trợ hội thoại (chatbot) còn rất hạn chế và giao diện tương tác có phần lỗi thời.
-    \end{itemize}
-    
-    \item \textbf{Các nền tảng quốc tế (Zillow, Trulia, Realtor.com):}
-    \begin{itemize}
-        \item \textit{Ưu điểm:} Tích hợp công nghệ trí tuệ nhân tạo mạnh mẽ phục vụ việc đánh giá giá trị bất động sản (ví dụ: công cụ định giá Zestimate của Zillow), bản đồ tương tác trực quan và giao diện thiết kế hiện đại.
-        \item \textit{Nhược điểm:} Dữ liệu, pháp lý và hành vi người dùng được xây dựng riêng cho thị trường nước ngoài nên hoàn toàn không phù hợp khi áp dụng trực tiếp tại Việt Nam. Đồng thời, các nền tảng này không hỗ trợ tiếng Việt.
-    \end{itemize}
-
-    \item \textbf{Nền tảng Nhà Tốt (nhatot.com):}
-    \begin{itemize}
-        \item \textit{Ưu điểm:} Là một trong những nền tảng mua bán và cho thuê lớn nhất Việt Nam, sở hữu tập người dùng rộng, giao diện thân thiện, có tích hợp tính năng gợi ý cá nhân hóa cơ bản cùng hệ thống thanh toán trực tuyến.
-        \item \textit{Nhược điểm:} Do hoạt động như một chuyên mục con của trang rao vặt Chợ Tốt nên giao diện còn đơn giản hướng đến đối tượng người dùng phổ thông, thiếu các tính năng AI chuyên sâu dành riêng cho nhu cầu tìm kiếm nhà trọ, không hỗ trợ tác nhân hội thoại thông minh (AI Agent), chưa tích hợp chức năng tự động đánh giá giá bất động sản, và quy trình kiểm duyệt tin đăng phần lớn vẫn thực hiện thủ công.
-    \end{itemize}
-\end{itemize}
-
-\subsection{So sánh tính năng}
-
-Dưới đây là Bảng~\ref{tab:comparison-platforms} thể hiện chi tiết việc so sánh tính năng giữa giải pháp đề xuất của đề tài và các nền tảng đang có mặt trên thị trường:
-
-\begin{table}[H]
-\centering
-\caption{Bảng so sánh tính năng giữa đề tài và các nền tảng hiện có}
-\label{tab:comparison-platforms}
-\begin{tabular}{|p{0.32\textwidth}|c|c|c|c|c|}
-\hline
-\textbf{Tính năng} & \textbf{Đề tài} & \textbf{Batdongsan} & \textbf{Phongtro123} & \textbf{Zillow} & \textbf{Nhà Tốt} \\
-\hline
-AI Agent tìm phòng & Có & Không & Không & Không & Không  \\
-\hline
-AI đánh giá giá BĐS & Có & Có & Không & Có & Không \\
-\hline
-Phát hiện tin trùng lặp & Có & Không & Không & Không & Không \\
-\hline
-Gợi ý cá nhân hóa & Có & Không & Không & Có & Có \\
-\hline
-Thông báo thông minh & Có & Không & Không & Không & Không \\
-\hline
-AI tạo nội dung bài đăng & Có & Không & Không & Không & Không \\
-\hline
-Tìm kiếm trên bản đồ tương tác & Có & Có & Không & Có & Không \\
-\hline
-Thanh toán trực tuyến (ví, gói hội viên) & Có & Có & Không & Có & Có \\
-\hline
-Hỗ trợ tiếng Việt đầy đủ & Có & Có & Có & Không & Có \\
-\hline
-Tối ưu cho thị trường VN & Có & Có & Có & Không & Có \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Kết luận khảo sát:} Các nền tảng kinh doanh bất động sản hiện tại ở Việt Nam chưa tận dụng tối đa sức mạnh của trí tuệ nhân tạo. Đây chính là khoảng trống công nghệ lớn mà đề tài hướng đến giải quyết thông qua việc kết hợp các giải pháp AI hiện đại vào một hệ thống tìm kiếm phòng trọ chuyên biệt dành riêng cho thị trường Việt Nam.
-
-\subsection{Những điểm khác biệt cốt lõi}
-
-Đề tài đặt mục tiêu đạt được những điểm khác biệt cốt lõi sau so với các hệ thống truyền thống:
-\begin{itemize}
-    \item \textbf{Tích hợp tác nhân hội thoại thông minh (AI Agent):} Có khả năng lập luận đa bước (multi-step reasoning), giúp người thuê tìm kiếm phòng trọ bằng ngôn ngữ tự nhiên thay vì chỉ sử dụng các bộ lọc cứng nhắc (ví dụ: ``tìm phòng gần Trường Đại học Khoa học Tự nhiên, giá dưới 3 triệu đồng, có máy lạnh''). Tác nhân này sẽ tự động phân tích nhu cầu người dùng, truy vấn cơ sở dữ liệu, sắp xếp thứ tự ưu tiên và phản hồi trực tiếp thông qua hội thoại.
-    \item \textbf{Phát hiện tin trùng lặp và tin rác tự động:} Bằng cách phân tích độ tương đồng văn bản (text similarity) kết hợp phân tích ngữ nghĩa sâu bằng mô hình ngôn ngữ lớn (Gemini), giúp nâng cao chất lượng dữ liệu của hệ thống.
-    \item \textbf{Hệ thống gợi ý cá nhân hóa và thông báo thông minh:} AI sẽ tự động phân tích và chỉ gửi các thông báo về bài đăng thực sự phù hợp với hồ sơ hành vi người dùng, tối ưu hóa trải nghiệm tiếp nhận thông tin.
-    \item \textbf{Hỗ trợ người đăng tin tối ưu hóa nội dung bài đăng:} Tự động sinh mô tả tin đăng chuyên nghiệp, gợi ý mức giá cho thuê phù hợp và cung cấp công cụ theo dõi, quản lý khách hàng tiềm năng hiệu quả.
-\end{itemize}
-
-\subsection{Hướng tiếp cận kỹ thuật}
-
-Để hiện thực hóa các điểm khác biệt nêu trên, nhóm nghiên cứu lựa chọn các hướng tiếp cận kỹ thuật cụ thể như sau:
 \begin{enumerate}
-    \item \textbf{Kiến trúc Modular Monolith với khả năng mở rộng:}
-    \begin{itemize}
-        \item Bắt đầu phát triển với kiến trúc nguyên khối mô-đun cho máy chủ chính (Spring Boot) nhằm đảm bảo sự ổn định và nhất quán giao dịch, có thể tách thành các dịch vụ nhỏ (microservices) khi hệ thống cần mở rộng quy mô.
-        \item Thiết lập một máy chủ Python độc lập chuyên trách các xử lý và tác vụ liên quan đến AI, giao tiếp với máy chủ chính thông qua REST API.
-        \item Sử dụng giải pháp quản lý container Kubernetes để điều phối và tự động co giãn tài nguyên theo tải thực tế.
-    \end{itemize}
-
-    \item \textbf{Tích hợp AI đa tầng và tác nhân hội thoại (AI Agent):}
-    \begin{itemize}
-        \item Sử dụng Gemini API làm nền tảng cốt lõi cho các tác vụ NLP như tóm tắt thông tin bài đăng, tạo nội dung tự động và cung cấp trí tuệ cho AI Agent.
-        \item Trợ lý thông minh AI Agent được phát triển dựa trên cơ chế gọi hàm (function calling) của Gemini để kích hoạt các công cụ nghiệp vụ tương ứng khi người dùng tương tác.
-        \item Xây dựng hệ thống gợi ý kết hợp giữa lọc cộng tác (collaborative filtering) và lọc dựa trên nội dung (content-based filtering).
-    \end{itemize}
-
-    \item \textbf{Hệ thống tìm kiếm và bản đồ thông minh:}
-    \begin{itemize}
-        \item Tích hợp API bản đồ (Google Maps hoặc OpenStreetMap) phục vụ chức năng tìm kiếm trên bản đồ trực quan bằng gom cụm điểm đánh dấu.
-        \item Tự động hóa việc tính toán khoảng cách địa lý và thời gian di chuyển dự kiến từ phòng trọ đến các điểm tiện ích lớn.
-    \end{itemize}
-
-    \item \textbf{Hệ thống thanh toán và quản lý gói dịch vụ:}
-    \begin{itemize}
-        \item Tích hợp cổng thanh toán trực tuyến trong nước VNPAY.
-        \item Xây dựng cơ chế ví tài khoản nội bộ đi kèm nhật ký giao dịch minh bạch và quy trình tự động gia hạn, nâng cấp các gói thành viên cho người dùng.
-    \end{itemize}
+    \item \textbf{Phương pháp nghiên cứu lý thuyết:}
+    Nghiên cứu các tài liệu khoa học, sách báo và các công bố khoa học gần đây về lĩnh vực Generative AI, AI Agent, LLM, Function Calling, RAG, Recommendation System và các công nghệ phát triển Web/Backend hiện đại.
+    
+    \item \textbf{Phương pháp khảo sát hiện trạng:}
+    Tiến hành khảo sát, phân tích trải nghiệm và so sánh tính năng của các nền tảng công nghệ tìm kiếm bất động sản phổ biến trong nước (Batdongsan.com.vn, Phongtro123, Nhà Tốt) và quốc tế (Zillow) nhằm xác định ưu nhược điểm, từ đó phát hiện khoảng trống công nghệ và định hình các tính năng cốt lõi cho đề tài (chi tiết khảo sát được trình bày tại Chương 2).
+    
+    \item \textbf{Phương pháp phân tích và thiết kế hệ thống:}
+    Áp dụng quy trình phát triển phần mềm để đặc tả yêu cầu người dùng, xây dựng sơ đồ ca sử dụng, thiết kế kiến trúc hệ thống theo mô hình Modular Monolith kết hợp dịch vụ AI độc lập, thiết kế cơ sở dữ liệu quan hệ và xây dựng đặc tả giao diện lập trình ứng dụng.
+    
+    \item \textbf{Phương pháp thực nghiệm:}
+    Xây dựng thực thể hệ thống chạy thử nghiệm hoàn chỉnh bao gồm cả ứng dụng Web, hệ thống dịch vụ lõi và dịch vụ AI. Thực hiện quy trình kiểm thử chức năng, đo lường hiệu năng hệ thống dưới các mức tải khác nhau và đánh giá độ chính xác của các mô hình AI phục vụ định giá và khả năng phản hồi của tác nhân AI Agent.
 \end{enumerate}
+
+
+
+
+
 
 \section{Ý nghĩa khoa học và thực tiễn}
 
