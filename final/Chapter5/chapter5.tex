@@ -628,7 +628,7 @@ Người dùng có thể đăng ký trở thành \textit{môi giới chuyên ngh
 
 \section{Chức năng dành cho quản trị viên}
 
-Kênh quản trị là không gian vận hành dành cho đội ngũ kiểm soát hệ thống, gồm các nhóm chức năng: giám sát và thống kê, quản lý người dùng và phân quyền, kiểm duyệt nội dung, quản lý doanh thu và quản lý tin tức.
+Kênh quản trị là không gian vận hành dành cho đội ngũ kiểm soát hệ thống, gồm các nhóm chức năng: giám sát và thống kê, quản lý quản trị viên và người dùng, kiểm duyệt tin đăng, xử lý tin bị tố cáo, xét duyệt hồ sơ môi giới, quản lý doanh thu và quản lý tin tức.
 
 \subsection{Thống kê và giám sát hệ thống}
 
@@ -654,9 +654,9 @@ Phân hệ giám sát cung cấp các chỉ số tổng quan như tổng doanh t
 \label{fig:admin-system-monitoring}
 \end{figure}
 
-\subsection{Quản lý người dùng, kiểm duyệt và doanh thu}
+\subsection{Quản lý quản trị viên, người dùng và phân quyền}
 
-Quản trị viên quản lý người dùng, quản trị viên và vai trò qua các bảng dữ liệu có tìm kiếm và phân trang, với các thao tác tạo mới, chỉnh sửa, xóa và thu hồi quyền môi giới (Hình~\ref{fig:admin-user-role}).
+Quản trị viên quản lý người dùng, quản trị viên và vai trò qua các bảng dữ liệu có tìm kiếm và phân trang (Hình~\ref{fig:admin-user-role}). Với từng tài khoản, có thể thực hiện các thao tác tạo mới, chỉnh sửa, xóa; riêng tài khoản người dùng còn có thao tác thu hồi quyền môi giới. Trang vai trò cho phép điều chỉnh danh mục phân quyền trong hệ thống, trong khi bảng quản trị viên hỗ trợ lọc theo vai trò để nhanh chóng tìm đúng đối tượng cần xử lý.
 
 \begin{figure}[H]
 \centering
@@ -675,23 +675,63 @@ Quản trị viên quản lý người dùng, quản trị viên và vai trò qu
 \label{fig:admin-user-role}
 \end{figure}
 
-Về kiểm duyệt, các tin đăng mới và hồ sơ môi giới được đưa vào hàng đợi chờ duyệt; quản trị viên xem chi tiết rồi duyệt, từ chối hoặc yêu cầu chỉnh sửa kèm lý do, và mọi quyết định đều được thông báo lại cho người đăng (Hình~\ref{fig:admin-content-moderation}). Mỗi tin được kèm một khối khuyến nghị do AI phân tích sẵn (xem Mục~\ref{sec:ai-moderation}) để hỗ trợ quản trị viên ra quyết định nhanh hơn, nhưng phán quyết cuối cùng vẫn thuộc về con người. Trang báo cáo vi phạm cũng theo cùng cách vận hành: quản trị viên xem xét các tin bị người dùng báo cáo rồi xử lý tương ứng (Hình~\ref{fig:admin-report-moderation}).
+\subsection{Kiểm duyệt tin đăng}
+
+Các tin đăng mới và tin được gửi lại sau chỉnh sửa được đưa vào hàng đợi chờ duyệt (Hình~\ref{fig:admin-content-moderation}a). Quản trị viên mở từng tin để xem chi tiết rồi duyệt, từ chối hoặc yêu cầu chỉnh sửa kèm lý do; mọi quyết định đều được thông báo lại cho người đăng (Hình~\ref{fig:admin-content-moderation}b--c). Kèm theo mỗi tin là một khối phân tích của AI đưa ra điểm rủi ro, cờ cảnh báo và đề xuất xử lý (xem Mục~\ref{sec:ai-moderation}), giúp quản trị viên ra quyết định nhanh hơn mà phán quyết cuối vẫn thuộc về con người.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{admin-kiem-duyet-tin-dang}
-\caption{Luồng kiểm duyệt nội dung: hàng đợi tin đăng và hộp thoại xem xét kèm khuyến nghị của AI}
+\includegraphics[width=0.95\textwidth]{admin-kiem-duyet-tin-dang-danh-sach}\\[4pt]{\small (a) Danh sách tin đăng chờ duyệt}
+
+\vspace{8pt}
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-tin-dang-duyet-bai-01}\\[3pt]{\small (b)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-tin-dang-duyet-bai-02}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Kiểm duyệt tin đăng: (a) danh sách tin chờ duyệt với bộ lọc; (b)--(c) hộp thoại xem xét chi tiết tin đăng kèm khuyến nghị của AI và thao tác duyệt, từ chối hoặc yêu cầu chỉnh sửa}
 \label{fig:admin-content-moderation}
 \end{figure}
 
+\subsection{Xử lý tin bị tố cáo}
+
+Khi người thuê báo cáo một tin đăng sai lệch, báo cáo đó được chuyển vào hàng đợi xử lý của quản trị viên (Hình~\ref{fig:admin-report-moderation}a). Quản trị viên xem xét thông tin tin đăng bị tố cáo, người tố cáo và lý do rồi đánh dấu đã xử lý, từ chối báo cáo hoặc yêu cầu người đăng chỉnh sửa (Hình~\ref{fig:admin-report-moderation}b--c); kết quả xử lý được thông báo lại cho cả hai phía, khép lại vòng phản hồi chất lượng dữ liệu trên nền tảng.
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{admin-kiem-duyet-bao-cao}
-\caption{Trang xử lý báo cáo vi phạm: danh sách báo cáo từ người dùng kèm thông tin tin đăng bị báo cáo và thao tác xử lý}
+\includegraphics[width=0.95\textwidth]{admin-kiem-duyet-bao-cao-danh-sach}\\[4pt]{\small (a) Danh sách báo cáo vi phạm chờ xử lý}
+
+\vspace{8pt}
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-bao-cao-duyet-bao-cao-01}\\[3pt]{\small (b)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-bao-cao-duyet-bao-cao-02}\\[3pt]{\small (c)}
+\end{minipage}
+\caption{Xử lý báo cáo vi phạm: (a) danh sách báo cáo từ người dùng; (b)--(c) hộp thoại xem xét chi tiết báo cáo và thao tác xử lý}
 \label{fig:admin-report-moderation}
 \end{figure}
 
-Kênh doanh thu cho phép quản trị viên tra cứu toàn bộ giao dịch, xem các chỉ số tổng hợp (tổng doanh thu, tỷ lệ thành công\ldots) và đi sâu vào từng giao dịch để đối soát, kèm chức năng xuất dữ liệu phục vụ kế toán (Hình~\ref{fig:admin-revenue-payments}). Ngoài ra, phân hệ tin tức cho phép đội ngũ nội dung soạn thảo, biên tập và xuất bản các bài viết thị trường ngay trong kênh quản trị (Hình~\ref{fig:admin-news-management}).
+\subsection{Xét duyệt hồ sơ môi giới}
+
+Hồ sơ đăng ký môi giới chuyên nghiệp do người dùng nộp được đưa vào danh sách chờ xét duyệt thủ công (Hình~\ref{fig:admin-broker-list}). Quản trị viên mở từng hồ sơ để xem thông tin định danh, email, số điện thoại, ngày đăng ký cùng các tài liệu đính kèm (giấy tờ tùy thân, chứng chỉ hành nghề) rồi duyệt hoặc từ chối kèm lý do (Hình~\ref{fig:admin-broker-list}b). Khi được duyệt, tài khoản nhận huy hiệu xác minh hiển thị trên toàn nền tảng; nếu cần thu hồi trạng thái môi giới sau này, quản trị viên có thể thực hiện trực tiếp từ trang quản lý người dùng mà không cần thao tác ở nhiều nơi.
+
+\begin{figure}[H]
+\centering
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-moi-gioi-danh-sach}\\[3pt]{\small (a)}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}\centering
+\includegraphics[width=\linewidth]{admin-kiem-duyet-moi-gioi-ho-so}\\[3pt]{\small (b)}
+\end{minipage}
+\caption{Xét duyệt hồ sơ môi giới: (a) danh sách hồ sơ đang chờ duyệt; (b) chi tiết hồ sơ kèm tài liệu đính kèm và thao tác duyệt hoặc từ chối}
+\label{fig:admin-broker-list}
+\end{figure}
+
+\subsection{Quản lý doanh thu và thanh toán}
+
+Kênh doanh thu cho phép quản trị viên tra cứu toàn bộ giao dịch qua bảng danh sách có bộ lọc theo từ khóa, trạng thái, cổng thanh toán và khoảng thời gian, kèm chức năng xuất dữ liệu CSV phục vụ đối soát kế toán (Hình~\ref{fig:admin-revenue-payments}). Trang tổng quan hiển thị các chỉ số tài chính như tổng doanh thu, tỷ lệ thành công và giá trị giao dịch trung bình cùng biểu đồ doanh thu theo tuần, tháng hoặc quý. Mỗi giao dịch có trang chi tiết riêng trình bày đầy đủ thông tin đơn hàng, cổng thanh toán và lịch sử trạng thái, thuận tiện cho việc truy vết khi phát sinh sự cố.
 
 \begin{figure}[H]
 \centering
@@ -709,6 +749,10 @@ Kênh doanh thu cho phép quản trị viên tra cứu toàn bộ giao dịch, x
 \caption{Phân hệ doanh thu: (a) tổng quan doanh thu và các chỉ số tài chính; (b) danh sách giao dịch với bộ lọc và chức năng xuất dữ liệu; (c) chi tiết một giao dịch}
 \label{fig:admin-revenue-payments}
 \end{figure}
+
+\subsection{Quản lý tin tức}
+
+Phân hệ tin tức cho phép đội ngũ nội dung soạn thảo, biên tập và xuất bản các bài viết thị trường ngay trong kênh quản trị (Hình~\ref{fig:admin-news-management}). Trang danh sách hiển thị trạng thái từng bài (nháp, đã xuất bản, đã lưu trữ) kèm các thao tác xem trước, chỉnh sửa và xóa. Trình soạn thảo tích hợp hỗ trợ định dạng văn bản phong phú, chèn ảnh và cột thiết lập bên phải để quản lý chuyên mục, thẻ và thông tin SEO; bài viết có thể lưu nháp rồi xuất bản sau khi hoàn tất nội dung.
 
 \begin{figure}[H]
 \centering
