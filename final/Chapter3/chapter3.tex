@@ -85,17 +85,23 @@ Hệ thống phải bảo đảm thời gian phản hồi nhanh ở các trang c
 
 Các thành phần nặng như bản đồ, biểu đồ và danh sách tin tương tự phải được tải động (lazy loading) kèm khung chờ để không làm chậm nội dung chính. Trên bản đồ, việc tải tin theo khung nhìn cần áp dụng cơ chế gộp thao tác (debounce) và lưu đệm vùng đã tải để tránh gọi máy chủ liên tục. Kết quả tìm kiếm và danh sách phải được phân trang và lưu đệm theo bộ điều kiện hiện hành.
 
+Ở phía máy chủ, các API có tần suất truy vấn cao (tìm kiếm, chi tiết tin đăng, thống kê trang chủ) cần được lưu đệm với thời gian sống phù hợp từng loại dữ liệu để giảm tải cho cơ sở dữ liệu. Kết nối cơ sở dữ liệu phải được quản lý qua hồ kết nối với giới hạn rõ ràng, và số luồng xử lý của máy chủ ứng dụng cần được cấu hình có kiểm soát để tránh cạn kiệt tài nguyên khi tải tăng đột biến.
+
 \subsection{Bảo mật}
 
 Mật khẩu người dùng phải được băm (hash) trước khi lưu, không lưu ở dạng văn bản thường. Phiên đăng nhập cần được quản lý bằng cặp mã thông báo (JSON Web Token -- JWT) gồm access token và refresh token, với cơ chế tự động làm mới khi access token hết hạn một cách trong suốt với người dùng. Hệ thống phải phân quyền rõ ràng theo vai trò (người thuê, chủ trọ, môi giới, quản trị viên), bảo đảm mỗi vai trò chỉ truy cập được các chức năng và dữ liệu thuộc phạm vi của mình.
 
-Một số dữ liệu nhạy cảm phải được kiểm soát truy cập: số điện thoại liên hệ chỉ hiển thị cho người dùng đã đăng nhập. Hệ thống cũng cần cơ chế kiểm duyệt nội dung và tiếp nhận tố cáo để ngăn chặn tin đăng vi phạm, giữ an toàn cho cộng đồng người dùng.
+Một số dữ liệu nhạy cảm phải được kiểm soát truy cập: số điện thoại liên hệ chỉ hiển thị cho người dùng đã đăng nhập. Hệ thống cũng cần cơ chế kiểm duyệt nội dung và tiếp nhận tố cáo để ngăn chặn tin đăng vi phạm, giữ an toàn cho cộng đồng người dùng. Các thao tác dễ bị lạm dụng như gửi mã xác minh hay đẩy tin cần bị giới hạn tần suất theo người dùng để ngăn tấn công và lạm dụng tài nguyên hệ thống.
 
 \subsection{Khả năng mở rộng}
 
 Hệ thống phải được tổ chức theo hướng dễ mở rộng và bảo trì. Backend cần tách thành các module nghiệp vụ rõ ràng để có thể phát triển và thay đổi độc lập. Các dịch vụ AI cần được tách thành một thành phần riêng, giao tiếp với backend qua giao diện lập trình ứng dụng (Application Programming Interface -- API), để có thể tiến hóa độc lập với phần xử lý nghiệp vụ.
 
 Việc truy cập mô hình ngôn ngữ lớn (Large Language Model -- LLM) cần đi qua một cổng trung gian, cho phép thay đổi nhà cung cấp mô hình mà không ảnh hưởng phần còn lại của hệ thống. Lưu trữ tệp (hình ảnh, video) cần dùng dịch vụ lưu trữ đối tượng (object storage) tách khỏi cơ sở dữ liệu quan hệ, bảo đảm khả năng chịu tải khi lượng nội dung đa phương tiện tăng nhanh.
+
+\subsection{Chịu lỗi}
+
+Hệ thống tương tác với nhiều dịch vụ bên ngoài (cổng thanh toán, dịch vụ email, dịch vụ AI) nên phải có cơ chế cô lập sự cố để một thành phần lỗi không kéo sập toàn bộ. Khi một dịch vụ phụ thuộc liên tục thất bại, hệ thống cần tự ngắt các lệnh gọi đến dịch vụ đó trong một khoảng thời gian rồi thử lại, tránh tích lũy lỗi và giữ thời gian phản hồi ổn định cho người dùng. Các thao tác có thể thất bại nhất thời như gửi email cần được tự động thử lại với thời gian chờ tăng dần, đồng thời phải giới hạn thời gian chờ tối đa để tránh giữ luồng xử lý vô hạn định.
 
 \subsection{Tính khả dụng}
 
