@@ -243,16 +243,6 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 \item \textbf{Bảo mật tập trung.} Cơ chế xác thực OAuth2 kết hợp JWT được áp dụng thống nhất ở tầng lọc, tách khỏi logic nghiệp vụ.
 \end{itemize}
 
-\subsection{Hiện thực yêu cầu phi chức năng}
-
-Ba yêu cầu phi chức năng trọng tâm từ Chương~\ref{Chapter3} -- hiệu năng, bảo mật và chịu lỗi -- đều được Backend hiện thực trực tiếp trong tầng cấu hình, không phụ thuộc hạ tầng bên ngoài.
-
-Về hiệu năng, Redis đảm nhiệm bộ đệm với 15 vùng tên và thời gian sống riêng theo từng loại dữ liệu: kết quả tìm kiếm hết hạn sau 5 phút, chi tiết tin đăng sau 3 phút, còn số liệu thống kê trang chủ được giữ vĩnh viễn và làm mới tự động lúc nửa đêm. Kết nối cơ sở dữ liệu đi qua hồ kết nối HikariCP (tối đa 30 kết nối đồng thời), Hibernate gom nhóm truy vấn theo lô để giảm số lần giao tiếp với MySQL, và Tomcat được giới hạn tối đa 150 luồng xử lý để tránh cạn kiệt tài nguyên khi tải tăng đột biến.
-
-Về bảo mật, toàn bộ luồng xác thực đi qua tầng lọc Spring Security với JWT gồm access token và refresh token ngắn hạn; đăng nhập qua Google OAuth2 cũng được tích hợp cùng cơ chế. Một số thao tác dễ bị lạm dụng bị giới hạn tần suất riêng: OTP chỉ được gửi tối đa 5 lần mỗi số điện thoại trong một giờ, đẩy tin bị giới hạn 10 lượt mỗi giờ.
-
-Về chịu lỗi, Resilience4j cung cấp ba lớp bảo vệ phối hợp: circuit breaker ngắt mạch khi tỉ lệ lỗi vượt 50\% và tự phục hồi sau 30 giây; retry với backoff lũy thừa xử lý lỗi nhất thời từ dịch vụ bên ngoài (tối đa 3 lần, bội số 2); time limiter giới hạn thời gian chờ để tránh giữ luồng vô hạn định. Trạng thái các circuit breaker được phơi bày qua endpoint giám sát cùng chỉ số Prometheus, hỗ trợ quan sát hệ thống trong môi trường vận hành.
-
 \section{Thiết kế kiến trúc AI}
 
 Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt nhằm cô lập phần phụ thuộc nặng về học máy và mô hình ngôn ngữ khỏi khối Backend nghiệp vụ, đồng thời cho phép mở rộng quy mô (scale) hai phần một cách riêng rẽ.
