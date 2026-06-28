@@ -29,7 +29,7 @@ Mục tiêu: báo cáo học thuật **sạch, nhất quán, tự nhiên** — k
 
 ### 3. Nội dung phải khớp hệ thống thật
 - **Không** thêm tích hợp không tồn tại. Hệ thống **không** dùng kênh nhắn tin SMS/Zalo (ZNS) để thông báo — đừng vẽ/viết các node "otp · sms", "Zalo OTP/ZNS". Cổng thanh toán **ZaloPay/SePay** thì **giữ** (là nghiệp vụ thật).
-- **webapp (FE) và trang quản trị (admin) là hai ứng dụng độc lập** — mỗi bên có cơ sở mã, phong cách thiết kế và quy ước riêng. **Không** viết rằng chúng "dùng chung phong cách thiết kế / hệ thống thiết kế chung".
+- **webapp (FE) và trang quản trị (admin) dùng chung kiến trúc kỹ thuật** -- admin được fork từ webapp rồi điều chỉnh nội dung và phong cách giao diện. Được phép viết rằng chúng "dùng chung kiến trúc". **Không** viết rằng chúng hoàn toàn độc lập về cơ sở mã hoặc quy ước kỹ thuật.
 
 ### 4. Văn phong & nhất quán
 - Tiếng Việt học thuật, ngôi trung lập; thuật ngữ kỹ thuật kèm bản gốc trong ngoặc lần đầu xuất hiện: "kết xuất phía máy chủ (Server-Side Rendering -- SSR)".

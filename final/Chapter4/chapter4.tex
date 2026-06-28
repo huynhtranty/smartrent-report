@@ -27,17 +27,16 @@ Theo mô hình kiến trúc này, luồng giao tiếp giữa các tầng đượ
 
 Hệ thống SmartRent bao gồm các thành phần cốt lõi sau phối hợp vận hành:
 \begin{enumerate}
-    \item \textbf{Ứng dụng Web người dùng cuối (Next.js Webapp):} Được xây dựng trên Next.js 15 (Pages Router) kết hợp React 19 và TypeScript. Ứng dụng này phục vụ hai đối tượng người dùng chính là người thuê trọ (tìm kiếm, so sánh, tương tác trợ lý AI, thanh toán) và chủ trọ/môi giới (SellerNet -- đăng tin, quản lý tin đăng, theo dõi khách hàng).
+    \item \textbf{Ứng dụng Web người dùng cuối (Next.js Webapp):} Được xây dựng trên Next.js 15 (Pages Router) kết hợp React 19 và TypeScript. Ứng dụng này phục vụ hai đối tượng người dùng chính là người thuê trọ (tìm kiếm, so sánh, tương tác trợ lý AI, thanh toán) và chủ trọ/môi giới (đăng tin, quản lý tin đăng, theo dõi khách hàng).
     \item \textbf{Ứng dụng Web quản trị (Next.js Admin):} Ứng dụng độc lập giúp quản trị viên giám sát hệ thống, kiểm duyệt bài đăng, phê duyệt hồ sơ môi giới chuyên nghiệp và quản lý tài chính/doanh thu.
     \item \textbf{Máy chủ Backend nghiệp vụ (Spring Boot):} Viết bằng Java Spring Boot, áp dụng kiến trúc nguyên khối mô-đun (Modular Monolith) để chia tách rõ ràng các nghiệp vụ (\texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, \texttt{recommendation}) bên dưới một ứng dụng chạy duy nhất, giúp bảo trì dễ dàng và sẵn sàng tách thành các dịch vụ nhỏ (microservices) khi cần.
     \item \textbf{Máy chủ Dịch vụ AI (FastAPI):} Viết bằng Python FastAPI, tích hợp các mô hình ngôn ngữ lớn (Gemini, Llama) qua cổng LiteLLM gateway để phục vụ trợ lý hội thoại AI Agent, tự động tạo mô tả bài đăng và kiểm duyệt tự động.
-    \item \textbf{Công cụ tìm kiếm và phân tích (Elasticsearch):} Phục vụ chức năng tìm kiếm toàn văn (full-text search) tiếng Việt hiệu năng cao và so khớp văn bản ngữ nghĩa để tự động phát hiện tin đăng trùng lặp hoặc spam.
     \item \textbf{Hệ cơ sở dữ liệu và lưu trữ (MySQL, Redis, Cloudflare R2):} MySQL lưu trữ dữ liệu có cấu trúc ổn định; Redis làm bộ đệm tăng tốc độ truy vấn và quản lý phiên; Cloudflare R2 lưu trữ các tệp đa phương tiện (ảnh, video) thông qua luồng tải lên bằng URL ký trước để tối ưu băng thông máy chủ chính.
 \end{enumerate}
 
 \section{Thiết kế nền tảng Web}
 
-Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập: ứng dụng web cho người dùng cuối (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và trang quản trị (admin -- dành cho quản trị viên). Mỗi ứng dụng có cơ sở mã, phong cách thiết kế và quy ước kỹ thuật riêng, phù hợp với nhóm người dùng mà nó phục vụ. Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
+Nền tảng Web của hệ thống được tách thành hai ứng dụng độc lập: ứng dụng web cho người dùng cuối (webapp -- nơi người thuê tìm kiếm, so sánh, lưu tin và liên hệ chủ trọ; đồng thời là không gian để người môi giới/chủ nhà đăng và quản lý tin) và trang quản trị (admin -- dành cho quản trị viên). Hai ứng dụng dùng chung kiến trúc kỹ thuật -- trang quản trị được khởi tạo bằng cách tách nhánh (fork) từ webapp rồi điều chỉnh nội dung, bố cục và phong cách giao diện cho phù hợp với nghiệp vụ quản trị. Phần này tập trung mô tả ứng dụng web cho người dùng cuối, vốn là thành phần người dùng tương tác trực tiếp nhiều nhất; phần trang quản trị được trình bày ở mục tiếp theo.
 
 Webapp được xây dựng trên Next.js 15 (theo mô hình Pages Router) cùng React 19 và TypeScript, sử dụng Tailwind CSS v4 kết hợp bộ component shadcn/ui làm hệ thống giao diện. Việc lựa chọn Next.js cho phép kết xuất phía máy chủ (Server-Side Rendering -- SSR) đối với các trang quan trọng về SEO như trang chi tiết tin đăng và trang tin tức, đồng thời tận dụng được hệ sinh thái React phong phú cho phần tương tác phía trình duyệt \cite{ReactDocs,NextDocs}.
 
@@ -114,28 +113,17 @@ Hình~\ref{fig:webapp-data-flow} minh họa luồng dữ liệu điển hình kh
 
 \subsection{Hỗ trợ đa ngôn ngữ}
 
-Ứng dụng hỗ trợ song ngữ tiếng Việt (mặc định) và tiếng Anh, được triển khai bằng thư viện next-intl. Mọi chuỗi hiển thị cho người dùng -- nhãn, nút bấm, thông báo, thông điệp lỗi, văn bản trạng thái rỗng -- đều không được viết cứng trong mã mà phải lấy qua các hàm \texttt{useTranslations} (phía client) hoặc \texttt{getTranslations} (phía server), tham chiếu tới hai bộ từ điển \texttt{messages/vi.json} và \texttt{messages/en.json}.
+Ứng dụng hỗ trợ song ngữ tiếng Việt (mặc định) và tiếng Anh, được triển khai bằng thư viện next-intl. Toàn bộ nhãn, nút bấm, thông báo và nội dung tĩnh hiển thị cho người dùng đều được quản lý tập trung qua hai bộ từ điển tương ứng; việc dịch diễn ra hoàn toàn ở phía trình duyệt.
 
-Một số điểm kỹ thuật đáng chú ý trong cơ chế đa ngôn ngữ:
+Một số đặc điểm của cơ chế đa ngôn ngữ:
 
 \begin{itemize}
-\item \textbf{Tải từ điển theo nhu cầu.} Vì phần lớn người dùng sử dụng tiếng Việt, bộ từ điển \texttt{vi.json} được đóng gói sẵn cùng ứng dụng; bộ \texttt{en.json} chỉ được tải động khi người dùng thực sự chuyển sang tiếng Anh, giúp giảm kích thước gói tải ban đầu.
-\item \textbf{Bảo đảm đồng bộ khóa dịch.} Một kịch bản kiểm tra (\texttt{check-i18n-keys.js}) được chạy tự động trong bước \texttt{pre-commit} để đối chiếu sự tương đồng khóa giữa hai tệp ngôn ngữ; nếu thiếu khóa ở một ngôn ngữ, thao tác commit sẽ bị chặn.
-\item \textbf{Dùng định dạng ICU.} Các chuỗi có tham số sử dụng placeholder kiểu ICU (\texttt{\{name\}}, \texttt{\{count, plural, \ldots\}}) thay vì nối chuỗi thủ công, bảo đảm đúng ngữ pháp khi trật tự từ khác nhau giữa các ngôn ngữ.
-\item \textbf{Quản lý trạng thái ngôn ngữ.} Việc chuyển ngôn ngữ được điều phối qua một context riêng (\texttt{SwitchLanguageProvider}), ghi nhớ lựa chọn của người dùng và cung cấp bộ từ điển phù hợp cho toàn bộ cây thành phần.
+\item \textbf{Tải từ điển theo nhu cầu.} Bộ từ điển tiếng Việt được đóng gói sẵn cùng ứng dụng; bộ tiếng Anh chỉ được tải khi người dùng thực sự chuyển ngôn ngữ, giúp giảm kích thước gói tải ban đầu.
+\item \textbf{Bảo đảm đồng bộ khóa dịch.} Hai bộ từ điển được kiểm tra tự động trước mỗi lần lưu mã nguồn để đảm bảo không có khóa nào bị thiếu ở một trong hai ngôn ngữ.
+\item \textbf{Hỗ trợ chuỗi động.} Các chuỗi có tham số thay đổi theo ngữ cảnh (tên người dùng, số lượng kết quả\ldots) sử dụng cú pháp thay thế chuẩn, đảm bảo đúng ngữ pháp khi trật tự từ khác nhau giữa các ngôn ngữ.
+\item \textbf{Chuyển ngôn ngữ tức thì.} Lựa chọn ngôn ngữ được lưu và áp dụng xuyên suốt toàn bộ giao diện mà không cần tải lại trang.
 \end{itemize}
 
-Hình~\ref{fig:webapp-i18n} minh họa cùng một trang chủ được hiển thị ở hai ngôn ngữ: tiếng Việt (mặc định) và tiếng Anh. Người dùng có thể chuyển đổi tức thời thông qua bộ chọn ngôn ngữ trên thanh điều hướng mà không cần tải lại trang; toàn bộ nhãn, nút bấm và nội dung tĩnh đều được thay thế theo bộ từ điển tương ứng.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.88\textwidth]{giao-dien-ngon-ngu-viet}\\[4pt]
-{\small (a) Giao diện tiếng Việt}\\[10pt]
-\includegraphics[width=0.88\textwidth]{giao-dien-ngon-ngu-anh}\\[4pt]
-{\small (b) Giao diện tiếng Anh}
-\caption{Giao diện trang chủ hiển thị ở hai ngôn ngữ tiếng Việt và tiếng Anh}
-\label{fig:webapp-i18n}
-\end{figure}
 
 \subsection{Ưu điểm}
 
@@ -250,7 +238,7 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 \begin{itemize}
 \item \textbf{Đơn giản khi vận hành.} Một khối triển khai duy nhất giúp việc build, kiểm thử và gỡ lỗi dễ dàng, đồng thời giảm chi phí hạ tầng so với kiến trúc microservices.
 \item \textbf{Tách bạch theo miền.} Ranh giới module rõ ràng cho phép nhiều thành viên cùng phát triển song song mà ít giẫm chân lên nhau.
-\item \textbf{Nhất quán phân tầng.} Cùng một khuôn \texttt{controller--service--repository} ở mọi module giúp mã dễ đọc, dễ bảo trì và rút ngắn thời gian làm quen cho thành viên mới.
+\item \textbf{Nhất quán phân tầng.} Cùng một khuôn controller -- service -- repository ở mọi module giúp mã dễ đọc, dễ bảo trì và rút ngắn thời gian làm quen cho thành viên mới.
 \item \textbf{Chịu lỗi và hiệu năng.} Bộ đệm Redis giảm tải truy vấn cơ sở dữ liệu, còn Resilience4j (circuit breaker và retry) cô lập sự cố từ các dịch vụ bên ngoài, giữ hệ thống ổn định.
 \item \textbf{Bảo mật tập trung.} Cơ chế xác thực OAuth2 kết hợp JWT được áp dụng thống nhất ở tầng lọc, tách khỏi logic nghiệp vụ.
 \end{itemize}
@@ -400,15 +388,7 @@ Hệ thống sử dụng MySQL 8.0 (storage engine InnoDB, bộ ký tự \texttt
 
 Lược đồ cơ sở dữ liệu được quản lý theo phương pháp \textit{di trú phiên bản} bằng công cụ Flyway: mỗi thay đổi cấu trúc là một tệp \texttt{V\{n\}\_\_\{mô tả\}.sql} bất biến, được áp dụng tuần tự và tự động khi ứng dụng khởi động. Tới thời điểm hiện tại, lược đồ đã trải qua 90 phiên bản di trú (từ \texttt{V1} đến \texttt{V90}), phản ánh quá trình tiến hóa liên tục của nghiệp vụ: thêm cột, đổi tên, mở rộng kiểu liệt kê (enum), tạo chỉ mục và tái cấu trúc bảng. Cách tiếp cận này bảo đảm lược đồ giữa các môi trường phát triển, kiểm thử và vận hành luôn đồng nhất và có thể truy vết.
 
-Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ: (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi (telemetry). Một số nguyên tắc thiết kế được áp dụng xuyên suốt:
-
-\begin{itemize}
-\item \textbf{Chiến lược khóa chính phân tầng.} Các thực thể nhạy cảm hoặc cần định danh toàn cục như \texttt{users}, \texttt{admins} và \texttt{transactions} dùng khóa chính dạng chuỗi \texttt{VARCHAR(36)} (sinh theo cơ chế Snowflake/UUID), giúp tránh lộ quy mô dữ liệu và thuận tiện khi đồng bộ giữa các dịch vụ; trong khi các bảng có lượng bản ghi lớn (tin đăng, lượt xem, giao dịch quyền lợi\ldots) dùng khóa \texttt{BIGINT AUTO\_INCREMENT} để tối ưu kích thước chỉ mục và hiệu năng ghi. Các bảng danh mục tham chiếu (\texttt{roles}, \texttt{vip\_tier\_details}\ldots) dùng mã nghiệp vụ làm khóa.
-\item \textbf{Toàn vẹn tham chiếu.} Quan hệ giữa các bảng được ràng buộc bằng khóa ngoại với hành vi xóa phù hợp: \texttt{ON DELETE CASCADE} cho dữ liệu phụ thuộc chặt (ảnh, tiện ích, lịch sử giá của tin đăng) và \texttt{ON DELETE SET NULL} cho tham chiếu lỏng (giao dịch liên quan, người duyệt báo cáo) nhằm giữ lại dữ liệu lịch sử khi thực thể cha bị xóa.
-\item \textbf{Lưu vết và lịch sử.} Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm: \texttt{pricing\_histories} ghi lại mọi lần đổi giá, \texttt{transaction\_audits} ghi lại mọi lần đổi trạng thái giao dịch, và \texttt{listing\_moderation\_events} ghi lại toàn bộ luồng kiểm duyệt tin đăng.
-\item \textbf{Phi chuẩn hóa có chủ đích để tăng hiệu năng.} Một số cột được thêm vào để phục vụ tìm kiếm và thống kê nhanh: \texttt{listings} có \texttt{search\_text} (văn bản đã chuẩn hóa, bỏ dấu) và \texttt{phonetic\_title} (mã ngữ âm DoubleMetaphone) phục vụ chỉ mục toàn văn (FULLTEXT) của MySQL; bảng \texttt{listing\_click\_daily} gộp sẵn số lượt bấm theo ngày để dựng biểu đồ thống kê mà không phải quét bảng chi tiết.
-\item \textbf{Hỗ trợ chuyển đổi đơn vị hành chính.} Do cải cách đơn vị hành chính năm 2025 (chuyển từ cấu trúc ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cũ và mới cùng một bảng ánh xạ trung gian để chuyển đổi qua lại, bảo đảm dữ liệu địa chỉ cũ vẫn dùng được sau cải cách.
-\end{itemize}
+Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ: (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi (telemetry). Một số nguyên tắc thiết kế được áp dụng xuyên suốt lược đồ. Về chiến lược khóa chính, các thực thể nhạy cảm hoặc cần định danh toàn cục dùng khóa dạng chuỗi sinh theo cơ chế Snowflake/UUID để tránh lộ quy mô dữ liệu, trong khi các bảng có lượng bản ghi lớn dùng khóa số nguyên tự tăng để tối ưu hiệu năng ghi. Toàn vẹn tham chiếu được bảo đảm bằng khóa ngoại với hành vi xóa phù hợp từng quan hệ -- xóa theo tầng cho dữ liệu phụ thuộc chặt, đặt về rỗng cho tham chiếu lỏng nhằm giữ lại lịch sử khi thực thể cha bị xóa. Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm để ghi lại mọi thay đổi trạng thái, bao gồm lịch sử giá, trạng thái giao dịch và luồng kiểm duyệt tin đăng. Một số cột phi chuẩn hóa cũng được bổ sung có chủ đích: văn bản chuẩn hóa bỏ dấu và mã ngữ âm phục vụ chỉ mục toàn văn của MySQL, bảng gộp lượt bấm theo ngày để dựng biểu đồ thống kê mà không cần quét bảng chi tiết. Ngoài ra, do cải cách đơn vị hành chính năm 2025 (từ ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cùng bảng ánh xạ trung gian để bảo đảm dữ liệu cũ vẫn dùng được sau cải cách.
 
 \subsection{Sơ đồ thiết kế cơ sở dữ liệu của hệ thống chính}
 

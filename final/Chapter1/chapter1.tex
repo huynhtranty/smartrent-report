@@ -54,7 +54,7 @@ Hệ thống phục vụ 3 nhóm đối tượng chính:
 \begin{itemize}
     \item \textbf{Giao diện người dùng (Frontend):} Next.js, React, TypeScript và Tailwind CSS.
     \item \textbf{Xử lý nghiệp vụ (Backend):} Spring Boot, Java và Python FastAPI.
-    \item \textbf{Cơ sở dữ liệu và lưu trữ:} MySQL, Redis, Elasticsearch và Cloudflare R2.
+    \item \textbf{Cơ sở dữ liệu và lưu trữ:} MySQL, Redis và Cloudflare R2.
     \item \textbf{Tích hợp AI:} Tận dụng các mô hình ngôn ngữ lớn qua Gemini API cho các tác vụ ngôn ngữ tự nhiên, lập luận nhiều bước và kiểm duyệt hình ảnh, kết hợp với các thuật toán học máy nội bộ để định giá và gợi ý.
 \end{itemize}
 
@@ -126,7 +126,7 @@ Tối ưu cho thị trường VN & Có & Có & Có & Không & Có \\
 Đề tài đặt mục tiêu đạt được những điểm khác biệt cốt lõi sau so với các hệ thống truyền thống:
 \begin{itemize}
     \item \textbf{Tích hợp tác nhân hội thoại thông minh (AI Agent):} Có khả năng lập luận đa bước (multi-step reasoning), giúp người thuê tìm kiếm phòng trọ bằng ngôn ngữ tự nhiên thay vì chỉ sử dụng các bộ lọc cứng nhắc (ví dụ: ``tìm phòng gần Trường Đại học Khoa học Tự nhiên, giá dưới 3 triệu đồng, có máy lạnh''). Tác nhân này sẽ tự động phân tích nhu cầu người dùng, truy vấn cơ sở dữ liệu, sắp xếp thứ tự ưu tiên và phản hồi trực tiếp thông qua hội thoại.
-    \item \textbf{Phát hiện tin trùng lặp và tin rác tự động:} Bằng cách kết hợp giữa độ tương đồng văn bản (text similarity) thông qua Elasticsearch và phân tích ngữ nghĩa sâu bằng mô hình ngôn ngữ lớn (Gemini), giúp nâng cao chất lượng dữ liệu của hệ thống.
+    \item \textbf{Phát hiện tin trùng lặp và tin rác tự động:} Bằng cách phân tích độ tương đồng văn bản (text similarity) kết hợp phân tích ngữ nghĩa sâu bằng mô hình ngôn ngữ lớn (Gemini), giúp nâng cao chất lượng dữ liệu của hệ thống.
     \item \textbf{Hệ thống gợi ý cá nhân hóa và thông báo thông minh:} AI sẽ tự động phân tích và chỉ gửi các thông báo về bài đăng thực sự phù hợp với hồ sơ hành vi người dùng, tối ưu hóa trải nghiệm tiếp nhận thông tin.
     \item \textbf{Hỗ trợ người đăng tin tối ưu hóa nội dung bài đăng:} Tự động sinh mô tả tin đăng chuyên nghiệp, gợi ý mức giá cho thuê phù hợp và cung cấp công cụ theo dõi, quản lý khách hàng tiềm năng hiệu quả.
 \end{itemize}
@@ -146,13 +146,11 @@ Tối ưu cho thị trường VN & Có & Có & Có & Không & Có \\
     \begin{itemize}
         \item Sử dụng Gemini API làm nền tảng cốt lõi cho các tác vụ NLP như tóm tắt thông tin bài đăng, tạo nội dung tự động và cung cấp trí tuệ cho AI Agent.
         \item Trợ lý thông minh AI Agent được phát triển dựa trên cơ chế gọi hàm (function calling) của Gemini để kích hoạt các công cụ nghiệp vụ tương ứng khi người dùng tương tác.
-        \item Sử dụng Elasticsearch làm công cụ tìm kiếm và khớp nội dung ngữ nghĩa tiếng Việt để phát hiện các bài đăng trùng lặp.
         \item Xây dựng hệ thống gợi ý kết hợp giữa lọc cộng tác (collaborative filtering) và lọc dựa trên nội dung (content-based filtering).
     \end{itemize}
 
     \item \textbf{Hệ thống tìm kiếm và bản đồ thông minh:}
     \begin{itemize}
-        \item Triển khai công cụ Elasticsearch nhằm đáp ứng các truy vấn tìm kiếm toàn văn tiếng Việt có dấu và không dấu đạt hiệu năng cao.
         \item Tích hợp API bản đồ (Google Maps hoặc OpenStreetMap) phục vụ chức năng tìm kiếm trên bản đồ trực quan bằng gom cụm điểm đánh dấu.
         \item Tự động hóa việc tính toán khoảng cách địa lý và thời gian di chuyển dự kiến từ phòng trọ đến các điểm tiện ích lớn.
     \end{itemize}
