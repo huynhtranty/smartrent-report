@@ -102,15 +102,6 @@ Hình~\ref{fig:webapp-source-org} tổng hợp cách tổ chức mã nguồn web
 \item \textbf{Tích hợp dịch vụ bên thứ ba.} Bản đồ tin đăng tích hợp Google Maps; luồng thanh toán điều hướng sang cổng thanh toán rồi nhận lại kết quả qua một trang callback công khai để cổng có thể chuyển hướng về.
 \end{itemize}
 
-Hình~\ref{fig:webapp-data-flow} minh họa luồng dữ liệu điển hình khi thực hiện một thao tác đọc/ghi: thành phần giao diện gọi hook, hook ủy thác cho TanStack Query, qua tầng dịch vụ và \texttt{axios} (kèm bộ chặn tự đính kèm và làm mới token) trước khi tới Backend. Khi ghi dữ liệu thành công, hook chủ động vô hiệu hóa bộ đệm liên quan (\texttt{invalidateQueries}) để dữ liệu hiển thị được làm mới một cách nhất quán.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{../diagrams/fe/pdf/04-data-flow}
-\caption{Luồng dữ liệu giữa giao diện, hook, tầng dịch vụ và Backend}
-\label{fig:webapp-data-flow}
-\end{figure}
-
 \subsection{Hỗ trợ đa ngôn ngữ}
 
 Ứng dụng hỗ trợ song ngữ tiếng Việt (mặc định) và tiếng Anh, được triển khai bằng thư viện next-intl. Toàn bộ nhãn, nút bấm, thông báo và nội dung tĩnh hiển thị cho người dùng đều được quản lý tập trung qua hai bộ từ điển tương ứng; việc dịch diễn ra hoàn toàn ở phía trình duyệt.
@@ -386,16 +377,7 @@ Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i
 
 \subsection{Tích hợp API AI}
 
-Dịch vụ AI phục vụ ba nhóm bên gọi và kết nối tới ba dịch vụ phía sau, như tóm tắt ở Hình~\ref{fig:ai-integrations}. Về phía bên gọi: nền tảng web kết nối trực tiếp tới điểm cuối hội thoại truyền luồng để hiển thị trợ lý theo thời gian thực; Backend chính gọi các điểm cuối kiểm duyệt tin đăng, gợi ý giá và sinh mô tả (completion); ngoài ra một máy chủ theo giao thức Model Context Protocol -- MCP chạy như tiến trình riêng, cho phép các trợ lý AI bên ngoài truy vấn kho tin đăng qua kênh stdio. Về phía sau: mọi lời gọi mô hình đi tới Vertex AI Gemini qua LiteLLM; lớp quan sát ghi vết và quản lý prompt qua Langfuse; còn dữ liệu nghiệp vụ thật luôn được lấy từ Backend chính qua \texttt{httpx}, giữ Backend là nguồn dữ liệu duy nhất đáng tin.
-
-Bên cạnh trợ lý hội thoại, hai bề mặt LLM khác cũng do Backend gọi qua API. Kiểm duyệt tin đăng dùng khả năng đa phương thức của Gemini: ảnh và video của tin được tải về và phân tích cùng phần văn bản mô tả để phát hiện sai lệch (ví dụ ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa. Ước tính giá là một bề mặt lai: công cụ \texttt{get\_price\_estimate} trong trợ lý dùng mô hình XGBoost khi có sẵn artefact đã huấn luyện, còn lại lùi về ước tính theo luật dựa trên đơn giá mỗi mét vuông theo khu vực; điểm cuối gợi ý giá độc lập thì dùng một tác tử LLM truy vấn các tin tương tự để suy ra khoảng giá thị trường, kèm cơ chế dự phòng theo luật khi tác tử thất bại.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{../diagrams/ai/pdf/05-external-integrations}
-\caption{Các bên gọi và dịch vụ bên ngoài của dịch vụ AI}
-\label{fig:ai-integrations}
-\end{figure}
+Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các bề mặt LLM. Kiểm duyệt tin đăng khai thác khả năng đa phương thức của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa. Trợ lý hội thoại và các tác tử định giá cũng gọi Gemini qua cùng một lớp tích hợp thống nhất.
 
 Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 14 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng (\texttt{agent\_factory.make\_model}) đọc cấu hình \texttt{LLM\_PROVIDER} lúc khởi động và trả về một \texttt{LitellmModel} tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema -- ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ -- nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
 
@@ -425,22 +407,18 @@ Cơ sở dữ liệu là trung tâm lưu trữ và bảo toàn tính nhất quá
 
 \subsection{Giới thiệu tổng quan}
 
-Hệ thống sử dụng MySQL 8.0 (storage engine InnoDB, bộ ký tự \texttt{utf8mb4}) làm cơ sở dữ liệu quan hệ chính -- nơi lưu trữ nguồn dữ liệu duy nhất đáng tin cậy cho mọi nghiệp vụ. Bên cạnh đó, Redis đảm nhiệm vai trò bộ nhớ đệm và lưu trạng thái tạm thời như mã xác thực OTP, danh sách token bị vô hiệu hóa và bộ đệm thống kê, giúp giảm tải ghi cho cơ sở dữ liệu quan hệ.
-
-Lược đồ cơ sở dữ liệu được quản lý theo phương pháp \textit{di trú phiên bản} bằng công cụ Flyway: mỗi thay đổi cấu trúc là một tệp \texttt{V\{n\}\_\_\{mô tả\}.sql} bất biến, được áp dụng tuần tự và tự động khi ứng dụng khởi động. Tới thời điểm hiện tại, lược đồ đã trải qua 90 phiên bản di trú (từ \texttt{V1} đến \texttt{V90}), phản ánh quá trình tiến hóa liên tục của nghiệp vụ: thêm cột, đổi tên, mở rộng kiểu liệt kê, tạo chỉ mục và tái cấu trúc bảng. Cách tiếp cận này bảo đảm lược đồ giữa các môi trường phát triển, kiểm thử và vận hành luôn đồng nhất và có thể truy vết.
-
-Lược đồ cuối cùng gồm 48 bảng, được tổ chức thành bảy nhóm nghiệp vụ: (i) người dùng và xác thực; (ii) tin đăng và nội dung cốt lõi; (iii) địa chỉ; (iv) tương tác người dùng; (v) kiểm duyệt và báo cáo; (vi) thanh toán và gói thành viên; và (vii) tìm kiếm và đo lường hành vi. Một số nguyên tắc thiết kế được áp dụng xuyên suốt lược đồ. Về chiến lược khóa chính, các thực thể nhạy cảm hoặc cần định danh toàn cục dùng khóa dạng chuỗi sinh theo cơ chế Snowflake/UUID để tránh lộ quy mô dữ liệu, trong khi các bảng có lượng bản ghi lớn dùng khóa số nguyên tự tăng để tối ưu hiệu năng ghi. Toàn vẹn tham chiếu được bảo đảm bằng khóa ngoại với hành vi xóa phù hợp từng quan hệ -- xóa theo tầng cho dữ liệu phụ thuộc chặt, đặt về rỗng cho tham chiếu lỏng nhằm giữ lại lịch sử khi thực thể cha bị xóa. Các nghiệp vụ quan trọng đều có bảng nhật ký bất biến đi kèm để ghi lại mọi thay đổi trạng thái, bao gồm lịch sử giá, trạng thái giao dịch và luồng kiểm duyệt tin đăng. Một số cột phi chuẩn hóa cũng được bổ sung có chủ đích: văn bản chuẩn hóa bỏ dấu và mã ngữ âm phục vụ chỉ mục toàn văn của MySQL, bảng gộp lượt bấm theo ngày để dựng biểu đồ thống kê mà không cần quét bảng chi tiết. Ngoài ra, do cải cách đơn vị hành chính năm 2025 (từ ba cấp tỉnh -- huyện -- xã sang hai cấp tỉnh -- phường/xã), hệ thống duy trì song song hai bộ bảng địa chỉ cùng bảng ánh xạ trung gian để bảo đảm dữ liệu cũ vẫn dùng được sau cải cách.
+Hệ thống sử dụng MySQL 8.0 làm cơ sở dữ liệu quan hệ chính, bổ sung Redis cho bộ nhớ đệm và lưu trạng thái tạm thời (OTP, token bị vô hiệu hóa, thống kê). Lược đồ được quản lý bằng Flyway với 90 phiên bản di trú, bảo đảm đồng nhất giữa các môi trường. Tổng cộng 48 bảng, chia thành bảy nhóm nghiệp vụ: người dùng và xác thực; tin đăng và nội dung cốt lõi; địa chỉ; tương tác người dùng; kiểm duyệt và báo cáo; thanh toán và gói thành viên; tìm kiếm và đo lường hành vi.
 
 \subsection{Sơ đồ thiết kế cơ sở dữ liệu của hệ thống chính}
 
 Vì số lượng bảng lớn, lược đồ được trình bày theo hai mức: trước hết là sơ đồ tổng thể thể hiện cách phân nhóm các bảng theo bảy domain và những liên kết chính giữa chúng (Hình~\ref{fig:db-overview}); sau đó là các sơ đồ ER chi tiết cho từng nhóm nghiệp vụ, làm rõ khóa chính, khóa ngoại và quan hệ giữa các bảng.
 
-\begin{sidewaysfigure}
+\begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textheight]{../diagrams/db/pdf/01-overview}
+\includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{../diagrams/db/pdf/01-overview}
 \caption{Sơ đồ tổng thể cơ sở dữ liệu gom theo bảy nhóm nghiệp vụ}
 \label{fig:db-overview}
-\end{sidewaysfigure}
+\end{figure}
 
 Như Hình~\ref{fig:db-overview} cho thấy, hai bảng \texttt{users} và \texttt{listings} đóng vai trò trung tâm của toàn bộ lược đồ: hầu hết các nhóm nghiệp vụ còn lại đều tham chiếu trực tiếp tới một trong hai bảng này. Người dùng là chủ thể của tin đăng, giao dịch, gói thành viên và mọi tương tác; còn tin đăng là đối tượng của tìm kiếm, kiểm duyệt, tương tác và dịch vụ đẩy tin.
 
@@ -471,7 +449,7 @@ Như Hình~\ref{fig:db-overview} cho thấy, hai bảng \texttt{users} và \text
 \label{fig:db-er-address}
 \end{figure}
 
-\textbf{Nhóm tương tác người dùng.} Hình~\ref{fig:db-er-interaction} gom các bảng ghi nhận hành vi: tin yêu thích (\texttt{favorites}), tin đã lưu (\texttt{saved\_listings}), lượt xem (\texttt{views}), lượt bấm xem số điện thoại (\texttt{phone\_clicks}) và bảng thống kê lượt bấm theo ngày (\texttt{listing\_click\_daily}); quan hệ theo dõi giữa người dùng (\texttt{user\_follows}); thông báo trong ứng dụng (\texttt{notifications}); và hai bảng đo lường gợi ý tìm kiếm (\texttt{search\_query\_impressions}, \texttt{search\_suggestion\_clicks}).
+\textbf{Nhóm tương tác người dùng.} Hình~\ref{fig:db-er-interaction} gom các bảng ghi nhận hành vi: tin yêu thích (\texttt{favorites}), tin đã lưu (\texttt{saved\_listings}), lượt xem (\texttt{views}), lượt bấm xem số điện thoại (\texttt{phone\_clicks}) và bảng thống kê lượt bấm theo ngày (\texttt{listing\_click\_daily}); quan hệ theo dõi giữa người dùng (\texttt{user\_follows}); thông báo trong ứng dụng (\texttt{notifications}); và hai bảng đo lường gợi ý tìm kiếm (\texttt{search\_\allowbreak{}query\_\allowbreak{}impressions}, \texttt{search\_\allowbreak{}suggestion\_\allowbreak{}clicks}).
 
 \begin{figure}[H]
 \centering

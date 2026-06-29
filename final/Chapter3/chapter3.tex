@@ -260,18 +260,19 @@ Use case kiểm duyệt tin đăng (Bảng~\ref{tab:uc-moderate}) mô tả quy t
 \hline
 \textbf{Tên} & Kiểm duyệt tin đăng \\
 \hline
-\textbf{Tác nhân} & Quản trị viên; Dịch vụ AI (hỗ trợ) \\
+\textbf{Tác nhân} & Dịch vụ AI; Quản trị viên (khi cần) \\
 \hline
-\textbf{Mô tả} & Quản trị viên xét duyệt tin đăng trước khi cho phép xuất bản. \\
+\textbf{Mô tả} & Hệ thống kiểm duyệt tin đăng tự động bằng AI; quản trị viên chỉ can thiệp khi AI không đủ tin cậy để tự quyết định. \\
 \hline
 \textbf{Điều kiện trước} & Tồn tại tin đăng đang ở trạng thái chờ duyệt. \\
 \hline
-\textbf{Luồng chính} & 1. Dịch vụ AI sàng lọc sơ bộ và gắn cảnh báo cho các tin nghi vấn.\newline
-2. Quản trị viên xem danh sách tin chờ duyệt cùng kết quả sàng lọc.\newline
-3. Quản trị viên xem chi tiết và ra quyết định: duyệt, từ chối hoặc yêu cầu chỉnh sửa.\newline
-4. Hệ thống cập nhật trạng thái tin và gửi thông báo tới chủ trọ. \\
+\textbf{Luồng chính} & 1. Dịch vụ AI phân tích nội dung, hình ảnh và video của tin đăng.\newline
+2. AI tự ra quyết định: duyệt hoặc từ chối.\newline
+3. Hệ thống cập nhật trạng thái tin và gửi thông báo tới chủ trọ. \\
 \hline
-\textbf{Luồng thay thế} & 3a. Với tin bị tố cáo, quản trị viên xem xét nội dung tố cáo trước khi quyết định gỡ tin hoặc giữ lại. \\
+\textbf{Luồng thay thế} & 2a. AI không đủ tin cậy để tự quyết định: tin chuyển sang hàng đợi chờ xét thủ công.\newline
+2b. Quản trị viên xem danh sách tin chờ cùng kết quả phân tích của AI, xem chi tiết và ra quyết định: duyệt, từ chối hoặc yêu cầu chỉnh sửa; hệ thống thông báo tới chủ trọ.\newline
+2c. Với tin bị tố cáo, quản trị viên xem xét nội dung tố cáo trước khi quyết định gỡ tin hoặc giữ lại. \\
 \hline
 \textbf{Điều kiện sau} & Tin được xuất bản, bị từ chối hoặc được yêu cầu chỉnh sửa; chủ trọ nhận thông báo kết quả. \\
 \hline
