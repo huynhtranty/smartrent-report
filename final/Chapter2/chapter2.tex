@@ -83,17 +83,17 @@ Qua so sánh có thể thấy: các nền tảng nội địa (Batdongsan.com.vn
 
 \subsection{Mô hình ngôn ngữ lớn và Kỹ thuật Prompting}
 
-Mô hình ngôn ngữ lớn là các mạng nơ-ron tích chập sâu dựa trên kiến trúc Transformer, được huấn luyện trên các tập dữ liệu văn bản khổng lồ để hiểu và tạo sinh ngôn ngữ tự nhiên \cite{VaswaniTransformer}. Trong đề tài này, mô hình Gemini của Google được sử dụng làm nền tảng trí tuệ cốt lõi nhờ khả năng xử lý đa phương tiện vượt trội và hiệu năng suy luận xuất sắc.
+Mô hình ngôn ngữ lớn là các mạng nơ-ron tích chập sâu dựa trên kiến trúc Transformer, được huấn luyện trên các tập dữ liệu văn bản khổng lồ để hiểu và tạo sinh ngôn ngữ tự nhiên. Trong đề tài này, mô hình Gemini của Google được sử dụng làm nền tảng trí tuệ cốt lõi nhờ khả năng xử lý đa phương tiện vượt trội và hiệu năng suy luận xuất sắc \cite{GeminiDocs}.
 
 Trong quá trình tích hợp LLM, kỹ thuật thiết kế chỉ thị đóng vai trò quyết định để định hình hành vi phản hồi của mô hình. Nhóm nghiên cứu đã ứng dụng hai kỹ thuật chính:
 \begin{itemize}
-    \item \textbf{In-Context Learning (Học ngữ cảnh / Few-Shot Prompting):} Thay vì tinh chỉnh lại trọng số mô hình vốn tốn kém tài nguyên, hệ thống cung cấp trực tiếp các ví dụ mẫu (inputs-outputs) hoặc các dữ liệu thực tế lân cận ngay trong prompt. Điều này giúp mô hình nhận diện cấu trúc, phong cách văn phong và quy luật định giá để phản hồi chính xác \cite{Brown2020GPT3}.
+    \item \textbf{In-Context Learning (Học ngữ cảnh / Few-Shot Prompting):} Thay vì tinh chỉnh lại trọng số mô hình vốn tốn kém tài nguyên, hệ thống cung cấp trực tiếp các ví dụ mẫu (inputs-outputs) hoặc các dữ liệu thực tế lân cận ngay trong prompt. Điều này giúp mô hình nhận diện cấu trúc, phong cách văn phong và quy luật định giá để phản hồi chính xác.
     \item \textbf{System Prompting:} Thiết lập một tập quy tắc hành xử cố định cho mô hình (ví dụ: yêu cầu đóng vai làm một trợ lý tìm phòng thân thiện, trung thực, chỉ sử dụng thông tin được cung cấp, không tự vẽ thêm số điện thoại hoặc liên kết ngoài).
 \end{itemize}
 
 \subsection{Tạo sinh kết hợp truy xuất}
 
-Mô hình ngôn ngữ lớn tuy rất thông minh nhưng lại mắc phải hai hạn chế nghiêm trọng: tri thức tĩnh (chỉ giới hạn trong thời điểm dữ liệu huấn luyện) và hiện tượng ``ảo tưởng'' (tự tạo ra thông tin sai lệch). Nhằm khắc phục hạn chế này, kỹ thuật tạo sinh kết hợp truy xuất đã được phát triển \cite{Lewis2020RAG}.
+Mô hình ngôn ngữ lớn tuy rất thông minh nhưng lại mắc phải hai hạn chế nghiêm trọng: tri thức tĩnh (chỉ giới hạn trong thời điểm dữ liệu huấn luyện) và hiện tượng ``ảo tưởng'' (tự tạo ra thông tin sai lệch). Nhằm khắc phục hạn chế này, kỹ thuật tạo sinh kết hợp truy xuất đã được phát triển.
 
 Quy trình RAG hoạt động theo ba bước chính:
 \begin{enumerate}
@@ -104,7 +104,7 @@ Quy trình RAG hoạt động theo ba bước chính:
 
 \subsection{Tác nhân trí tuệ nhân tạo và Vòng lặp ReAct}
 
-Tác nhân AI là một thực thể phần mềm thông minh có khả năng tự động hóa quy trình ra quyết định để thực hiện một mục tiêu cụ thể bằng cách quan sát môi trường và kích hoạt các công cụ hành động (tools) có sẵn. Trong đề tài, trợ lý chatbot tìm phòng được xây dựng dưới dạng một Agent hoạt động theo vòng lặp ReAct (Reasoning and Acting) \cite{ReActPaper}.
+Tác nhân AI là một thực thể phần mềm thông minh có khả năng tự động hóa quy trình ra quyết định để thực hiện một mục tiêu cụ thể bằng cách quan sát môi trường và kích hoạt các công cụ hành động (tools) có sẵn. Trong đề tài, trợ lý chatbot tìm phòng được xây dựng dưới dạng một Agent hoạt động theo vòng lặp ReAct (Reasoning and Acting).
 
 Vòng lặp ReAct kết hợp đồng thời khả năng lập luận (Reasoning) và hành động (Acting) của LLM qua bốn giai đoạn lặp đi lặp lại:
 \begin{itemize}
@@ -118,8 +118,8 @@ Vòng lặp ReAct kết hợp đồng thời khả năng lập luận (Reasoning
 
 Hệ thống gợi ý tin đăng giúp cá nhân hóa trang chủ của từng người dùng dựa trên sở thích và hành vi của họ. Hệ thống SmartRent triển khai cơ chế gợi ý lai kết hợp hai hướng tiếp cận chính:
 \begin{itemize}
-    \item \textbf{Lọc dựa trên nội dung:} Gợi ý các tin đăng có đặc trưng tương đồng (tiện ích, khoảng giá, vị trí) với các tin đăng mà người dùng đó đã từng xem, lưu hoặc tương tác nhiều trong lịch sử \cite{LopsCBF}. Độ tương đồng giữa các đặc trưng được tính toán bằng chỉ số độ tương đồng Cosine trên không gian vector.
-    \item \textbf{Lọc cộng tác:} Tìm kiếm các người dùng có hành vi tương tự (lịch sử xem tin giống nhau) để gợi ý chéo các tin đăng mà người dùng tương tự kia đã thích nhưng người dùng hiện hành chưa biết tới \cite{SarwarCF}.
+    \item \textbf{Lọc dựa trên nội dung:} Gợi ý các tin đăng có đặc trưng tương đồng (tiện ích, khoảng giá, vị trí) với các tin đăng mà người dùng đó đã từng xem, lưu hoặc tương tác nhiều trong lịch sử. Độ tương đồng giữa các đặc trưng được tính toán bằng chỉ số độ tương đồng Cosine trên không gian vector.
+    \item \textbf{Lọc cộng tác:} Tìm kiếm các người dùng có hành vi tương tự (lịch sử xem tin giống nhau) để gợi ý chéo các tin đăng mà người dùng tương tự kia đã thích nhưng người dùng hiện hành chưa biết tới.
 \end{itemize}
 Hai thuật toán này được tích hợp song song và chuẩn hóa điểm số, kết hợp với các hệ số hiệu chỉnh đặc thù (như khoảng cách địa lý từ cơ sở làm việc/học tập của người dùng và mức độ ưu tiên đẩy tin của tài khoản VIP) để xếp hạng danh sách gợi ý cuối cùng đạt độ chính xác cao nhất.
 

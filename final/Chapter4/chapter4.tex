@@ -29,8 +29,8 @@ Hệ thống SmartRent bao gồm các thành phần cốt lõi sau phối hợp 
 \begin{enumerate}
     \item \textbf{Ứng dụng Web người dùng cuối (Next.js Webapp):} Được xây dựng trên Next.js 15 (Pages Router) kết hợp React 19 và TypeScript. Ứng dụng này phục vụ hai đối tượng người dùng chính là người thuê trọ (tìm kiếm, so sánh, tương tác trợ lý AI, thanh toán) và chủ trọ/môi giới (đăng tin, quản lý tin đăng, theo dõi khách hàng).
     \item \textbf{Ứng dụng Web quản trị (Next.js Admin):} Ứng dụng độc lập giúp quản trị viên giám sát hệ thống, kiểm duyệt bài đăng, phê duyệt hồ sơ môi giới chuyên nghiệp và quản lý tài chính/doanh thu.
-    \item \textbf{Máy chủ Backend nghiệp vụ (Spring Boot):} Viết bằng Java Spring Boot, áp dụng kiến trúc nguyên khối mô-đun để chia tách rõ ràng các nghiệp vụ (\texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, \texttt{recommendation}) bên dưới một ứng dụng chạy duy nhất, giúp bảo trì dễ dàng và sẵn sàng tách thành các dịch vụ nhỏ khi cần.
-    \item \textbf{Máy chủ Dịch vụ AI (FastAPI):} Viết bằng Python FastAPI, tích hợp các mô hình ngôn ngữ lớn (Gemini, Llama) qua cổng LiteLLM gateway để phục vụ trợ lý hội thoại AI Agent, tự động tạo mô tả bài đăng và kiểm duyệt tự động.
+    \item \textbf{Máy chủ Backend nghiệp vụ (Spring Boot):} Viết bằng Java Spring Boot \cite{SpringBootDocs}, áp dụng kiến trúc nguyên khối mô-đun để chia tách rõ ràng các nghiệp vụ (\texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, \texttt{recommendation}) bên dưới một ứng dụng chạy duy nhất, giúp bảo trì dễ dàng và sẵn sàng tách thành các dịch vụ nhỏ khi cần.
+    \item \textbf{Máy chủ Dịch vụ AI (FastAPI):} Viết bằng Python FastAPI \cite{FastAPIDocs}, tích hợp các mô hình ngôn ngữ lớn (Gemini, Llama) qua cổng LiteLLM gateway để phục vụ trợ lý hội thoại AI Agent, tự động tạo mô tả bài đăng và kiểm duyệt tự động.
     \item \textbf{Hệ cơ sở dữ liệu và lưu trữ (MySQL, Redis, Cloudflare R2):} MySQL lưu trữ dữ liệu có cấu trúc ổn định; Redis làm bộ đệm tăng tốc độ truy vấn và quản lý phiên; Cloudflare R2 lưu trữ các tệp đa phương tiện (ảnh, video) thông qua luồng tải lên bằng URL ký trước để tối ưu băng thông máy chủ chính.
 \end{enumerate}
 
@@ -285,7 +285,7 @@ Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên: yêu
 
 \subsection{Luồng xử lý AI Chatbot}
 
-Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận -- hành động \cite{ReActPaper}: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events -- SSE.
+Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận -- hành động: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events -- SSE.
 
 Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối (\texttt{AgentOrchestrator}) cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn -- mã tỉnh/thành, mã quận/huyện, mã tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng -- từ bốn cơ sở tri thức dạng JSON; việc đối sánh dựa trên từ khóa, có chuẩn hóa loại bỏ dấu tiếng Việt và mở rộng từ đồng nghĩa, hoàn toàn ở bộ nhớ nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng, tách khỏi chỉ dẫn hệ thống để chỉ dẫn hệ thống giữ nguyên byte qua mọi yêu cầu, tận dụng được cơ chế lưu đệm tiền tố của mô hình.
 
@@ -323,14 +323,14 @@ Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiệ
 
 \subsection{Luồng gợi ý phòng trọ}
 
-Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung, lọc cộng tác \cite{CFSurvey} và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
+Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu -- nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung, lọc cộng tác và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
 
 Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Trước hết, mỗi tin đăng được biểu diễn thành một vector đặc trưng: giá, diện tích và số phòng ngủ được chuẩn hóa MinMax, kết hợp các đặc trưng phân loại one-hot cho loại bất động sản, loại tin và mã tỉnh. Từ lịch sử tương tác, hệ thống dựng một vector hồ sơ người dùng bằng trung bình có trọng số. Điểm CBF là độ tương đồng cosine giữa hồ sơ (hoặc tin mục tiêu) và ứng viên; điểm CF dựa trên mức đồng xuất hiện item-item trên toàn bộ tương tác. Quy trình tính toán chi tiết điểm số cuối cùng để xếp hạng tin đăng ứng viên được thực hiện qua ba bước định lượng sau:
 
 Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i$ đối với người dùng được tính toán theo quy trình sau:
 \begin{enumerate}
     \item \textbf{Tính điểm lai cơ sở:}
-    Điểm số cơ sở $S_{\text{base}}(i)$ được kết hợp từ điểm lọc cộng tác $S_{\text{CF}}(i)$ và điểm lọc dựa trên nội dung $S_{\text{CBF}}(i)$ theo phương pháp lai trọng số \cite{BurkeHybrid}:
+    Điểm số cơ sở $S_{\text{base}}(i)$ được kết hợp từ điểm lọc cộng tác $S_{\text{CF}}(i)$ và điểm lọc dựa trên nội dung $S_{\text{CBF}}(i)$ theo phương pháp lai trọng số:
     \begin{equation}
         S_{\text{base}}(i) = 
         \begin{cases}
@@ -345,7 +345,7 @@ Chi tiết hơn, điểm số cuối cùng của mỗi tin đăng ứng viên $i
     Điểm số này sau đó được chuẩn hóa MinMax về đoạn $[0.1, 1.0]$ để thu được điểm cơ sở chuẩn hóa $S_{\text{base\_norm}}(i)$.
 
     \item \textbf{Áp dụng hệ số suy giảm địa lý:}
-    Điểm số sau khi hiệu chỉnh địa lý $S_{\text{geo}}(i)$ được tính bằng cách nhân điểm cơ sở đã chuẩn hóa với hệ số suy giảm mũ theo khoảng cách địa lý \cite{YeGeodistance}:
+    Điểm số sau khi hiệu chỉnh địa lý $S_{\text{geo}}(i)$ được tính bằng cách nhân điểm cơ sở đã chuẩn hóa với hệ số suy giảm mũ theo khoảng cách địa lý:
     \begin{equation}
         S_{\text{geo}}(i) = S_{\text{base\_norm}}(i) \cdot e^{-k \cdot d_i}
     \end{equation}
