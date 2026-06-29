@@ -5,7 +5,7 @@ Trong bối cảnh đô thị hóa diễn ra nhanh chóng tại Việt Nam, nhu 
 
 Hệ thống được thiết kế và hiện thực hóa thông qua sự phối hợp đồng bộ giữa ba phân hệ chính:
 \begin{itemize}
-    \item \textbf{Phân hệ Frontend (Next.js 15):} Xây dựng bằng Next.js (Pages Router), TypeScript và Tailwind CSS v4, cung cấp giao diện người dùng tối ưu hóa SEO, tích hợp bản đồ Google Maps tương tác gom cụm tin đăng, tính năng so sánh bất động sản và trang điều khiển dành cho chủ trọ (SellerNet) cùng quản trị viên (Admin).
+    \item \textbf{Phân hệ Frontend (Next.js 15):} Xây dựng bằng Next.js (Pages Router), TypeScript và Tailwind CSS v4, cung cấp giao diện người dùng tối ưu hóa SEO, tích hợp bản đồ Google Maps tương tác gom cụm tin đăng, tính năng so sánh bất động sản và trang điều khiển dành cho chủ trọ cùng quản trị viên.
     \item \textbf{Phân hệ Backend (Spring Boot 3.4.0):} Thực hiện theo kiến trúc nguyên khối mô-đun (Modular Monolith) an toàn, tích hợp xác thực JWT, cơ chế OTP qua Brevo Email Service và cổng thanh toán tự động qua SePay/ZaloPay với mô hình đối soát chủ động (On-Demand Query Pattern).
     \item \textbf{Phân hệ Dịch vụ AI (FastAPI):} Được thiết kế theo kiến trúc sạch (Clean Architecture) kết nối qua LiteLLM gateway và giám sát bởi Langfuse.
 \end{itemize}
