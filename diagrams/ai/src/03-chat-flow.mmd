@@ -7,7 +7,7 @@ sequenceDiagram
  participant Run as Runner (Agents SDK)
  participant LLM as Gemini (LiteLLM)
  participant Tool as Tool (@function_tool)
- participant BE as SmartRent Backend
+ participant BE as Thuê Nhà Trọ Backend
  FE->>API: POST messages (SSE)
  API->>Orch: run_stream()
  Orch->>Orch: cắt bớt lịch sử theo ngân sách token

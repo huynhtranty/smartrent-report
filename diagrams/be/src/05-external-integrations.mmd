@@ -1,10 +1,10 @@
 flowchart TB
  FE(["FE / Admin"]) -->|REST + WebSocket| BE
- BE["SmartRent Backend<br/><small>Spring Boot</small>"]
+ BE["Thuê Nhà Trọ Backend<br/><small>Spring Boot</small>"]
  BE --> DB[("MySQL<br/><small>Flyway</small>")]
  BE --> Redis[("Redis<br/><small>cache · token · OTP</small>")]
  BE --> S3["AWS S3<br/><small>media</small>"]
  BE --> Google["Google<br/><small>OAuth2 · Geocoding</small>"]
  BE --> Brevo["Brevo<br/><small>email</small>"]
  BE --> Pay["ZaloPay / SePay<br/><small>thanh toán</small>"]
- BE --> AI["SmartRent AI"]
+ BE --> AI["Thuê Nhà Trọ AI"]

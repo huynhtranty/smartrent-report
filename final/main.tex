@@ -113,6 +113,13 @@
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{5}
 
+% Giảm khoảng trắng dọc quanh hình/bảng và caption để bớt số trang
+\setlength{\textfloatsep}{10pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setlength{\abovecaptionskip}{5pt}
+\setlength{\belowcaptionskip}{2pt}
+
 
 % Dãn dòng 1.5
 \usepackage{setspace}
@@ -231,7 +238,7 @@
 \DeclareNameAlias{sortname}{last-first}
 \DeclareNameAlias{default}{last-first}
 
-\printbibliography[heading=subbibliography, title={Tiếng Anh}, notkeyword=Viet, resetnumbers=3]
+\printbibliography[heading=subbibliography, title={Tiếng Anh}, notkeyword=Viet, resetnumbers=7]
 % ===================================================================== %
 % CHÚ Ý: phải gán lại resetnumbers=số tài liệu tham khảo tiếng Việt + 1 %
 % ===================================================================== %

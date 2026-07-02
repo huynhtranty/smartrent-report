@@ -2,12 +2,12 @@ flowchart TB
     Dev(["Lập trình viên"])
     GH["GitHub<br/><small>nhánh feature, pull request vào main</small>"]
 
-    subgraph CI["GitHub Actions --- CI (trên pull request)"]
+    subgraph CI["GitHub Actions - CI (trên pull request)"]
         direction LR
         B["Biên dịch"] --> T["Kiểm thử đơn vị + độ phủ"]
     end
 
-    subgraph CD["GitHub Actions --- CD (khi hợp nhất vào main)"]
+    subgraph CD["GitHub Actions - CD (khi hợp nhất vào main)"]
         direction LR
         Img["Đóng gói Docker image"] --> Push["Đẩy lên Docker Hub"] --> Hook["Gọi webhook Dokploy"]
     end
