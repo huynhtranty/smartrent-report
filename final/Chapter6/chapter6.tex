@@ -1,15 +1,13 @@
 \chapter{Kiểm thử và đánh giá hệ thống}
 \label{Chapter6}
 
-% Phụ trách chương: Ty (Kiểm thử và đánh giá).
-
 \section{Kế hoạch kiểm thử}
 
-Quá trình kiểm thử nhằm bảo đảm hệ thống hoạt động đúng đặc tả, ổn định và an toàn trước khi đưa vào sử dụng thực tế. Đối tượng kiểm thử bao gồm ba khối dịch vụ --- Backend, Frontend (ứng dụng người dùng và trang quản trị) và dịch vụ AI --- cùng các luồng tích hợp giữa chúng và với những dịch vụ bên ngoài (cơ sở dữ liệu, lưu trữ, cổng thanh toán, mô hình ngôn ngữ).
+Quá trình kiểm thử nhằm bảo đảm hệ thống hoạt động đúng đặc tả, ổn định và an toàn trước khi đưa vào sử dụng thực tế. Đối tượng kiểm thử bao gồm ba khối dịch vụ: Backend, Frontend (ứng dụng người dùng và trang quản trị) và dịch vụ AI, cùng các luồng tích hợp giữa chúng và với những dịch vụ bên ngoài (cơ sở dữ liệu, lưu trữ, cổng thanh toán, mô hình ngôn ngữ).
 
-Nhóm áp dụng nhiều hình thức kiểm thử bổ trợ cho nhau, tương ứng với các mức độ và mục tiêu khác nhau. Ở mức thấp nhất, \textit{kiểm thử đơn vị} được chạy tự động trong quy trình tích hợp liên tục (đã trình bày ở Chương~\ref{Chapter5}) như một cổng kiểm soát: mọi pull request đều phải vượt qua bộ kiểm thử mới được hợp nhất vào nhánh chính. Ở mức nghiệp vụ, \textit{kiểm thử chức năng} xác nhận từng tính năng đúng theo các use case đã đặc tả ở Chương~\ref{Chapter3}. Bên cạnh đó, \textit{kiểm thử API}, \textit{kiểm thử bảo mật}, \textit{kiểm thử hiệu năng} và \textit{đánh giá chức năng AI} lần lượt soi chiếu hệ thống ở các khía cạnh giao tiếp, an toàn, khả năng chịu tải và chất lượng trí tuệ nhân tạo. Bảng~\ref{tab:test-plan} tóm tắt kế hoạch kiểm thử tổng thể.
+Nhóm áp dụng nhiều hình thức kiểm thử bổ trợ cho nhau, tương ứng với các mức độ và mục tiêu khác nhau. Ở mức thấp nhất, \textit{kiểm thử đơn vị} được chạy tự động trong quy trình tích hợp liên tục (đã trình bày ở Chương~\ref{Chapter5}) như một cổng kiểm soát: mọi pull request đều phải vượt qua bộ kiểm thử mới được hợp nhất vào nhánh chính. Ở mức nghiệp vụ, \textit{kiểm thử chức năng} xác nhận từng tính năng đúng theo các use case đã đặc tả ở Chương~\ref{Chapter3}. Bên cạnh đó, \textit{kiểm thử API}, \textit{kiểm thử bảo mật} và \textit{đánh giá chức năng AI} lần lượt soi chiếu hệ thống ở các khía cạnh giao tiếp, an toàn và chất lượng trí tuệ nhân tạo. Bảng~\ref{tab:test-plan} tóm tắt kế hoạch kiểm thử tổng thể.
 
-\begin{table}[H]
+\begin{table}[!ht]
 \centering
 \caption{Kế hoạch kiểm thử tổng thể của hệ thống}
 \label{tab:test-plan}
@@ -21,13 +19,11 @@ Kiểm thử đơn vị & Kiểm tra tính đúng đắn logic của từng thà
 \hline
 Kiểm thử chức năng & Xác nhận tính năng đáp ứng đúng use case & Thủ công theo kịch bản + kịch bản hành trình người dùng/quản trị \\
 \hline
-Kiểm thử API & Kiểm tra endpoint REST: mã trạng thái, cấu trúc phản hồi, ràng buộc xác thực & k6~\cite{k6} \\
+Kiểm thử API & Kiểm tra endpoint REST: mã trạng thái, cấu trúc phản hồi, ràng buộc xác thực & Kịch bản tự động gọi endpoint \\
 \hline
 Kiểm thử bảo mật & Xác thực, phân quyền, bảo vệ dữ liệu nhạy cảm & Thủ công + rà soát cấu hình bảo mật \\
 \hline
-Kiểm thử hiệu năng & Đo thời gian phản hồi, thông lượng và tỉ lệ lỗi dưới tải & k6~\cite{k6} \\
-\hline
-Đánh giá chức năng AI & Đánh giá chất lượng gợi ý, phản hồi chatbot và mức hài lòng & Truy vết Langfuse + khảo sát người dùng \\
+Đánh giá chức năng AI & Đánh giá chất lượng gợi ý và phản hồi chatbot & Truy vết Langfuse \\
 \hline
 \end{tabular}
 \end{table}
@@ -38,52 +34,33 @@ Kiểm thử chức năng xác nhận mỗi tính năng hoạt động đúng th
 
 Mỗi ca kiểm thử được mô tả theo cấu trúc thống nhất: mã ca, tiền điều kiện, các bước thực hiện, dữ liệu đầu vào, kết quả mong đợi, kết quả thực tế và trạng thái (đạt/không đạt).
 
-Kết quả kiểm thử cho thấy các luồng nghiệp vụ trọng yếu kể trên đều hoạt động đúng theo đặc tả use case. Một số sai khác nhỏ phát hiện trong quá trình kiểm thử đã được ghi nhận và khắc phục trước khi nghiệm thu; nhìn chung, hệ thống đáp ứng đầy đủ các chức năng cốt lõi đã đề ra.
+Kết quả kiểm thử cho thấy các luồng nghiệp vụ trọng yếu kể trên đều hoạt động đúng theo đặc tả use case. Một số sai khác nhỏ phát hiện trong quá trình kiểm thử đã được ghi nhận và khắc phục trước khi nghiệm thu.
 
 \section{Kiểm thử API}
 
-Tầng API của Backend được kiểm thử ở mức endpoint nhằm bảo đảm các dịch vụ REST trả về đúng dữ liệu và xử lý đúng các trường hợp ngoại lệ. Nhóm xây dựng các kịch bản kiểm thử tự động bằng k6~\cite{k6}, lần lượt gọi tới những nhóm endpoint chính (đăng nhập, danh sách và chi tiết tin đăng, lưu tin, đẩy tin, thống kê trang chủ\ldots) và kiểm tra ba khía cạnh: mã trạng thái HTTP, cấu trúc phản hồi chuẩn hóa (\texttt{ApiResponse}) và các ràng buộc xác thực (ví dụ trả về lỗi 401 khi truy cập tài nguyên cần đăng nhập mà thiếu token hợp lệ).
+Tầng API của Backend được kiểm thử ở mức endpoint nhằm bảo đảm các dịch vụ REST trả về đúng dữ liệu và xử lý đúng các trường hợp ngoại lệ. Nhóm xây dựng các kịch bản kiểm thử tự động, lần lượt gọi tới những nhóm endpoint chính (đăng nhập, danh sách và chi tiết tin đăng, lưu tin, đẩy tin, thống kê trang chủ\ldots) và kiểm tra ba khía cạnh: mã trạng thái HTTP, cấu trúc phản hồi chuẩn hóa (\texttt{ApiResponse}) và các ràng buộc xác thực (ví dụ trả về lỗi 401 khi truy cập tài nguyên cần đăng nhập mà thiếu token hợp lệ).
 
-Kết quả cho thấy các nhóm endpoint chính trả về đúng mã trạng thái và cấu trúc phản hồi chuẩn hóa \texttt{ApiResponse}, đồng thời tuân thủ các ràng buộc xác thực --- yêu cầu thiếu token hợp lệ tới tài nguyên cần đăng nhập đều bị từ chối với mã 401. Các trường hợp ngoại lệ được xử lý nhất quán, không phát sinh lỗi nghiêm trọng ở tầng giao tiếp.
+Kết quả cho thấy cả ba khía cạnh đều đạt: mã trạng thái, cấu trúc \texttt{ApiResponse} và ràng buộc xác thực đúng như thiết kế; các trường hợp ngoại lệ được xử lý nhất quán, không phát sinh lỗi nghiêm trọng ở tầng giao tiếp.
 
 \section{Kiểm thử bảo mật}
 
 Kiểm thử bảo mật tập trung vào các cơ chế bảo vệ đã thiết kế ở phần Backend. Các nội dung được rà soát và kiểm thử bao gồm: cơ chế \textit{xác thực} OAuth2 kết hợp JWT và việc làm mới token; \textit{phân quyền} theo vai trò (người thuê, chủ trọ, quản trị viên) bảo đảm mỗi vai trò chỉ truy cập được tài nguyên được phép; bộ lọc bảo mật và cổng chặn truy cập đối với các tuyến cá nhân; \textit{giới hạn tần suất} ở tầng reverse proxy nhằm chống lạm dụng và bảo vệ hạn mức dịch vụ bên ngoài; việc \textit{che dữ liệu nhạy cảm} trong nhật ký và phản hồi; cùng việc bắt buộc HTTPS/TLS cho toàn bộ lưu lượng.
 
-Kết quả kiểm thử cho thấy các cơ chế bảo mật hoạt động đúng thiết kế: yêu cầu thiếu hoặc sai token đều bị từ chối; người dùng không thể truy cập tài nguyên vượt quá vai trò được cấp; token bị vô hiệu hóa ngay sau khi đăng xuất; và lưu lượng vượt ngưỡng bị chặn bởi cơ chế giới hạn tần suất ở reverse proxy. Hệ thống cũng không để lộ dữ liệu nhạy cảm trong nhật ký và bắt buộc HTTPS/TLS cho toàn bộ lưu lượng.
-
-\section{Kiểm thử hiệu năng}
-
-Kiểm thử hiệu năng đánh giá khả năng đáp ứng và độ ổn định của hệ thống dưới tải bằng công cụ \textbf{k6}~\cite{k6}. Nhóm xây dựng nhiều kịch bản tải mô phỏng các tình huống sử dụng thực tế --- hành trình người dùng (duyệt, tìm kiếm, xem chi tiết), hành trình quản trị, gọi toàn bộ nhóm API và mô phỏng lưu lượng gần với môi trường thật. Mỗi kịch bản tăng dần số người dùng ảo theo từng giai đoạn, duy trì tải đỉnh rồi giảm dần, đồng thời đặt các ngưỡng chấp nhận (ví dụ thời gian phản hồi phân vị 95 và tỉ lệ lỗi tối đa) để tự động kết luận đạt hay không đạt.
-
-Các chỉ số chính được theo dõi gồm: thời gian phản hồi (trung bình, trung vị và phân vị 95), thông lượng (số yêu cầu mỗi giây) và tỉ lệ lỗi.
-
-Kết quả các kịch bản tải cho thấy hệ thống đáp ứng ổn định: thời gian phản hồi và tỉ lệ lỗi nằm trong ngưỡng chấp nhận ở các mức tải mô phỏng, hệ thống không xảy ra sự cố quá tải hay rò rỉ tài nguyên trong suốt quá trình kiểm thử.
+Kết quả kiểm thử cho thấy các cơ chế bảo mật hoạt động đúng thiết kế: yêu cầu thiếu hoặc sai token đều bị từ chối; người dùng không thể truy cập tài nguyên vượt quá vai trò được cấp; token bị vô hiệu hóa ngay sau khi đăng xuất; và lưu lượng vượt ngưỡng bị chặn bởi cơ chế giới hạn tần suất ở reverse proxy. Hệ thống cũng không để lộ dữ liệu nhạy cảm và duy trì HTTPS/TLS cho toàn bộ lưu lượng như thiết kế.
 
 \section{Đánh giá chức năng AI}
 
-Bên cạnh kiểm thử phần mềm thông thường, các chức năng trí tuệ nhân tạo được đánh giá riêng do đặc thù đầu ra mang tính xác suất và phụ thuộc ngữ cảnh. Việc đánh giá kết hợp số liệu định lượng, truy vết qua nền tảng Langfuse và khảo sát phản hồi người dùng.
+Bên cạnh kiểm thử phần mềm thông thường, các chức năng trí tuệ nhân tạo được đánh giá riêng do đặc thù đầu ra mang tính xác suất và phụ thuộc ngữ cảnh. Việc đánh giá kết hợp số liệu định lượng và truy vết qua nền tảng Langfuse.
 
 \subsection{Độ chính xác của gợi ý phòng}
 
 Hệ thống gợi ý được đánh giá dựa trên mức độ phù hợp giữa các tin được gợi ý và nhu cầu thực tế của người dùng, thông qua các chỉ số như độ chính xác trên nhóm gợi ý hàng đầu và tỉ lệ người dùng tương tác (nhấp xem, lưu tin) với các gợi ý.
 
-Kết quả thử nghiệm cho thấy các gợi ý bám sát nhu cầu của người dùng về khu vực, mức giá và loại hình phòng; tỉ lệ người dùng tương tác với gợi ý (nhấp xem, lưu tin) ở mức tích cực, phản ánh chất lượng gợi ý phù hợp với mục tiêu đề ra.
+Kết quả cho thấy các gợi ý bám sát nhu cầu người dùng về khu vực, mức giá và loại hình phòng; tỉ lệ tương tác với gợi ý đạt mức tích cực.
 
 \subsection{Chất lượng phản hồi chatbot}
 
 Chất lượng của trợ lý hội thoại được đánh giá ở các tiêu chí: mức độ liên quan và chính xác của câu trả lời, khả năng gọi đúng công cụ tìm kiếm/định giá, và độ trễ phản hồi. Dữ liệu truy vết từ Langfuse (prompt, công cụ được gọi, số token, kết quả) là cơ sở để phân tích và cải thiện.
 
-Qua thử nghiệm, trợ lý hội thoại trả lời liên quan và chính xác với phần lớn câu hỏi tìm phòng, gọi đúng công cụ tìm kiếm và định giá trong đa số trường hợp. Dữ liệu truy vết từ Langfuse được sử dụng để rà soát và tinh chỉnh, góp phần cải thiện độ chính xác cũng như độ trễ phản hồi.
+Qua thử nghiệm, trợ lý hội thoại trả lời liên quan và chính xác với phần lớn câu hỏi tìm phòng, gọi đúng công cụ tìm kiếm và định giá trong đa số trường hợp; dữ liệu truy vết Langfuse được dùng để rà soát và tinh chỉnh độ chính xác cũng như độ trễ.
 
-\subsection{Khảo sát mức độ hài lòng người dùng}
-
-Nhóm tiến hành khảo sát một nhóm người dùng thử nghiệm để thu thập đánh giá định tính và định lượng về trải nghiệm sử dụng các tính năng AI (trợ lý hội thoại, gợi ý cá nhân hóa, định giá).
-
-Phản hồi định tính thu được từ nhóm người dùng thử nghiệm nhìn chung tích cực: các tính năng AI được đánh giá là hữu ích và dễ sử dụng, đặc biệt ở trợ lý hội thoại và gợi ý cá nhân hóa; một số góp ý cũng được ghi nhận làm cơ sở để tiếp tục hoàn thiện.
-
-\section{So sánh với các hệ thống hiện có}
-
-Để làm rõ giá trị của đề tài, hệ thống được đối chiếu lại với các nền tảng đã khảo sát ở Chương~\ref{Chapter2}. Phép so sánh tập trung vào những khía cạnh mà hệ thống hướng tới tạo khác biệt: trợ lý hội thoại AI hỗ trợ tìm phòng, gợi ý cá nhân hóa, định giá tham khảo bằng AI và trải nghiệm tìm kiếm phù hợp với người thuê trọ tại Việt Nam.
-
-Nhìn chung, so với các nền tảng đã khảo sát ở Chương~\ref{Chapter2}, hệ thống tạo khác biệt ở bốn khía cạnh: trợ lý hội thoại AI hỗ trợ tìm phòng bằng ngôn ngữ tự nhiên, gợi ý cá nhân hóa theo hành vi người dùng, định giá tham khảo bằng AI, và trải nghiệm tìm kiếm tinh chỉnh cho người thuê trọ tại Việt Nam --- những tính năng mà các nền tảng hiện có hoặc chưa hỗ trợ, hoặc chỉ ở mức cơ bản. Bù lại, do mới được triển khai, hệ thống còn hạn chế về quy mô dữ liệu tin đăng và mức độ phủ thị trường so với các nền tảng đã vận hành lâu năm.
