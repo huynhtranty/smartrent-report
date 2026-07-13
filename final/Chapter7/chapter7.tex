@@ -3,25 +3,20 @@
 
 \section{Kết quả đạt được}
 
-Đề tài ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' đã hoàn thành các mục tiêu đề ra, xây dựng một hệ thống tìm kiếm và quản lý phòng trọ cho thuê tích hợp các công nghệ trí tuệ nhân tạo. Các kết quả cụ thể gồm:
+Đề tài ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' đã hoàn thành mục tiêu đề ra, xây dựng thành công hệ thống tìm kiếm và quản lý phòng trọ cho thuê tích hợp trí tuệ nhân tạo, gồm:
 
 \begin{itemize}
-    \item \textbf{Phân hệ Frontend (Next.js 15):} Hoàn thiện hai ứng dụng web độc lập bao gồm webapp dành cho người dùng cuối (người thuê, chủ trọ/môi giới) và trang quản trị hệ thống (Admin). Giao diện được thiết kế hiện đại, responsive, tích hợp bản đồ tương tác Google Maps kèm marker clustering, tính năng so sánh trực quan các tin đăng, theo dõi người dùng, nạp tiền ví điện tử và quản lý dịch vụ đẩy tin.
-    \item \textbf{Phân hệ Backend (Spring Boot 3.4.0):} Hiện thực kiến trúc nguyên khối mô-đun bảo đảm nhất quán giao dịch và thuận tiện mở rộng. Hệ thống được tổ chức thành các module nghiệp vụ biệt lập như \texttt{auth}, \texttt{listing}, \texttt{payment}, \texttt{billing}, \texttt{chat}, và \texttt{recommendation}. Phân hệ đã hoàn thành cơ chế bảo mật JWT với chu kỳ tự động refresh token, hệ thống xác thực OTP qua Brevo Email Service, và tích hợp thành công cổng thanh toán tự động qua SePay/ZaloPay đi kèm cơ chế đối soát chủ động theo yêu cầu.
-    \item \textbf{Phân hệ Dịch vụ AI (FastAPI):} Xây dựng máy chủ AI Service chuyên trách theo kiến trúc sạch, bao gồm các thành phần cốt lõi:
-    \begin{itemize}
-        \item \textbf{AI Agent:} Trợ lý hội thoại thông minh dựa trên cơ chế gọi hàm với vòng lặp suy luận ReAct giới hạn tối đa 12 bước, được tích hợp 14 công cụ nghiệp vụ tương tác trực tiếp với cơ sở dữ liệu và truyền dữ liệu thời gian thực dạng luồng về máy khách.
-        \item \textbf{Định giá bất động sản bằng Trí tuệ nhân tạo:} Ứng dụng mô hình ngôn ngữ lớn (Gemini LLM) thông qua phương pháp học ngữ cảnh, kết hợp đối chiếu dữ liệu các tin đăng thực tế lân cận để tự động ước tính khoảng giá thị trường.
-        \item \textbf{Hệ thống gợi ý tin đăng:} Hiện thực thuật toán gợi ý lai kết hợp lọc cộng tác và lọc dựa trên nội dung, tối ưu hóa theo khoảng cách địa lý và hạng thành viên VIP.
-        \item \textbf{Kiểm duyệt tin đăng tự động:} Ứng dụng mô hình đa phương tiện (Gemini Multimodal) để tự động đánh giá văn bản, hình ảnh và video của tin đăng, phát hiện bài viết trùng lặp hoặc vi phạm tiêu chuẩn.
-    \end{itemize}
-    \item \textbf{Hạ tầng và Triển khai:} Đóng gói thành công toàn bộ hệ thống bằng Docker, triển khai thực tế trên môi trường đám mây sử dụng Dokploy kết hợp Traefik Reverse Proxy làm bộ điều phối HTTPS, thiết lập quy trình tích hợp và triển khai liên tục tự động thông qua GitHub Actions.
+    \item \textbf{Frontend (Next.js 15):} Hai ứng dụng web hoàn chỉnh -- webapp cho người thuê/chủ trọ và trang quản trị -- với bản đồ tương tác, so sánh tin đăng, theo dõi người đăng và quản lý ví/dịch vụ đẩy tin.
+    \item \textbf{Backend (Spring Boot):} Kiến trúc Modular Monolith, xác thực JWT tự làm mới, xác minh OTP qua email, và tích hợp thanh toán SePay/ZaloPay kèm đối soát giao dịch.
+    \item \textbf{Dịch vụ AI (FastAPI):} Trợ lý hội thoại dùng vòng lặp suy luận ReAct với 14 công cụ nghiệp vụ, định giá bất động sản bằng LLM, gợi ý tin đăng lai (lọc cộng tác kết hợp lọc nội dung), và kiểm duyệt tin đăng tự động bằng mô hình đa phương thức.
+    \item \textbf{Hạ tầng:} Đóng gói Docker, triển khai trên Dokploy kết hợp Traefik, cùng quy trình tích hợp và triển khai liên tục tự động qua GitHub Actions.
 \end{itemize}
 
 \section{Kiến thức và kinh nghiệm thu nhận được}
 
 Quá trình thực hiện đề tài mang lại cho nhóm nhiều kinh nghiệm về chuyên môn kỹ thuật, quản lý dự án và làm việc nhóm.
 
+\FloatBarrier
 \subsection{Về mặt kỹ thuật}
 
 Về mặt kỹ thuật, nhóm tích lũy được các kinh nghiệm chính:
@@ -32,6 +27,7 @@ Về mặt kỹ thuật, nhóm tích lũy được các kinh nghiệm chính:
     \item \textbf{DevOps và hạ tầng đám mây:} Sử dụng Docker để nhất quán hóa môi trường phát triển cục bộ và môi trường chạy thật. Tự tay cấu hình máy chủ Traefik, thiết lập chứng chỉ bảo mật SSL tự động và xây dựng các luồng CI/CD tự động build, test và deploy mã nguồn.
 \end{itemize}
 
+\FloatBarrier
 \subsection{Về kỹ năng làm việc nhóm và lập kế hoạch}
 
 Với nhóm 6 thành viên, kỹ năng cộng tác và tổ chức có vai trò quan trọng:
@@ -41,6 +37,7 @@ Với nhóm 6 thành viên, kỹ năng cộng tác và tổ chức có vai trò 
     \item \textbf{Giao tiếp và giải quyết xung đột:} Duy trì cơ chế Daily Standup trực tuyến trên Discord và các buổi họp trực tiếp cuối mỗi sprint. Việc trao đổi thường xuyên giúp nhóm phát hiện sớm các rào cản kỹ thuật và nhanh chóng hỗ trợ lẫn nhau.
 \end{itemize}
 
+\FloatBarrier
 \subsection{Một số kiến thức và kinh nghiệm khác}
 
 Ngoài ra, đề tài còn mang lại một số kinh nghiệm khác:
