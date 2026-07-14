@@ -291,13 +291,15 @@ Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên, vớ
 \end{figure}
 
 \FloatBarrier
-\subsection{Luồng xử lý AI Chatbot}
+\subsection{Luồng xử lý trợ lý hội thoại}
 
 Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận - hành động: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events (SSE).
 
+Đề cương ban đầu dự kiến một trợ lý hội thoại dựa thuần túy trên cơ chế gọi hàm của mô hình ngôn ngữ, tức mỗi câu hỏi ứng với một lời gọi công cụ rồi trả lời ngay. Trong quá trình hiện thực, nhóm nâng thiết kế này lên thành một tác tử hoàn chỉnh hoạt động theo vòng lặp ReAct: mô hình được nhận lại kết quả của công cụ vừa gọi và tự quyết định có cần gọi tiếp hay không. Nhờ đó trợ lý xử lý được những yêu cầu bắc cầu mà cơ chế gọi hàm đơn lượt không đáp ứng nổi, chẳng hạn đánh giá một mức giá có hợp lý hay không (phải tra chi tiết tin đăng trước, rồi mới dùng chính giá và diện tích lấy được để ước tính khoảng giá thị trường), hay tự nới lỏng tiêu chí và tìm lại khi lượt tìm kiếm đầu không ra kết quả.
+
 Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn (mã địa danh, tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng) từ các cơ sở tri thức, đối sánh theo từ khóa nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng và tách khỏi chỉ dẫn hệ thống, giúp tận dụng cơ chế lưu đệm của mô hình để giảm chi phí xử lý.
 
-Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho bộ chạy của Agents SDK thực hiện vòng lặp gọi công cụ (tối đa 12 lượt). Trong mỗi lượt, mô hình có thể phát ra một hay nhiều lời gọi công cụ; các công cụ được thực thi và gom dữ liệu tin đăng thô để bộ điều phối dựng phần kết quả trả về giao diện sau khi kết thúc. Trợ lý được trang bị 14 công cụ phủ các nhóm nghiệp vụ như liệt kê ở Bảng~\ref{tab:ai-tools}.
+Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho bộ chạy của Agents SDK thực hiện vòng lặp gọi công cụ (tối đa 12 lượt). Trong mỗi lượt, mô hình có thể phát ra một hay nhiều lời gọi công cụ; các công cụ được thực thi và gom dữ liệu tin đăng thô để bộ điều phối dựng phần kết quả trả về giao diện sau khi kết thúc. Trợ lý được trang bị 15 công cụ phủ các nhóm nghiệp vụ như liệt kê ở Bảng~\ref{tab:ai-tools}.
 
 \begin{table}[!ht]
 \centering
@@ -307,11 +309,11 @@ Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho b
 \hline
 \textbf{Nhóm} & \textbf{Chức năng} \\
 \hline
-Tìm kiếm và tra cứu & Tìm kiếm tin đăng theo tiêu chí, xem chi tiết, so sánh tin và chuyển đổi địa danh. \\
+Tìm kiếm và tra cứu & Tìm kiếm tin đăng theo tiêu chí, xem chi tiết, so sánh tin, tra cứu địa điểm xung quanh (trường học, bệnh viện, siêu thị\ldots) và chuyển đổi địa danh giữa cấu trúc hành chính cũ và mới. \\
 \hline
 Định giá và lịch sử giá & Ước tính khoảng giá thị trường (mô hình XGBoost~\cite{ChenGuestrin2016}) và tra cứu lịch sử giá của tin. \\
 \hline
-Cá nhân hóa & Gợi ý tin phù hợp, tra cứu thông tin tài khoản và lưu tin yêu thích. \\
+Cá nhân hóa & Gợi ý tin phù hợp, tra cứu thông tin tài khoản và lưu tin yêu thích, đơn lẻ hoặc hàng loạt. \\
 \hline
 Quản lý dành cho chủ trọ & Xem trạng thái tin của chủ trọ và cập nhật giá tin đăng. \\
 \hline
@@ -348,7 +350,7 @@ Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đă
 
 Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các bề mặt LLM. Kiểm duyệt tin đăng khai thác khả năng đa phương thức của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa.
 
-Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 14 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng đọc cấu hình nhà cung cấp lúc khởi động và trả về mô hình tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema, ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ, nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
+Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 15 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng đọc cấu hình nhà cung cấp lúc khởi động và trả về mô hình tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema, ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ, nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
 
 \begin{figure}[!ht]
 \centering

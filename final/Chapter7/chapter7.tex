@@ -6,9 +6,9 @@
 Đề tài ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' đã hoàn thành mục tiêu đề ra, xây dựng thành công hệ thống tìm kiếm và quản lý phòng trọ cho thuê tích hợp trí tuệ nhân tạo, gồm:
 
 \begin{itemize}
-    \item \textbf{Frontend (Next.js 15):} Hai ứng dụng web hoàn chỉnh -- webapp cho người thuê/chủ trọ và trang quản trị -- với bản đồ tương tác, so sánh tin đăng, theo dõi người đăng và quản lý ví/dịch vụ đẩy tin.
+    \item \textbf{Frontend (Next.js 15):} Hai ứng dụng web hoàn chỉnh -- webapp cho người thuê/chủ trọ và trang quản trị -- với bản đồ tương tác, so sánh tin đăng, theo dõi người đăng, quản lý gói hội viên và dịch vụ đẩy tin.
     \item \textbf{Backend (Spring Boot):} Kiến trúc Modular Monolith, xác thực JWT tự làm mới, xác minh OTP qua email, và tích hợp thanh toán SePay/ZaloPay kèm đối soát giao dịch.
-    \item \textbf{Dịch vụ AI (FastAPI):} Trợ lý hội thoại dùng vòng lặp suy luận ReAct với 14 công cụ nghiệp vụ, định giá bất động sản bằng LLM, gợi ý tin đăng lai (lọc cộng tác kết hợp lọc nội dung), và kiểm duyệt tin đăng tự động bằng mô hình đa phương thức.
+    \item \textbf{Dịch vụ AI (FastAPI):} Trợ lý hội thoại dùng vòng lặp suy luận ReAct với 15 công cụ nghiệp vụ, định giá bất động sản bằng LLM, gợi ý tin đăng lai (lọc cộng tác kết hợp lọc nội dung), và kiểm duyệt tin đăng tự động bằng mô hình đa phương thức.
     \item \textbf{Hạ tầng:} Đóng gói Docker, triển khai trên Dokploy kết hợp Traefik, cùng quy trình tích hợp và triển khai liên tục tự động qua GitHub Actions.
 \end{itemize}
 
@@ -53,7 +53,13 @@ Mặc dù đã đạt được nhiều kết quả tích cực, hệ thống Thu
     \item \textbf{Độ trễ phản hồi của AI Agent:} Do phải suy luận đa bước và gọi liên tiếp nhiều công cụ truy vấn, thời gian phản hồi cho câu hỏi phức tạp còn cao (khoảng 10 đến 15 giây), ảnh hưởng phần nào đến trải nghiệm thời gian thực.
     \item \textbf{Sự hạn chế của dữ liệu ngữ cảnh trong định giá bằng AI:} Định giá bằng mô hình ngôn ngữ lớn kết hợp In-Context Learning cần dữ liệu tin đăng lân cận làm mốc so sánh. Ở khu vực thưa tin đăng (ngoại thành, tỉnh lẻ), thiếu dữ liệu đối chiếu khiến mô hình phải tự suy đoán, làm giảm độ chính xác của khoảng giá.
     \item \textbf{Chi phí vận hành dịch vụ bên thứ ba:} Việc phụ thuộc vào các API thương mại bên ngoài (Gemini API cho các tác vụ ngôn ngữ và kiểm duyệt hình ảnh, Google Maps API cho chức năng bản đồ) làm phát sinh chi phí vận hành khá lớn khi số lượng người dùng và lượt truy cập tăng cao.
-    \item \textbf{Đánh giá gợi ý chưa qua thử nghiệm quy mô lớn:} Thuật toán gợi ý tin đăng lai hiện tại được đánh giá chủ yếu dựa trên các kịch bản thử nghiệm giả lập cục bộ, chưa có cơ hội kiểm chứng hiệu quả thực tế trên lượng người dùng thật đủ lớn để tối ưu hóa chính xác các trọng số địa lý và hành vi.
+    \item \textbf{Đánh giá các chức năng AI còn mang tính định tính:} Chất lượng gợi ý và phản hồi của trợ lý hội thoại được đánh giá chủ yếu qua quan sát và dữ liệu truy vết, dựa trên các kịch bản thử nghiệm giả lập cục bộ thay vì các chỉ số định lượng trên một tập dữ liệu chuẩn. Độ chính xác của mô hình định giá cũng chưa được đối chiếu với giá giao dịch thực tế. So với kế hoạch ban đầu, hệ thống chưa trải qua giai đoạn kiểm thử chấp nhận với một nhóm người dùng thật đủ lớn, nên chưa có cơ sở để tinh chỉnh các trọng số địa lý và hành vi của bộ gợi ý theo dữ liệu thực.
+
+    \item \textbf{Chưa kiểm thử hiệu năng dưới tải:} So với kế hoạch ban đầu, nhóm chưa thực hiện được phần kiểm thử hiệu năng và chịu tải với lưu lượng mô phỏng ở quy mô hàng nghìn người dùng đồng thời. Các số liệu về thời gian phản hồi nêu trong báo cáo đến từ quan sát trong quá trình sử dụng thực tế chứ không phải từ một phép đo có kiểm soát; do đó hệ thống chưa xác định được ngưỡng chịu tải cũng như điểm nghẽn khi lưu lượng tăng đột biến.
+
+    \item \textbf{Giám sát vận hành chưa đầy đủ:} Hệ thống hiện chỉ ghi vết các lượt gọi mô hình ngôn ngữ qua Langfuse, chưa có lớp giám sát chỉ số hạ tầng (mức dùng bộ xử lý và bộ nhớ, độ trễ và tỉ lệ lỗi của các điểm cuối) kèm cảnh báo tự động. Việc phát hiện sự cố trên môi trường chạy thật vì vậy còn phụ thuộc vào quan sát thủ công.
+
+    \item \textbf{Phạm vi thu hẹp so với kế hoạch ban đầu:} Trong quá trình thực hiện, nhóm ưu tiên hoàn thiện các nhóm nghiệp vụ cốt lõi cùng năm năng lực trí tuệ nhân tạo, nên một số chức năng dự kiến ban đầu chưa được hiện thực. Kênh nhắn tin trực tiếp giữa người dùng với nhau và với quản trị viên được lược bỏ, thay bằng cơ chế thông báo trong ứng dụng kết hợp email và liên hệ trực tiếp qua số điện thoại. Ứng dụng mới dừng ở giao diện đáp ứng, chưa được đóng gói thành ứng dụng web lũy tiến kèm thông báo đẩy trên thiết bị di động. Ví điện tử nội bộ cùng chức năng nạp tiền cũng không được triển khai; mọi khoản chi trả đi thẳng qua cổng thanh toán theo từng giao dịch hoặc theo quyền lợi gói hội viên.
 \end{itemize}
 
 \section{Hướng phát triển}
@@ -64,6 +70,7 @@ Mặc dù đã đạt được nhiều kết quả tích cực, hệ thống Thu
     \item \textbf{Cải tiến kỹ thuật RAG nâng cao:} Áp dụng các kỹ thuật RAG hiện đại như GraphRAG hoặc Hybrid Vector Search để cải thiện độ chính xác và tính liên kết thông tin cho trợ lý AI.
     \item \textbf{Làm phong phú dữ liệu tham chiếu cho AI định giá:} Phát triển hệ thống tự động cào dữ liệu lịch sử giá bất động sản từ các trang tin uy tín một cách định kỳ để làm giàu cơ sở dữ liệu tin đăng, đảm bảo luôn có đủ dữ liệu ngữ cảnh đối chiếu cho AI suy luận giá ở mọi khu vực.
     \item \textbf{Mở rộng tích hợp thanh toán và tối ưu gợi ý:} Tích hợp thêm các cổng thanh toán trực tuyến phổ biến khác như MoMo, thẻ nội địa VNPAY để đa dạng hóa lựa chọn cho người dùng. Áp dụng các framework xử lý luồng dữ liệu thời gian thực (như Apache Spark hoặc Flink) để cập nhật liên tục hành vi người dùng, từ đó đưa ra các gợi ý tin đăng chính xác hơn.
+    \item \textbf{Hoàn thiện kiểm thử và giám sát vận hành:} Bổ sung kiểm thử hiệu năng dưới tải mô phỏng nhằm xác định ngưỡng chịu tải và điểm nghẽn của hệ thống, đồng thời triển khai lớp giám sát chỉ số hạ tầng kèm cảnh báo tự động để phát hiện sự cố mà không phụ thuộc vào quan sát thủ công. Song song, xây dựng một tập dữ liệu chuẩn để đánh giá định lượng chất lượng gợi ý và độ chính xác của mô hình định giá, thay cho cách đánh giá định tính hiện nay.
 \end{itemize}
 
 
