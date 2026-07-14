@@ -291,9 +291,11 @@ Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên, vớ
 \end{figure}
 
 \FloatBarrier
-\subsection{Luồng xử lý AI Chatbot}
+\subsection{Luồng xử lý trợ lý hội thoại}
 
 Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận - hành động: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events (SSE).
+
+Đề cương ban đầu dự kiến một trợ lý hội thoại dựa thuần túy trên cơ chế gọi hàm của mô hình ngôn ngữ, tức mỗi câu hỏi ứng với một lời gọi công cụ rồi trả lời ngay. Trong quá trình hiện thực, nhóm nâng thiết kế này lên thành một tác tử hoàn chỉnh hoạt động theo vòng lặp ReAct: mô hình được nhận lại kết quả của công cụ vừa gọi và tự quyết định có cần gọi tiếp hay không. Nhờ đó trợ lý xử lý được những yêu cầu bắc cầu mà cơ chế gọi hàm đơn lượt không đáp ứng nổi, chẳng hạn đánh giá một mức giá có hợp lý hay không (phải tra chi tiết tin đăng trước, rồi mới dùng chính giá và diện tích lấy được để ước tính khoảng giá thị trường), hay tự nới lỏng tiêu chí và tìm lại khi lượt tìm kiếm đầu không ra kết quả.
 
 Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn (mã địa danh, tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng) từ các cơ sở tri thức, đối sánh theo từ khóa nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng và tách khỏi chỉ dẫn hệ thống, giúp tận dụng cơ chế lưu đệm của mô hình để giảm chi phí xử lý.
 
