@@ -249,7 +249,7 @@ Các tác tử hội thoại được xây trên OpenAI Agents SDK~\cite{OpenAIA
 \FloatBarrier
 \subsection{Kiến trúc tích hợp AI}
 
-Mã nguồn dịch vụ AI cũng theo khuôn phân tầng \texttt{api $\to$ service $\to$ lõi xử lý $\to$ hạ tầng}, phản ánh qua cấu trúc thư mục \texttt{app/} ở Bảng~\ref{tab:ai-structure}. Tầng API chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu; tầng dịch vụ chứa logic của từng bề mặt AI; lõi tác tử (\texttt{agent}) điều phối vòng lặp gọi công cụ và truy hồi ngữ cảnh; còn tầng \texttt{ai} đóng gói việc dựng mô hình và tích hợp mô hình ngôn ngữ. Mọi truy cập tới dữ liệu thật của hệ thống đều đi qua một thân khách HTTP duy nhất trỏ về Backend chính.
+Mã nguồn dịch vụ AI cũng theo khuôn phân tầng \texttt{api $\to$ service $\to$ lõi xử lý $\to$ hạ tầng}, phản ánh qua cấu trúc thư mục \texttt{app/} ở Bảng~\ref{tab:ai-structure}. Tầng API chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu; tầng dịch vụ chứa logic của từng bề mặt AI; lõi tác tử (\texttt{agent}) điều phối vòng lặp gọi công cụ và truy hồi ngữ cảnh; còn tầng \texttt{ai} đóng gói việc dựng mô hình và tích hợp mô hình ngôn ngữ. Mọi truy cập tới dữ liệu thật của hệ thống đều đi qua một HTTP client duy nhất trỏ về Backend chính.
 
 \begin{table}[!ht]
 \centering
@@ -267,7 +267,7 @@ Mã nguồn dịch vụ AI cũng theo khuôn phân tầng \texttt{api $\to$ serv
 \hline
 \texttt{ai/} & Tích hợp mô hình: dựng và gọi mô hình ngôn ngữ qua LiteLLM, xử lý đa phương thức và mô hình định giá. \\
 \hline
-\texttt{core/} & Hạ tầng dùng chung: thân khách gọi Backend và cấu hình hệ thống. \\
+\texttt{core/} & Hạ tầng dùng chung: client gọi Backend và cấu hình hệ thống. \\
 \hline
 \texttt{dto/}, \texttt{entity/}, \texttt{repository/} & Đối tượng truyền tải, thực thể và truy xuất dữ liệu người dùng. \\
 \hline
@@ -370,7 +370,7 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 \item \textbf{Quan sát thống nhất.} Mọi lượt hội thoại, lời gọi mô hình, bước truy hồi RAG và lời gọi công cụ đều được ghi vết qua Langfuse, giúp theo dõi mức dùng token, phiên bản prompt và lỗi một cách nhất quán.
 \item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM đa phương thức cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
 \item \textbf{Chịu lỗi mềm.} Các bề mặt định giá và kiểm duyệt đều có đường lùi theo luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
-\item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một thân khách HTTP dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
+\item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một HTTP client dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
 \end{itemize}
 
 \section{Thiết kế cơ sở dữ liệu}
