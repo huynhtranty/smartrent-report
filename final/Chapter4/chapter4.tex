@@ -10,19 +10,19 @@
 
 Hệ thống Thuê Nhà Trọ áp dụng mô hình kiến trúc phân rã chức năng, trong đó các ứng dụng khách giao tiếp với máy chủ chính thông qua các yêu cầu REST API hoặc kết nối thời gian thực bằng giao thức WebSocket (STOMP). Sơ đồ kiến trúc tổng quan của hệ thống được thể hiện trong Hình~\ref{fig:system-overview}.
 
-\begin{figure}[!ht]
-  \centering
-  \includegraphics[width=\textwidth]{../diagrams/system/png/re-final-architecture.png}
-  \caption{Sơ đồ kiến trúc tổng quan hệ thống Thuê Nhà Trọ}
-  \label{fig:system-overview}
-\end{figure}
-
 Theo mô hình kiến trúc này, luồng giao tiếp giữa các tầng được tổ chức chặt chẽ:
 \begin{itemize}
     \item \textbf{Tầng giao diện:} Gồm ứng dụng web dành cho người thuê/chủ trọ (webapp) và trang quản trị (admin). Cả hai ứng dụng đều gửi các yêu cầu HTTPS REST API để truy xuất hoặc thay đổi dữ liệu trên máy chủ chính, hoặc duy trì kết nối WebSocket để nhận thông báo tức thời.
     \item \textbf{Tầng nghiệp vụ chính:} Máy chủ Spring Boot điều phối nghiệp vụ: nó tiếp nhận các yêu cầu từ tầng giao diện, thực hiện kiểm tra quyền truy cập (JWT), điều phối giao dịch dữ liệu với cơ sở dữ liệu quan hệ (MySQL) hoặc bộ nhớ đệm (Redis), và gọi sang dịch vụ AI khi có yêu cầu xử lý thông minh.
     \item \textbf{Tầng dịch vụ AI:} Máy chủ FastAPI (Python) chạy độc lập để xử lý các tác vụ AI chuyên sâu, nhờ đó các phép toán NLP hay định giá nặng không ảnh hưởng đến hiệu năng phản hồi giao dịch nghiệp vụ thông thường trên máy chủ chính.
 \end{itemize}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{../diagrams/system/png/re-final-architecture.png}
+  \caption{Sơ đồ kiến trúc tổng quan hệ thống Thuê Nhà Trọ}
+  \label{fig:system-overview}
+\end{figure}
 
 \FloatBarrier
 \subsection{Khái quát các thành phần bên trong hệ thống}
