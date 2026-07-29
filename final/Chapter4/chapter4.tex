@@ -8,7 +8,7 @@
 \FloatBarrier
 \subsection{Mô hình kiến trúc hệ thống}
 
-Hệ thống Thuê Nhà Trọ áp dụng mô hình kiến trúc phân rã chức năng, trong đó các ứng dụng khách giao tiếp với máy chủ chính thông qua các yêu cầu REST API hoặc kết nối thời gian thực bằng giao thức WebSocket (STOMP). Sơ đồ kiến trúc tổng quan của hệ thống được thể hiện trong Hình~\ref{fig:system-overview}.
+Hệ thống Thuê Nhà Trọ áp dụng mô hình kiến trúc phân rã chức năng, trong đó trình duyệt giao tiếp với máy chủ chính thông qua các yêu cầu REST API hoặc kết nối thời gian thực bằng giao thức WebSocket (STOMP). Sơ đồ kiến trúc tổng quan của hệ thống được thể hiện trong Hình~\ref{fig:system-overview}.
 
 Theo mô hình kiến trúc này, luồng giao tiếp giữa các tầng được tổ chức chặt chẽ:
 \begin{itemize}
@@ -93,11 +93,11 @@ Hình~\ref{fig:webapp-source-org} tổng hợp cách tổ chức nêu trên: mũ
 \begin{itemize}
 \item \textbf{Giao tiếp HTTP với Backend chính.} Mọi yêu cầu REST đi qua một thể hiện \texttt{axios} duy nhất được cấu hình tập trung. Thể hiện này gắn sẵn URL gốc của Backend, tiêu đề mặc định và bộ chặn xử lý xác thực. Toàn bộ phản hồi được chuẩn hóa về một kiểu \texttt{ApiResponse} thống nhất để các tầng phía trên xử lý nhất quán.
 
-\item \textbf{Xác thực bằng JWT và cơ chế làm mới token.} Bộ chặn yêu cầu tự động đính kèm access token vào tiêu đề \texttt{Authorization}. Khi token sắp hết hạn hoặc máy chủ trả về lỗi 401, hệ thống tự động gọi refresh token để lấy token mới rồi phát lại yêu cầu ban đầu một cách trong suốt với người dùng. Cơ chế này còn khử trùng lặp để nhiều yêu cầu đồng thời chỉ kích hoạt đúng một lần làm mới, tránh tình trạng đua tranh.
+\item \textbf{Xác thực bằng JWT và cơ chế làm mới token.} Hệ thống sử dụng Interceptor để tự động đính kèm Access Token vào header Authorization của mỗi yêu cầu HTTP. Khi Access Token hết hạn (hoặc máy chủ trả về mã lỗi 401), hệ thống sẽ ngầm sử dụng Refresh Token để lấy token mới, sau đó tự động gửi lại yêu cầu ban đầu mà không làm gián đoạn trải nghiệm người dùng. Ngoài ra, cơ chế này còn tích hợp khả năng xử lý đồng bộ (deduplication) nhằm đảm bảo khi có nhiều yêu cầu bị lỗi 401 cùng lúc, hệ thống chỉ gọi API làm mới token một lần duy nhất, giúp tránh lỗi đua tranh (race condition).
 
-\item \textbf{Cổng chặn truy cập.} Một lớp trung gian (middleware) đóng vai trò cổng kiểm soát: nó cho phép một danh sách các tuyến công khai (trang chủ, danh sách tin, chi tiết tin, tin tức, bản đồ\ldots) và chặn các tuyến cá nhân khi người dùng chưa đăng nhập. Khi đó, người dùng được chuyển hướng kèm tham số đường dẫn quay lại để sau khi đăng nhập có thể quay lại đúng trang đang truy cập.
+\item \textbf{Kiểm soát truy cập bằng Middleware.} Một lớp trung gian (middleware) được sử dụng để quản lý quyền truy cập các đường dẫn (route). Cụ thể, hệ thống cho phép truy cập tự do vào các trang công khai (trang chủ, danh sách tin, chi tiết tin, bản đồ\ldots), đồng thời bảo vệ các trang yêu cầu xác thực. Nếu người dùng chưa đăng nhập mà cố gắng truy cập các trang này, middleware sẽ tự động chuyển hướng họ đến trang đăng nhập, kèm theo tham số lưu lại URL hiện tại (return URL) để điều hướng họ về đúng trang cũ sau khi xác thực thành công.
 
-\item \textbf{Bộ nhớ đệm dữ liệu máy chủ.} Toàn bộ trạng thái lấy từ máy chủ được quản lý bởi TanStack Query, giúp tự động lưu đệm, làm mới nền và đồng bộ dữ liệu giữa các thành phần. Một số dữ liệu thống kê ổn định theo ngày (ví dụ thống kê tin theo tỉnh thành) còn được lưu bền vào \texttt{localStorage} để tồn tại qua các lần tải lại trang.
+\item \textbf{Quản lý bộ nhớ đệm dữ liệu phía giao diện.} Toàn bộ dữ liệu truy xuất từ máy chủ được quản lý tập trung bởi thư viện TanStack Query. Thư viện này đảm nhận việc tự động lưu bộ đệm (caching), cập nhật dữ liệu ngầm (background refetching) và đồng bộ trạng thái nhất quán giữa các thành phần giao diện. Bên cạnh đó, đối với các số liệu thống kê ít biến động trong ngày (ví dụ: thống kê tin đăng theo tỉnh thành), hệ thống sẽ lưu trữ cục bộ vào \texttt{localStorage} nhằm duy trì dữ liệu qua các lần tải lại trang, giúp tối ưu hiệu năng và trải nghiệm người dùng.
 
 \item \textbf{Kết nối dịch vụ AI bằng luồng SSE.} Trợ lý hội thoại AI kết nối tới một dịch vụ AI riêng và nhận câu trả lời theo thời gian thực qua kỹ thuật Server-Sent Events (SSE). Nhờ đó nội dung trả lời hiện dần theo từng đoạn, kèm theo trạng thái công cụ mà AI đang thực thi, và người dùng có thể hủy luồng đang chạy.
 
@@ -336,7 +336,7 @@ Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiệ
 
 Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu, nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung, lọc cộng tác và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
 
-Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đăng được biểu diễn thành một vector đặc trưng gồm giá, diện tích, số phòng ngủ, loại bất động sản, loại tin và khu vực. Hồ sơ người dùng là trung bình có trọng số của các tin đã tương tác, trong đó tin đã lưu có trọng số cao nhất, tiếp đến là lượt bấm xem số điện thoại và lượt xem gần đây. Điểm lọc theo nội dung (CBF) đo độ tương đồng giữa hồ sơ người dùng và tin ứng viên; điểm lọc cộng tác (CF) dựa trên hành vi của cộng đồng người dùng. Điểm lai kết hợp hai thành phần này, rồi được điều chỉnh theo khoảng cách địa lý tới vùng ưa thích của người dùng, mức ưu tiên VIP và độ tươi mới của tin để ra điểm xếp hạng cuối.
+Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đăng được biểu diễn thành một vector đặc trưng gồm giá, diện tích, số phòng ngủ, loại hình nhà trọ, loại tin và khu vực. Hồ sơ người dùng là trung bình có trọng số của các tin đã tương tác, trong đó tin đã lưu có trọng số cao nhất, tiếp đến là lượt bấm xem số điện thoại và lượt xem gần đây. Điểm lọc theo nội dung (CBF) đo độ tương đồng giữa hồ sơ người dùng và tin ứng viên; điểm lọc cộng tác (CF) dựa trên hành vi của cộng đồng người dùng. Điểm lai kết hợp hai thành phần này, rồi được điều chỉnh theo khoảng cách địa lý tới vùng ưa thích của người dùng, mức ưu tiên VIP và độ tươi mới của tin để ra điểm xếp hạng cuối.
 
 \begin{figure}[!ht]
 \centering
@@ -464,9 +464,9 @@ Trong đó, năm bảng sau giữ vai trò trung tâm hoặc được nhiều b�
 
 \begin{itemize}
 \item \textbf{Bảng \texttt{users}.} Lưu thông tin tài khoản cho cả ba vai trò người thuê, chủ trọ và môi giới; khóa chính là chuỗi định danh, mật khẩu cho phép rỗng để hỗ trợ đăng nhập qua OAuth (Google). Khi đăng ký làm môi giới, các trường nhóm \texttt{broker\_*} lưu trạng thái xác thực và liên kết tới giấy tờ đã tải lên trong bảng \texttt{media}.
-\item \textbf{Bảng \texttt{listings}.} Là thực thể trung tâm, tổng hợp thông tin một tin đăng và liên kết tới nhiều bảng khác qua khóa ngoại. Trường \texttt{listing\_type} biểu diễn mục đích (cho thuê, bán, ở ghép) còn \texttt{product\_type} biểu diễn loại hình bất động sản, tách biệt ý định giao dịch khỏi danh mục để một danh mục dùng chung được cho nhiều ý định.
+\item \textbf{Bảng \texttt{listings}.} Là thực thể trung tâm, tổng hợp thông tin một tin đăng và liên kết tới nhiều bảng khác qua khóa ngoại. Trường \texttt{listing\_type} biểu diễn mục đích (cho thuê, ở ghép) còn \texttt{product\_type} biểu diễn loại hình nhà trọ, tách biệt ý định giao dịch khỏi danh mục để một danh mục dùng chung được cho nhiều ý định.
 \item \textbf{Bảng \texttt{transactions}.} Ghi nhận toàn bộ giao dịch tài chính, hỗ trợ nhiều loại giao dịch và nhiều cổng thanh toán. Trường \texttt{idempotency\_key} bảo đảm một thao tác thanh toán không bị xử lý trùng, còn các cột ảnh chụp lưu lại thông tin tại thời điểm giao dịch để phục vụ đối soát về sau.
-\item \textbf{Bảng \texttt{categories}.} Danh mục loại hình bất động sản (phòng trọ, căn hộ, nhà, văn phòng\ldots), được mỗi tin đăng tham chiếu tới qua khóa ngoại \texttt{category\_id}.
+\item \textbf{Bảng \texttt{categories}.} Danh mục loại hình nhà trọ (phòng trọ, căn hộ, nhà nguyên căn\ldots), được mỗi tin đăng tham chiếu tới qua khóa ngoại \texttt{category\_id}.
 \item \textbf{Bảng \texttt{addresses}.} Lưu địa chỉ của từng tin đăng, gồm cả thành phần theo cấu trúc hành chính cũ lẫn mới cùng tọa độ trên bản đồ; liên kết một - một với \texttt{address\_metadata} để chuẩn hóa các thành phần địa chỉ.
 \end{itemize}
 

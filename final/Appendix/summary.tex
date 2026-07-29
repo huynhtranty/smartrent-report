@@ -1,11 +1,11 @@
 \chapter*{Tóm tắt}
 \label{summary}
 
-Trong bối cảnh đô thị hóa diễn ra nhanh chóng tại Việt Nam, nhu cầu tìm kiếm nhà trọ, căn hộ cho thuê tại các đô thị lớn ngày càng tăng. Tuy nhiên, thị trường cho thuê truyền thống đang đối mặt với nhiều bất cập lớn như thông tin phân tán, thiếu tính minh bạch về giá cả, tin đăng ảo và quy trình kiểm duyệt thủ công tốn kém. Đề tài khóa luận tốt nghiệp ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' hướng đến xây dựng Thuê Nhà Trọ, một nền tảng tìm kiếm và quản lý bất động sản cho thuê toàn diện, ứng dụng các giải pháp trí tuệ nhân tạo (AI) nhằm nâng cao trải nghiệm người dùng và tính minh bạch của thị trường.
+Trong bối cảnh đô thị hóa diễn ra nhanh chóng tại Việt Nam, nhu cầu tìm kiếm nhà trọ, căn hộ cho thuê tại các đô thị lớn ngày càng tăng. Tuy nhiên, thị trường cho thuê truyền thống đang đối mặt với nhiều bất cập lớn như thông tin phân tán, thiếu tính minh bạch về giá cả, tin đăng ảo và quy trình kiểm duyệt thủ công tốn kém. Đề tài khóa luận tốt nghiệp ``Xây dựng hệ thống hỗ trợ tìm nhà trọ tích hợp AI'' hướng đến xây dựng Thuê Nhà Trọ, một nền tảng tìm kiếm và quản lý nhà trọ cho thuê toàn diện, ứng dụng các giải pháp trí tuệ nhân tạo (AI) nhằm nâng cao trải nghiệm người dùng và tính minh bạch của thị trường.
 
 Hệ thống được thiết kế và hiện thực hóa thông qua sự phối hợp đồng bộ giữa ba phân hệ chính:
 \begin{itemize}
-    \item \textbf{Phân hệ Frontend (Next.js 15):} Xây dựng bằng Next.js (Pages Router), TypeScript và Tailwind CSS v4, cung cấp giao diện người dùng tối ưu hóa SEO, tích hợp bản đồ Google Maps tương tác gom cụm tin đăng, tính năng so sánh bất động sản và trang điều khiển dành cho chủ trọ cùng quản trị viên.
+    \item \textbf{Phân hệ Frontend (Next.js 15):} Xây dựng bằng Next.js (Pages Router), TypeScript và Tailwind CSS v4, cung cấp giao diện người dùng tối ưu hóa SEO, tích hợp bản đồ Google Maps tương tác gom cụm tin đăng, tính năng so sánh tin đăng và trang điều khiển dành cho chủ trọ cùng quản trị viên.
     \item \textbf{Phân hệ Backend (Spring Boot 3.4):} Thực hiện theo kiến trúc nguyên khối mô-đun, tích hợp xác thực JWT, cơ chế OTP qua dịch vụ gửi email Brevo và cổng thanh toán SePay/ZaloPay kèm cơ chế đối soát chủ động trạng thái giao dịch.
     \item \textbf{Phân hệ Dịch vụ AI (FastAPI):} Tổ chức theo khuôn phân tầng, tách logic nghiệp vụ khỏi tầng tích hợp mô hình ngôn ngữ; mọi lời gọi mô hình đi qua cổng LiteLLM và được ghi vết bằng Langfuse.
 \end{itemize}
@@ -13,7 +13,7 @@ Hệ thống được thiết kế và hiện thực hóa thông qua sự phối
 Các tính năng AI nổi bật được phát triển trong hệ thống bao gồm:
 \begin{itemize}
     \item \textbf{AI Agent:} Trợ lý hội thoại thông minh hỗ trợ tìm phòng bằng ngôn ngữ tự nhiên, hoạt động theo cơ chế ReAct loop (suy luận tối đa 12 bước) kết hợp 15 công cụ nghiệp vụ và truyền dữ liệu thời gian thực dạng luồng (SSE).
-    \item \textbf{Định giá bất động sản bằng AI:} Sử dụng mô hình ngôn ngữ lớn Gemini kết hợp phương pháp học ngữ cảnh (In-Context Learning) đối chiếu với các tin đăng lân cận thời gian thực để đưa ra khoảng giá đề xuất và đánh giá giá thuê.
+    \item \textbf{Định giá nhà trọ bằng AI:} Sử dụng mô hình ngôn ngữ lớn Gemini kết hợp phương pháp học ngữ cảnh (In-Context Learning) đối chiếu với các tin đăng lân cận thời gian thực để đưa ra khoảng giá đề xuất và đánh giá giá thuê.
     \item \textbf{Kiểm duyệt nội dung tự động:} Ứng dụng mô hình đa phương tiện (Gemini Multimodal) để đánh giá tính hợp lệ của bài đăng thông qua hình ảnh, video và văn bản.
     \item \textbf{Hệ thống gợi ý lai:} Khớp hành vi người dùng thông qua thuật toán Collaborative Filtering kết hợp Content-based Filtering nâng cao.
 \end{itemize}
