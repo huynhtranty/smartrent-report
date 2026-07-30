@@ -175,7 +175,7 @@ Phần nghiệp vụ được chia thành khoảng 40 module dịch vụ, mỗi 
 \FloatBarrier
 \subsection{Tổ chức phân tầng bên trong module}
 
-Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng nhất quán, phản ánh qua cấu trúc gói \texttt{com.smartrent} ở Hình~\ref{fig:be-packages}. Tầng \texttt{controller} chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu (\texttt{@Valid}); tầng \texttt{service} (tách giao diện và phần hiện thực \texttt{impl}) chứa logic nghiệp vụ; \texttt{mapper} (MapStruct) chuyển đổi giữa thực thể và DTO; còn \texttt{infra/repository} dùng Spring Data JPA để truy xuất dữ liệu. Các đối tượng truyền tải được tách thành \texttt{dto/request} và \texttt{dto/response}, trong khi cấu hình hệ thống (bảo mật, cache, circuit breaker, WebSocket) nằm trong gói \texttt{config}. Bảng~\ref{tab:backend-structure} liệt kê chi tiết vai trò của từng gói chính trong mã nguồn Backend.
+Bên trong mỗi module, mã nguồn tuân theo cùng một kiến trúc phân tầng nhất quán, phản ánh qua cấu trúc gói \texttt{com.smartrent} ở Hình~\ref{fig:be-packages}. Tầng \texttt{controller} chỉ tiếp nhận yêu cầu và kiểm tra hợp lệ dữ liệu (\texttt{@Valid}); tầng \texttt{service} (tách biệt giữa giao thức \texttt{interface} và lớp thực thi \texttt{impl}) chứa logic nghiệp vụ; \texttt{mapper} (MapStruct) chuyển đổi giữa thực thể và DTO; còn \texttt{infra/repository} dùng Spring Data JPA để truy xuất dữ liệu. Các đối tượng truyền tải được tách thành \texttt{dto/request} và \texttt{dto/response}, trong khi cấu hình hệ thống (bảo mật, cache, circuit breaker, WebSocket) nằm trong gói \texttt{config}. Bảng~\ref{tab:backend-structure} liệt kê chi tiết vai trò của từng gói chính trong mã nguồn Backend.
 
 \begin{table}[!ht]
 \centering
@@ -187,7 +187,7 @@ Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng 
 \hline
 \texttt{controller/} & Lớp API: 54 lớp \texttt{@RestController} cung cấp các điểm cuối REST (đa số theo tiền tố \texttt{/v1}); tiếp nhận yêu cầu, kiểm tra hợp lệ dữ liệu và ủy thác cho tầng dịch vụ. \\
 \hline
-\texttt{service/} & Lớp nghiệp vụ: 40 module theo miền (tin đăng, xác thực, thanh toán, trí tuệ nhân tạo\ldots), mỗi module tách \textit{giao diện} và phần \textit{hiện thực} (\texttt{impl}). \\
+\texttt{service/} & Lớp nghiệp vụ: 40 module theo miền (tin đăng, xác thực, thanh toán, trí tuệ nhân tạo\ldots), mỗi module tách biệt giữa giao thức (\texttt{interface}) và lớp thực thi (\texttt{impl}). \\
 \hline
 \texttt{dto/} & Đối tượng truyền tải, tách \texttt{request} (82) và \texttt{response} (137); cách ly mô hình API khỏi thực thể cơ sở dữ liệu. \\
 \hline
@@ -218,7 +218,7 @@ Bên trong mỗi module, mã nguồn tuân theo cùng một khuôn phân tầng 
 \FloatBarrier
 \subsection{Luồng dữ liệu}
 
-Hình~\ref{fig:be-request-flow} minh họa luồng xử lý một yêu cầu có xác thực. Yêu cầu kèm \textit{Bearer token} trước hết đi qua bộ lọc bảo mật để \texttt{CustomJwtDecoder} kiểm tra token; controller kiểm tra hợp lệ DTO rồi gọi dịch vụ. Dịch vụ ưu tiên đọc từ bộ đệm Redis, chỉ truy vấn cơ sở dữ liệu khi \textit{cache miss} và ghi lại kết quả vào đệm; sau đó dùng mapper chuyển thực thể sang DTO phản hồi và trả về cho máy khách dưới dạng \texttt{ApiResponse} JSON.
+Hình~\ref{fig:be-request-flow} minh họa luồng xử lý một yêu cầu có xác thực. Yêu cầu kèm \textit{Bearer token} trước hết đi qua bộ lọc bảo mật để \texttt{CustomJwtDecoder} kiểm tra token; controller kiểm tra hợp lệ DTO rồi gọi tầng service. Tầng service ưu tiên đọc từ bộ đệm Redis, chỉ truy vấn cơ sở dữ liệu khi \textit{cache miss} và ghi lại kết quả vào đệm; sau đó dùng mapper ánh xạ thực thể sang DTO phản hồi và trả về cho client dưới dạng \texttt{ApiResponse} JSON.
 
 \begin{figure}[!ht]
 \centering
@@ -234,7 +234,7 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 \begin{itemize}
 \item \textbf{Đơn giản khi vận hành.} Một khối triển khai duy nhất giúp việc build, kiểm thử và gỡ lỗi dễ dàng, đồng thời giảm chi phí hạ tầng so với kiến trúc microservices.
-\item \textbf{Tách bạch theo miền.} Ranh giới module rõ ràng cho phép nhiều thành viên cùng phát triển song song mà ít giẫm chân lên nhau.
+\item \textbf{Tách bạch theo miền.} Ranh giới module rõ ràng cho phép nhiều thành viên cùng phát triển song song mà tránh xung đột mã nguồn.
 \item \textbf{Nhất quán phân tầng.} Cùng một khuôn controller, service và repository ở mọi module giúp mã dễ đọc, dễ bảo trì và rút ngắn thời gian làm quen cho thành viên mới.
 \item \textbf{Chịu lỗi và hiệu năng.} Bộ đệm Redis giảm tải truy vấn cơ sở dữ liệu, còn Resilience4j (circuit breaker và retry) cô lập sự cố từ các dịch vụ bên ngoài, giữ hệ thống ổn định.
 \item \textbf{Bảo mật tập trung.} Cơ chế xác thực OAuth2 kết hợp JWT được áp dụng thống nhất ở tầng lọc, tách khỏi logic nghiệp vụ.
@@ -244,7 +244,7 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt với khối Backend nghiệp vụ.
 
-Các tác tử hội thoại được xây trên OpenAI Agents SDK~\cite{OpenAIAgentsSDK}; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường cho trợ lý hội thoại; LLM multimodal cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát và một lớp truy cập Backend dùng chung.
+Các tác tử hội thoại được xây trên OpenAI Agents SDK~\cite{OpenAIAgentsSDK}; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp các tính năng AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp Truy hồi tăng cường (RAG) cho trợ lý hội thoại; LLM đa phương thức cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp giám sát và một lớp truy cập Backend dùng chung.
 
 \FloatBarrier
 \subsection{Kiến trúc tích hợp AI}
@@ -293,9 +293,9 @@ Hình~\ref{fig:ai-architecture} tổng hợp cách phân tầng nêu trên, vớ
 \FloatBarrier
 \subsection{Luồng xử lý trợ lý hội thoại}
 
-Trợ lý hội thoại là bề mặt AI phức tạp nhất, vận hành theo mô hình tác tử suy luận - hành động: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai điểm cuối: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events (SSE).
+Trợ lý hội thoại là phân hệ AI phức tạp nhất, vận hành theo mô hình tác tử suy luận - hành động: mô hình ngôn ngữ tự quyết định gọi công cụ nào, nhận kết quả rồi suy luận tiếp cho tới khi đủ dữ kiện trả lời. Dịch vụ cung cấp hai endpoint: \texttt{/chat} trả về một lần và \texttt{/chat/stream} truyền dần kết quả theo thời gian thực bằng kỹ thuật Server-Sent Events (SSE).
 
-Đề cương ban đầu dự kiến một trợ lý hội thoại dựa thuần túy trên cơ chế gọi hàm của mô hình ngôn ngữ, tức mỗi câu hỏi ứng với một lời gọi công cụ rồi trả lời ngay. Trong quá trình hiện thực, nhóm nâng thiết kế này lên thành một tác tử hoàn chỉnh hoạt động theo vòng lặp ReAct: mô hình được nhận lại kết quả của công cụ vừa gọi và tự quyết định có cần gọi tiếp hay không. Nhờ đó trợ lý xử lý được những yêu cầu bắc cầu mà cơ chế gọi hàm đơn lượt không đáp ứng nổi, chẳng hạn đánh giá một mức giá có hợp lý hay không (phải tra chi tiết tin đăng trước, rồi mới dùng chính giá và diện tích lấy được để ước tính khoảng giá thị trường), hay tự nới lỏng tiêu chí và tìm lại khi lượt tìm kiếm đầu không ra kết quả.
+Đề cương ban đầu dự kiến một trợ lý hội thoại dựa thuần túy trên cơ chế gọi hàm của mô hình ngôn ngữ, tức mỗi câu hỏi ứng với một lời gọi công cụ rồi trả lời ngay. Trong quá trình hiện thực, nhóm nâng thiết kế này lên thành một tác tử hoàn chỉnh hoạt động theo vòng lặp ReAct: mô hình được nhận lại kết quả của công cụ vừa gọi và tự quyết định có cần gọi tiếp hay không. Nhờ đó trợ lý xử lý được những yêu cầu suy luận đa bước mà cơ chế gọi hàm đơn lượt không đáp ứng nổi, chẳng hạn đánh giá một mức giá có hợp lý hay không (phải tra chi tiết tin đăng trước, rồi mới dùng chính giá và diện tích lấy được để ước tính khoảng giá thị trường), hay tự nới lỏng tiêu chí và tìm lại khi lượt tìm kiếm đầu không ra kết quả.
 
 Hình~\ref{fig:ai-chat-flow} mô tả luồng xử lý một lượt hội thoại có truyền luồng. Trước hết, bộ điều phối cắt bớt lịch sử hội thoại theo một ngân sách token để giữ ngữ cảnh gọn mà vẫn đủ mạch chuyện. Tiếp đó, lớp RAG truy hồi ngữ cảnh liên quan tới truy vấn (mã địa danh, tiện nghi, câu hỏi thường gặp và hướng dẫn sử dụng) từ các cơ sở tri thức, đối sánh theo từ khóa nên độ trễ không đáng kể. Phần ngữ cảnh động này được ghép vào tin nhắn người dùng và tách khỏi chỉ dẫn hệ thống, giúp tận dụng cơ chế lưu đệm của mô hình để giảm chi phí xử lý.
 
@@ -311,7 +311,7 @@ Bộ điều phối dựng một tác tử cho mỗi yêu cầu rồi giao cho b
 \hline
 Tìm kiếm và tra cứu & Tìm kiếm tin đăng theo tiêu chí, xem chi tiết, so sánh tin, tra cứu địa điểm xung quanh (trường học, bệnh viện, siêu thị\ldots) và chuyển đổi địa danh giữa cấu trúc hành chính cũ và mới. \\
 \hline
-Định giá và lịch sử giá & Ước tính khoảng giá thị trường (mô hình XGBoost~\cite{ChenGuestrin2016}) và tra cứu lịch sử giá của tin. \\
+Định giá và lịch sử giá & Ước tính khoảng giá thị trường hợp lý (dùng LLM kết hợp tìm kiếm tin tương đồng và cơ chế dự phòng dựa trên tập luật) cùng tra cứu lịch sử biến động giá của tin. \\
 \hline
 Cá nhân hóa & Gợi ý tin phù hợp, tra cứu thông tin tài khoản và lưu tin yêu thích, đơn lẻ hoặc hàng loạt. \\
 \hline
@@ -334,9 +334,37 @@ Trong chế độ truyền luồng, bộ điều phối phát ra các sự kiệ
 \FloatBarrier
 \subsection{Luồng gợi ý phòng trọ}
 
-Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} dùng mô hình ngôn ngữ mà dựa hoàn toàn vào học máy cổ điển, bởi đây là bài toán xếp hạng thời gian thực trên hàng trăm tới hàng nghìn ứng viên mỗi yêu cầu, nơi độ trễ và chi phí của mô hình ngôn ngữ là không phù hợp. Dịch vụ hiện thực một bộ gợi ý lai gồm lọc theo nội dung, lọc cộng tác và các luật nghiệp vụ, chỉ dùng NumPy và scikit-learn; nó phục vụ hai điểm cuối là gợi ý tin tương tự và dòng gợi ý cá nhân hóa.
+Khác với trợ lý hội thoại, chức năng gợi ý phòng trọ \textit{không} sử dụng mô hình ngôn ngữ lớn (LLM) mà dựa hoàn toàn vào các mô hình học máy cổ điển. Lựa chọn này xuất phát từ đặc thù bài toán: bộ gợi ý phải duyệt qua và tính điểm xếp hạng trên tập ứng viên gồm hàng trăm tới hàng nghìn tin đăng mỗi yêu cầu. Việc sử dụng LLM để xử lý và xếp hạng danh sách lớn sẽ gây ra độ trễ phản hồi rất cao (thường mất nhiều giây) cùng chi phí tài nguyên không cần thiết, trong khi các mô hình học máy cổ điển (NumPy, scikit-learn) giúp tính toán ma trận độ tương đồng hiệu quả và tiết kiệm chi phí hơn hẳn.
 
-Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đăng được biểu diễn thành một vector đặc trưng gồm giá, diện tích, số phòng ngủ, loại hình nhà trọ, loại tin và khu vực. Hồ sơ người dùng là trung bình có trọng số của các tin đã tương tác, trong đó tin đã lưu có trọng số cao nhất, tiếp đến là lượt bấm xem số điện thoại và lượt xem gần đây. Điểm lọc theo nội dung (CBF) đo độ tương đồng giữa hồ sơ người dùng và tin ứng viên; điểm lọc cộng tác (CF) dựa trên hành vi của cộng đồng người dùng. Điểm lai kết hợp hai thành phần này, rồi được điều chỉnh theo khoảng cách địa lý tới vùng ưa thích của người dùng, mức ưu tiên VIP và độ tươi mới của tin để ra điểm xếp hạng cuối.
+Dịch vụ hiện thực một \textbf{Bộ gợi ý lai (Hybrid Recommender System)} kết hợp hai mô hình tính toán cốt lõi: Lọc theo nội dung (Content-Based Filtering - CBF) và Lọc cộng tác (Collaborative Filtering - CF), sau đó điều chỉnh bằng các hệ số thưởng/phạt nghiệp vụ (Boosting \& Penalty). Bộ gợi ý được chia làm hai tầng xử lý: máy chủ Backend chịu trách nhiệm thu thập hành vi, tính toán trọng số tương tác và trích xuất tập ứng viên; còn dịch vụ AI (Python/FastAPI với NumPy và scikit-learn) đảm nhận việc tính toán ma trận độ tương đồng và xếp hạng cuối. Dịch vụ phục vụ hai endpoint chính: gợi ý tin tương tự (\texttt{/similar}) tại trang chi tiết tin đăng và dòng gợi ý cá nhân hóa (\texttt{/personalized}) trên trang chủ.
+
+Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm và xếp hạng tin đăng. Chi tiết các bước xử lý trong thuật toán như sau:
+
+\begin{enumerate}
+    \item \textbf{Gán trọng số tương tác người dùng (Interaction Weighting):} Hệ thống theo dõi lịch sử hành vi của người dùng và gán trọng số cho từng loại tương tác nhằm phản ánh chính xác mức độ quan tâm:
+    \begin{itemize}
+        \item \textit{Tin đăng đã lưu (\texttt{saved\_listings}):} Trọng số $3.0$ (thể hiện ý định thuê phòng rất cao).
+        \item \textit{Lượt bấm xem số điện thoại (\texttt{phone\_clicks}):} Trọng số $2.5$ (thể hiện nhu cầu liên hệ trực tiếp với chủ trọ).
+        \item \textit{Lượt xem chi tiết tin đăng (\texttt{views}):} Trọng số $1.0$ (thể hiện sự quan tâm ban đầu).
+    \end{itemize}
+
+    \item \textbf{Biểu diễn vector đặc trưng và Xây dựng hồ sơ người dùng (User Profiling):} 
+    Mỗi tin đăng được chuẩn hóa thành một vector đặc trưng gồm các thuộc tính định lượng và định tính: khoảng giá, diện tích, số phòng ngủ, loại hình nhà trọ (phòng trọ, căn hộ, nhà nguyên căn), loại tin (cho thuê, ở ghép), tọa độ địa lý (kinh độ, vĩ độ) và địa giới hành chính.
+    Hồ sơ người dùng được xây dựng bằng cách tính trung bình có trọng số của tất cả các vector tin đăng mà người dùng đó từng tương tác trong lịch sử, từ đó tổng hợp nên vector đại diện cho sở thích cá nhân.
+
+    \item \textbf{Tính điểm Lọc theo nội dung (CBF Score):} Điểm CBF đo độ tương đồng về mặt thuộc tính giữa hồ sơ sở thích của người dùng và từng tin đăng ứng viên thông qua đo khoảng cách độ tương đồng Cosine (Cosine Similarity). Tin đăng có đặc trưng càng sát với sở thích lịch sử thì điểm CBF càng cao.
+
+    \item \textbf{Tính điểm Lọc cộng tác (CF Score):} Điểm CF khai thác thông tin từ cộng đồng những người dùng có hành vi tương tự. Thuật toán tìm kiếm nhóm người dùng đồng sở thích (Nearest Neighbors) và tính xác suất người dùng hiện tại cũng sẽ thích tin đăng dựa trên lịch sử tương tác của nhóm người dùng này.
+
+    \item \textbf{Tổng hợp Hybrid score:} Điểm cơ sở của mỗi tin ứng viên được tính bằng tổng hợp tuyến tính có trọng số giữa điểm CBF và CF. Trong đó, hệ số kết hợp được điều chỉnh linh hoạt: với người dùng mới chưa có nhiều lịch sử tương tác (bài toán Cold Start), hệ thống tự động ưu tiên trọng số cho điểm CBF để gợi ý theo thuộc tính nội dung và vị trí địa lý.
+
+    \item \textbf{Điều chỉnh điểm số và Xếp hạng cuối (Post-Processing \& Boosting):} Hybrid score sau đó được điều chỉnh qua ba bộ lọc nghiệp vụ:
+    \begin{itemize}
+        \item \textit{Phạt theo khoảng cách địa lý (Geo-distance Penalty):} Sử dụng công thức Haversine tính khoảng cách thực tế giữa vị trí tin đăng và vùng địa lý ưa thích của người dùng. Tin đăng ở càng xa vị trí quan tâm sẽ chịu mức giảm trừ điểm số theo hàm suy giảm khoảng cách.
+        \item \textit{Thưởng hạng tin VIP (VIP Boost):} Các tin đăng thuộc cấp độ VIP (VIP Bạc, VIP Vàng, VIP Kim Cương so với Tin Thường) được nhân thêm hệ số thưởng ưu tiên tương ứng nhằm tăng khả năng hiển thị cho chủ trọ.
+        \item \textit{Giảm trừ theo thời gian (Freshness Decay):} Tin đăng mới tạo hoặc vừa được thực hiện tác vụ đẩy tin (push) được cộng điểm ưu tiên; điểm này suy giảm dần theo hàm mũ thời gian để bảo đảm tính tươi mới của dòng gợi ý.
+    \end{itemize}
+\end{enumerate}
 
 \begin{figure}[!ht]
 \centering
@@ -348,9 +376,9 @@ Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đă
 \FloatBarrier
 \subsection{Tích hợp API AI}
 
-Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các bề mặt LLM. Kiểm duyệt tin đăng khai thác khả năng multimodal của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa.
+Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các phân hệ ứng dụng LLM. Kiểm duyệt tin đăng khai thác khả năng đa phương thức của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa.
 
-Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 15 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng đọc cấu hình nhà cung cấp lúc khởi động và trả về mô hình tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema, ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ, nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
+Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 15 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một Factory function đọc cấu hình nhà cung cấp lúc khởi động và trả về mô hình tương ứng, có thể là Vertex AI Gemini (xác thực bằng Service Account), Google AI Studio (xác thực bằng API Key), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema, ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ, nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
 
 \begin{figure}[!ht]
 \centering
@@ -366,10 +394,10 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 
 \begin{itemize}
 \item \textbf{Tách biệt và mở rộng độc lập.} Dịch vụ AI là một tiến trình riêng, cô lập phần phụ thuộc nặng về học máy khỏi Backend nghiệp vụ và cho phép mở rộng quy mô hai phần một cách riêng rẽ.
-\item \textbf{Không khóa nhà cung cấp.} Nhờ lớp trừu tượng LiteLLM và hàm xưởng dựng mô hình, việc đổi nhà cung cấp mô hình ngôn ngữ chỉ là thay đổi cấu hình; lõi tác tử và tầng công cụ không đổi.
+\item \textbf{Tránh phụ thuộc nhà cung cấp.} Nhờ lớp trừu tượng LiteLLM và Factory function dựng mô hình, việc đổi nhà cung cấp mô hình ngôn ngữ chỉ là thay đổi cấu hình; lõi tác tử và tầng công cụ không đổi.
 \item \textbf{Quan sát thống nhất.} Mọi lượt hội thoại, lời gọi mô hình, bước truy hồi RAG và lời gọi công cụ đều được ghi vết qua Langfuse, giúp theo dõi mức dùng token, phiên bản prompt và lỗi một cách nhất quán.
-\item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM multimodal cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
-\item \textbf{Chịu lỗi mềm.} Các bề mặt định giá và kiểm duyệt đều có đường lùi theo luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
+\item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM đa phương thức cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
+\item \textbf{Khả năng chịu lỗi linh hoạt.} Các phân hệ định giá và kiểm duyệt đều có cơ chế dự phòng dựa trên tập luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
 \item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một HTTP client dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
 \end{itemize}
 
@@ -380,7 +408,7 @@ Cơ sở dữ liệu là trung tâm lưu trữ và bảo toàn tính nhất quá
 \FloatBarrier
 \subsection{Giới thiệu tổng quan}
 
-Hệ thống sử dụng MySQL 8.0 làm cơ sở dữ liệu quan hệ chính, bổ sung Redis cho bộ nhớ đệm và lưu trạng thái tạm thời (OTP, token bị vô hiệu hóa, thống kê). Lược đồ được quản lý bằng Flyway với 90 phiên bản di trú, bảo đảm đồng nhất giữa các môi trường. Tổng cộng 48 bảng, chia thành bảy nhóm nghiệp vụ: người dùng và xác thực; tin đăng và nội dung cốt lõi; địa chỉ; tương tác người dùng; kiểm duyệt và báo cáo; thanh toán và gói thành viên; tìm kiếm và đo lường hành vi.
+Hệ thống sử dụng MySQL 8.0 làm cơ sở dữ liệu quan hệ chính, bổ sung Redis cho bộ nhớ đệm và lưu trạng thái tạm thời (OTP, token bị vô hiệu hóa, thống kê). Lược đồ được quản lý bằng Flyway với 90 database migrations, bảo đảm đồng nhất giữa các môi trường. Tổng cộng 48 bảng, chia thành bảy nhóm nghiệp vụ: người dùng và xác thực; tin đăng và nội dung cốt lõi; địa chỉ; tương tác người dùng; kiểm duyệt và báo cáo; thanh toán và gói thành viên; tìm kiếm và đo lường hành vi.
 
 \FloatBarrier
 \subsection{Sơ đồ thiết kế cơ sở dữ liệu của hệ thống chính}
@@ -405,7 +433,7 @@ Như Hình~\ref{fig:db-overview} cho thấy, hai bảng \texttt{users} và \text
 \label{fig:db-er-user}
 \end{figure}
 
-\textbf{Nhóm tin đăng và nội dung cốt lõi.} Hình~\ref{fig:db-er-listing} đặt \texttt{listings} ở trung tâm: mỗi tin đăng thuộc về một người dùng, một danh mục (\texttt{categories}) và một địa chỉ (\texttt{addresses}); gắn với nhiều tiện ích qua bảng nối \texttt{listing\_amenities}; có nhiều tệp đa phương tiện (\texttt{media}, cùng hai bảng \texttt{images}/\texttt{videos} kế thừa từ thiết kế cũ) và toàn bộ lịch sử giá trong \texttt{pricing\_histories}. Quan hệ tự tham chiếu \texttt{parent\_listing\_id} phục vụ cơ chế tin bóng. Hai bảng \texttt{listing\_drafts} (bản nháp tự lưu) và \texttt{news} (tin tức/blog) cũng thuộc nhóm này.
+\textbf{Nhóm tin đăng và nội dung cốt lõi.} Hình~\ref{fig:db-er-listing} đặt \texttt{listings} ở trung tâm: mỗi tin đăng thuộc về một người dùng, một danh mục (\texttt{categories}) và một địa chỉ (\texttt{addresses}); gắn với nhiều tiện ích qua bảng nối \texttt{listing\_amenities}; có nhiều tệp đa phương tiện (\texttt{media}, cùng hai bảng \texttt{images}/\texttt{videos} kế thừa từ thiết kế cũ) và toàn bộ lịch sử giá trong \texttt{pricing\_histories}. Quan hệ tự tham chiếu \texttt{parent\_listing\_id} phục vụ cơ chế Shadow Listing. Hai bảng \texttt{listing\_drafts} (bản nháp tự lưu) và \texttt{news} (tin tức/blog) cũng thuộc nhóm này.
 
 \begin{figure}[!ht]
 \centering
