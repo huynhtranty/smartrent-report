@@ -244,7 +244,7 @@ Mô hình Modular Monolith mang lại một số ưu điểm cho Backend của h
 
 Toàn bộ năng lực thông minh của hệ thống được tách thành một dịch vụ AI độc lập (smartrent-ai), triển khai riêng và giao tiếp với Backend cùng nền tảng web qua giao thức HTTP. Dịch vụ được xây dựng bằng Python trên nền FastAPI, vận hành như một tiến trình tách biệt với khối Backend nghiệp vụ.
 
-Các tác tử hội thoại được xây trên OpenAI Agents SDK~\cite{OpenAIAgentsSDK}; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường cho trợ lý hội thoại; LLM đa phương thức cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát và một lớp truy cập Backend dùng chung.
+Các tác tử hội thoại được xây trên OpenAI Agents SDK~\cite{OpenAIAgentsSDK}; mọi lời gọi mô hình ngôn ngữ lớn đều đi qua lớp trừu tượng LiteLLM, nhờ vậy việc đổi nhà cung cấp mô hình chỉ là thay đổi cấu hình chứ không sửa mã nghiệp vụ. Mô hình mặc định là Gemini 2.5 Flash truy cập qua Vertex AI \cite{VertexAIDocs}. Dịch vụ tập hợp sáu bề mặt AI trải trên bốn nhóm mô hình tính toán: tác tử LLM có công cụ kết hợp truy hồi tăng cường cho trợ lý hội thoại; LLM multimodal cho kiểm duyệt tin đăng; học máy cổ điển cho gợi ý phòng trọ; và mô hình lai (học máy kết hợp luật/LLM) cho ước tính giá thuê. Toàn bộ được hợp nhất dưới một lớp quan sát và một lớp truy cập Backend dùng chung.
 
 \FloatBarrier
 \subsection{Kiến trúc tích hợp AI}
@@ -265,7 +265,7 @@ Mã nguồn dịch vụ AI cũng theo khuôn phân tầng \texttt{api $\to$ serv
 \hline
 \texttt{agent/} & Lõi tác tử: điều phối vòng lặp gọi công cụ, tập công cụ và truy hồi ngữ cảnh (RAG). \\
 \hline
-\texttt{ai/} & Tích hợp mô hình: dựng và gọi mô hình ngôn ngữ qua LiteLLM, xử lý đa phương thức và mô hình định giá. \\
+\texttt{ai/} & Tích hợp mô hình: dựng và gọi mô hình ngôn ngữ qua LiteLLM, xử lý multimodal và mô hình định giá. \\
 \hline
 \texttt{core/} & Hạ tầng dùng chung: client gọi Backend và cấu hình hệ thống. \\
 \hline
@@ -348,7 +348,7 @@ Hình~\ref{fig:ai-reco-flow} minh họa quy trình tính điểm. Mỗi tin đă
 \FloatBarrier
 \subsection{Tích hợp API AI}
 
-Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các bề mặt LLM. Kiểm duyệt tin đăng khai thác khả năng đa phương thức của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa.
+Dịch vụ AI sử dụng Gemini của Google (truy cập qua Vertex AI) làm mô hình ngôn ngữ cho toàn bộ các bề mặt LLM. Kiểm duyệt tin đăng khai thác khả năng multimodal của Gemini: ảnh và video của tin được phân tích cùng văn bản mô tả để phát hiện sai lệch (ảnh mờ, ảnh không liên quan, thiếu trường bắt buộc, dấu hiệu vi phạm), trả về một báo cáo kiểm định có điểm số và đề xuất chỉnh sửa.
 
 Một điểm thiết kế quan trọng ở tầng tích hợp mô hình là khả năng thay thế nhà cung cấp. Như Hình~\ref{fig:ai-provider}, lõi ứng dụng (bộ điều phối, các dịch vụ và 15 công cụ) chỉ phụ thuộc vào kiểu \texttt{Model} của Agents SDK chứ không phụ thuộc thư viện của một nhà cung cấp cụ thể. Một hàm xưởng đọc cấu hình nhà cung cấp lúc khởi động và trả về mô hình tương ứng, có thể là Vertex AI Gemini (xác thực bằng tài khoản dịch vụ), Google AI Studio (xác thực bằng khóa API), OpenAI hay nhà cung cấp khác qua LiteLLM. Mô tả công cụ được viết bằng JSON Schema, ngôn ngữ chung mà các nhà cung cấp lớn đều hỗ trợ, nên việc đổi mô hình không kéo theo sửa đổi ở tầng công cụ.
 
@@ -368,7 +368,7 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 \item \textbf{Tách biệt và mở rộng độc lập.} Dịch vụ AI là một tiến trình riêng, cô lập phần phụ thuộc nặng về học máy khỏi Backend nghiệp vụ và cho phép mở rộng quy mô hai phần một cách riêng rẽ.
 \item \textbf{Không khóa nhà cung cấp.} Nhờ lớp trừu tượng LiteLLM và hàm xưởng dựng mô hình, việc đổi nhà cung cấp mô hình ngôn ngữ chỉ là thay đổi cấu hình; lõi tác tử và tầng công cụ không đổi.
 \item \textbf{Quan sát thống nhất.} Mọi lượt hội thoại, lời gọi mô hình, bước truy hồi RAG và lời gọi công cụ đều được ghi vết qua Langfuse, giúp theo dõi mức dùng token, phiên bản prompt và lỗi một cách nhất quán.
-\item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM đa phương thức cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
+\item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM multimodal cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
 \item \textbf{Chịu lỗi mềm.} Các bề mặt định giá và kiểm duyệt đều có đường lùi theo luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
 \item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một HTTP client dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
 \end{itemize}
