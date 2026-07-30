@@ -26,6 +26,3 @@ final/main.pdf
 # OS / misc
 .DS_Store
 Thumbs.db
-
-# Anh chup truoc/sau cua tung thay doi (sinh boi tools/change_shot.py)
-.change-shots/
