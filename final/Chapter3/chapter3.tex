@@ -363,31 +363,3 @@ Bất kỳ bước nào: chủ trọ lưu bản nháp để tiếp tục sau. \\
 \hline
 \end{tabular}
 \end{table}
-
-\begin{table}[!ht]
-\centering
-\caption{Đặc tả use case Đăng ký môi giới chuyên nghiệp}
-\label{tab:uc-broker}
-\begin{tabular}{p{0.24\textwidth} p{0.66\textwidth}}
-\hline
-\textbf{Mã use case} & UC-07 \\
-\hline
-\textbf{Tên} & Đăng ký môi giới chuyên nghiệp \\
-\hline
-\textbf{Tác nhân} & Chủ trọ / Người dùng; Quản trị viên \\
-\hline
-\textbf{Mô tả} & Người dùng nộp hồ sơ để được xác minh là môi giới chuyên nghiệp. \\
-\hline
-\textbf{Điều kiện trước} & Người dùng đã đăng nhập và hoàn thiện thông tin cá nhân (họ tên, số điện thoại, ảnh đại diện). \\
-\hline
-\textbf{Luồng chính} & 1. Người dùng tải lên ba giấy tờ: căn cước công dân mặt trước, mặt sau và chứng chỉ hành nghề.\newline
-2. Người dùng gửi hồ sơ; hệ thống chuyển hồ sơ sang trạng thái chờ duyệt và thông báo cho quản trị viên.\newline
-3. Quản trị viên đối chiếu giấy tờ với cổng thông tin của cơ quan nhà nước.\newline
-4. Quản trị viên duyệt; hệ thống gắn cờ môi giới đã xác minh và thông báo cho người dùng. \\
-\hline
-\textbf{Luồng thay thế} & 4a. Quản trị viên từ chối kèm lý do; người dùng nhận thông báo và có thể nộp lại hồ sơ với giấy tờ mới. \\
-\hline
-\textbf{Điều kiện sau} & Tài khoản được xác minh là môi giới chuyên nghiệp, hiển thị huy hiệu và lọc được theo bộ lọc môi giới; hoặc hồ sơ bị từ chối. \\
-\hline
-\end{tabular}
-\end{table}
