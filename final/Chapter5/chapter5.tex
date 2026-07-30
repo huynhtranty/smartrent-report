@@ -179,7 +179,7 @@ Người dùng có thể chọn tối đa ba tin để so sánh cùng lúc. Nút
 \FloatBarrier
 \subsection{Lưu tin và theo dõi người đăng}
 
-Người dùng đã đăng nhập có thể lưu tin yêu thích bằng nút lưu trên mỗi thẻ tin (Hình~\ref{fig:saved-button}) và quản lý chúng trong một trang riêng (Hình~\ref{fig:saved-page}). Ngoài ra, ngay trên trang chi tiết tin đăng có nút theo dõi chủ trọ hoặc môi giới (Hình~\ref{fig:follow-detail}); khi theo dõi, người dùng được xem danh sách những người mình đang theo dõi (Hình~\ref{fig:follow-users}) và xem tất cả tin mới nhất từ họ tập trung ở một bảng tin riêng (Hình~\ref{fig:follow-feed}).
+Người dùng đã đăng nhập có thể lưu tin yêu thích bằng nút lưu trên mỗi thẻ tin (Hình~\ref{fig:saved-button}) và quản lý chúng trong một trang riêng (Hình~\ref{fig:saved-page}). Ngoài ra, người dùng có thể theo dõi chủ trọ hoặc môi giới ngay từ trang hồ sơ của họ (Hình~\ref{fig:follow-detail}); khi theo dõi, người dùng được xem danh sách những người mình đang theo dõi (Hình~\ref{fig:follow-users}) và xem tất cả tin mới nhất từ họ tập trung ở một bảng tin riêng (Hình~\ref{fig:follow-feed}).
 
 \begin{figure}[!ht]
 \centering
@@ -202,13 +202,8 @@ Người dùng đã đăng nhập có thể lưu tin yêu thích bằng nút lư
 
 \begin{figure}[!ht]
 \centering
-\begin{minipage}[t]{0.48\textwidth}\centering
-\imgborder{\includegraphics[width=\linewidth]{follow-indetailpage}}\\[3pt]{\small (a)}
-\end{minipage}\hfill
-\begin{minipage}[t]{0.48\textwidth}\centering
-\imgborder{\includegraphics[width=\linewidth]{follow-indetailUser}}\\[3pt]{\small (b)}
-\end{minipage}
-\caption{Nút theo dõi trên trang chi tiết: (a) theo dõi từ phần thông tin tin đăng; (b) theo dõi từ trang hồ sơ người đăng}
+\imgborder{\includegraphics[width=0.75\textwidth]{follow-indetailUser}}
+\caption{Nút theo dõi trên trang hồ sơ người đăng}
 \label{fig:follow-detail}
 \end{figure}
 
@@ -416,6 +411,8 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \label{fig:post-steps}
 \end{figure}
 
+\FloatBarrier
+
 \textbf{Bước 1. Thông tin bất động sản.} Chủ trọ nhập các thuộc tính cơ bản của phòng trọ: địa chỉ, loại hình, diện tích, giá, số phòng, tiện ích và các chi phí kèm theo (Hình~\ref{fig:post-step1}). Hệ thống hỗ trợ sinh tiêu đề và mô tả tự động bằng AI (Hình~\ref{fig:ai-content}): chủ trọ chọn văn phong mong muốn rồi bấm tạo, nội dung được điền sẵn để rà soát và chỉnh sửa.
 
 \begin{figure}[!ht]
@@ -437,6 +434,8 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \label{fig:ai-content}
 \end{figure}
 
+\FloatBarrier
+
 \textbf{Bước 2. Xem khoảng giá tham khảo.} Hệ thống ước tính khoảng giá thị trường dựa trên các tin tương đương trong cùng khu vực, đưa ra mức tối thiểu, trung bình và tối đa kèm lý do (Hình~\ref{fig:ai-price}). Chủ trọ dùng thông tin này để điều chỉnh giá đăng trước khi chuyển sang bước tiếp theo.
 
 \begin{figure}[!ht]
@@ -445,6 +444,8 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \caption{Kết quả định giá: khoảng giá đề xuất theo khu vực kèm các mốc tối thiểu, trung bình và tối đa}
 \label{fig:ai-price}
 \end{figure}
+
+\FloatBarrier
 
 \textbf{Bước 3. Chọn gói và cấu hình hiển thị.} Chủ trọ chọn hạng tin (Tin thường hoặc các hạng VIP Bạc, Vàng, Kim cương với mức ưu tiên hiển thị tăng dần) và thời hạn đăng; bảng tổng hợp cập nhật tức thời tổng chi phí (Hình~\ref{fig:post-step3}). Nếu đang sở hữu gói hội viên còn hạn mức, chủ trọ có thể dùng quyền lợi miễn phí cho tin này (Hình~\ref{fig:post-step3-benefit}).
 
@@ -462,6 +463,8 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \label{fig:post-step3-benefit}
 \end{figure}
 
+\FloatBarrier
+
 \textbf{Bước 4. Tải hình ảnh và video.} Chủ trọ tải lên ảnh và video của phòng trọ trực tiếp từ thiết bị (Hình~\ref{fig:post-step4}). Hệ thống hỗ trợ kéo thả, xem trước và sắp xếp thứ tự ảnh ngay trên trang.
 
 \begin{figure}[!ht]
@@ -476,7 +479,9 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \label{fig:post-step4}
 \end{figure}
 
-\textbf{Bước 5. Xem lại và thanh toán.} Chủ trọ xem lại toàn bộ thông tin trước khi xác nhận; hệ thống hiển thị tóm tắt đơn hàng và cho phép chọn phương thức thanh toán (Hình~\ref{fig:post-step5}). Trong quá trình đăng, chủ trọ có thể lưu lại bản nháp ở bất kỳ bước nào và tiếp tục về sau từ trang quản lý tin nháp (Hình~\ref{fig:draft-management}).
+\FloatBarrier
+
+\textbf{Bước 5. Xem lại và thanh toán.} Chủ trọ xem lại toàn bộ thông tin trước khi xác nhận; hệ thống hiển thị tóm tắt đơn hàng và cho phép chọn phương thức thanh toán (Hình~\ref{fig:post-step5}). Nếu không sử dụng quyền lợi hội viên ở bước trước, chủ trọ được chuyển đến màn hình thanh toán trước khi hoàn tất (Hình~\ref{fig:post-step5-payment}). Trong quá trình đăng, chủ trọ có thể lưu lại bản nháp ở bất kỳ bước nào và tiếp tục về sau từ trang quản lý tin nháp (Hình~\ref{fig:draft-management}).
 
 \begin{figure}[!ht]
 \centering
@@ -487,12 +492,16 @@ Quy trình đăng tin được chia thành năm bước nối tiếp với thanh
 \label{fig:post-step5}
 \end{figure}
 
+\FloatBarrier
+
 \begin{figure}[!ht]
 \centering
 \imgborder{\includegraphics[width=0.95\textwidth]{post-step-5-thanh-toan-ifnotchoosebenefit}}
 \caption{Màn hình thanh toán khi chủ trọ không sử dụng quyền lợi hội viên}
 \label{fig:post-step5-payment}
 \end{figure}
+
+\FloatBarrier
 
 \begin{figure}[!ht]
 \centering
