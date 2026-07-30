@@ -27,7 +27,7 @@ Hệ thống dành cho người thuê là một ứng dụng web đáp ứng (ho
 \FloatBarrier
 \subsection{Trang chủ và khám phá tin đăng}
 
-Trang chủ là điểm vào của người dùng, tổng hợp nhiều khối nội dung giúp định hướng nhanh (Hình~\ref{fig:homepage}): ảnh giới thiệu, thanh tìm kiếm kèm bộ lọc nhanh (Hình~\ref{fig:homepage-filter}), các nhóm tin tuyển chọn, tin theo địa điểm và tin tức thị trường.
+Trang chủ là điểm vào của người dùng, tổng hợp nhiều khối nội dung giúp định hướng nhanh (Hình~\ref{fig:homepage}): ảnh giới thiệu, thanh tìm kiếm, các nhóm tin tuyển chọn, tin theo địa điểm và tin tức thị trường.
 
 \begin{figure}[!ht]
 \centering
@@ -47,13 +47,6 @@ Trang chủ là điểm vào của người dùng, tổng hợp nhiều khối n
 \end{minipage}
 \caption{Các khối nội dung trên trang chủ: (a) ảnh giới thiệu, thanh tìm kiếm và danh mục bất động sản; (b) tin nổi bật và tin đề xuất; (c) tin đáng chú ý và tin mới; (d) bất động sản theo địa điểm và tin tức mới nhất}
 \label{fig:homepage}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\imgborder{\includegraphics[width=0.95\textwidth]{bo-loc-homepage}}
-\caption{Bộ lọc nhanh trên trang chủ: chọn địa điểm, loại hình và khoảng giá trực tiếp mà không cần mở hộp thoại bộ lọc đầy đủ}
-\label{fig:homepage-filter}
 \end{figure}
 
 \FloatBarrier
@@ -93,28 +86,28 @@ Trang chi tiết trình bày đầy đủ thông tin của một tin đăng: kh�
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-anh-gia-dia-chi}}
+\imgborder{\includegraphics[width=0.85\textwidth]{chi-tiet-tin-dang-anh-gia-dia-chi}}
 \caption{Khối đầu trang chi tiết: thư viện ảnh, tiêu đề, các nhãn, khoảng giá, địa chỉ và thẻ liên hệ}
 \label{fig:detail-top}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-lich-su-gia-ban-do}}
+\imgborder{\includegraphics[width=0.62\textwidth]{chi-tiet-tin-dang-lich-su-gia-ban-do}}
 \caption{Biểu đồ lịch sử giá và bản đồ vị trí tin đăng}
 \label{fig:detail-price-map}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-thong-tin-khac}}
+\imgborder{\includegraphics[width=0.75\textwidth]{chi-tiet-tin-dang-thong-tin-khac}}
 \caption{Thông tin bổ sung trên trang chi tiết: tiện ích, chi phí điện nước và mô tả tin đăng}
 \label{fig:detail-extra}
 \end{figure}
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[width=0.95\textwidth]{chi-tiet-tin-dang-bds-tuong-tu-da-xem-gan-day}}
+\imgborder{\includegraphics[width=0.7\textwidth]{chi-tiet-tin-dang-bds-tuong-tu-da-xem-gan-day}}
 \caption{Khối tin tương tự và tin đã xem gần đây ở cuối trang chi tiết}
 \label{fig:detail-similar}
 \end{figure}
@@ -325,8 +318,8 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[height=8cm]{listing-desktop}}\hspace{0.6cm}
-\imgborder{\includegraphics[height=8cm]{listing-mobile}}\\[4pt]
+\imgborder{\includegraphics[width=0.68\textwidth]{listing-desktop}}\hspace{0.6cm}
+\imgborder{\includegraphics[width=0.18\textwidth]{listing-mobile}}\\[4pt]
 {\small (a) Trang danh sách tin (máy tính) \quad (b) Trang danh sách tin (điện thoại)}
 \caption{Giao diện đáp ứng của trang danh sách tin đăng}
 \label{fig:responsive-listing}
@@ -334,8 +327,8 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[height=8cm]{detailpage-desktop}}\hspace{0.6cm}
-\imgborder{\includegraphics[height=8cm]{detailpage-mobile}}\\[4pt]
+\imgborder{\includegraphics[width=0.68\textwidth]{detailpage-desktop}}\hspace{0.6cm}
+\imgborder{\includegraphics[width=0.18\textwidth]{detailpage-mobile}}\\[4pt]
 {\small (a) Trang chi tiết (máy tính) \quad (b) Trang chi tiết (điện thoại)}
 \caption{Giao diện đáp ứng của trang chi tiết tin đăng}
 \label{fig:responsive-detail}
@@ -524,18 +517,15 @@ Hệ thống ghi nhận những người dùng đã quan tâm tới tin của ch
 
 \begin{figure}[!ht]
 \centering
-\imgborder{\includegraphics[width=0.82\textwidth]{quan-ly-khach-hang-dialog}}\\[4pt]{\small (a) Thông tin liên hệ và lịch sử tương tác}
-
-\vspace{10pt}
-\imgborder{\includegraphics[width=0.82\textwidth]{quan-ly-khach-hang-dialog-theo-tro}}\\[4pt]{\small (b) Danh sách tin khách đã quan tâm}
-\caption{Hộp thoại chi tiết khách hàng tiềm năng: (a) thông tin liên hệ và lịch sử tương tác; (b) danh sách tin khách đã quan tâm}
+\imgborder{\includegraphics[width=0.6\textwidth]{quan-ly-khach-hang-dialog}}
+\caption{Hộp thoại chi tiết khách hàng tiềm năng: thông tin liên hệ và lịch sử tương tác}
 \label{fig:owner-customers-dialog}
 \end{figure}
 
 \FloatBarrier
 \subsection{Gói hội viên và lịch sử giao dịch}
 
-Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấp sẵn một lượng quyền lợi đăng tin để dùng dần thay vì trả phí cho từng tin. Hệ thống cung cấp ba hạng gói (\textit{Cơ bản}, \textit{Tiêu chuẩn} và \textit{Nâng cao}) với quyền lợi tăng dần (Hình~\ref{fig:membership-plans}): số lượt đăng tin VIP miễn phí và số lượt đẩy tin lên đầu danh sách. Bảng điều khiển hiển thị gói đang dùng, số ngày còn lại và phần quyền lợi đã tiêu thụ (Hình~\ref{fig:membership-dashboard}); chủ trọ cũng có thể nâng cấp lên hạng cao hơn với mức chiết khấu theo thời gian còn lại của gói cũ (Hình~\ref{fig:membership-upgrade}). Tính năng đẩy tin nâng một tin lên đầu kết quả tìm kiếm trong thời gian nhất định; chủ trọ thực hiện trực tiếp từ trang quản lý tin đăng (Hình~\ref{fig:membership-push} và Hình~\ref{fig:push-listing-card}), hệ thống trừ một lượt trong hạn mức và cập nhật ngay.
+Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấp sẵn một lượng quyền lợi đăng tin để dùng dần thay vì trả phí cho từng tin. Hệ thống cung cấp ba hạng gói (\textit{Cơ bản}, \textit{Tiêu chuẩn} và \textit{Nâng cao}) với quyền lợi tăng dần (Hình~\ref{fig:membership-plans}): số lượt đăng tin VIP miễn phí và số lượt đẩy tin lên đầu danh sách. Bảng điều khiển hiển thị gói đang dùng, số ngày còn lại và phần quyền lợi đã tiêu thụ (Hình~\ref{fig:membership-dashboard}); chủ trọ cũng có thể nâng cấp lên hạng cao hơn với mức chiết khấu theo thời gian còn lại của gói cũ (Hình~\ref{fig:membership-upgrade}). Tính năng đẩy tin nâng một tin lên đầu kết quả tìm kiếm trong thời gian nhất định; chủ trọ thực hiện trực tiếp từ trang quản lý tin đăng, ngay trên thẻ tin đăng (Hình~\ref{fig:push-listing-card}), hệ thống trừ một lượt trong hạn mức và cập nhật ngay.
 
 \begin{figure}[!ht]
 \centering
@@ -556,13 +546,6 @@ Gói hội viên là cơ chế thuê bao theo tháng dành cho chủ trọ, cấ
 \imgborder{\includegraphics[width=0.95\textwidth]{membership-upgrade}}
 \caption{Giao diện nâng cấp gói hội viên kèm mức chiết khấu tính theo thời gian còn lại của gói cũ}
 \label{fig:membership-upgrade}
-\end{figure}
-
-\begin{figure}[!ht]
-\centering
-\imgborder{\includegraphics[width=0.95\textwidth]{memembership-push-listing}}
-\caption{Trang quản lý tin đăng hiển thị hạn mức lượt đẩy tin còn lại của gói hội viên}
-\label{fig:membership-push}
 \end{figure}
 
 \begin{figure}[!ht]
