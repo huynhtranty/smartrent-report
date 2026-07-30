@@ -238,7 +238,7 @@ Bên cạnh thông báo trong ứng dụng, hệ thống còn gửi email cho ch
 \FloatBarrier
 \subsection{Đăng nhập và xác thực}
 
-Hệ thống hỗ trợ ba cách đăng nhập: bằng email và mật khẩu, bằng liên kết đăng nhập một lần gửi qua email, và bằng tài khoản Google. Việc đăng nhập diễn ra ngay tại chỗ qua một hộp thoại, sau đó người dùng được đưa trở lại đúng trang đang thao tác. Với phương thức magic link, người dùng nhập địa chỉ email rồi nhận về một liên kết đăng nhập tức thì qua hộp thư, không cần nhớ mật khẩu. Đối với người dùng mới, quy trình đăng ký yêu cầu nhập mã OTP xác thực địa chỉ email trước khi kích hoạt tài khoản. Người dùng quên mật khẩu có thể yêu cầu đặt lại qua email: hệ thống gửi mã OTP để xác minh danh tính rồi cho phép nhập mật khẩu mới.
+Hệ thống hỗ trợ ba cách đăng nhập: bằng email và mật khẩu, bằng liên kết đăng nhập một lần qua email, và bằng tài khoản Google. Việc đăng nhập diễn ra ngay tại chỗ qua một hộp thoại, sau đó người dùng được đưa trở lại đúng trang đang thao tác. Với cách đăng nhập một lần qua email, người dùng nhập địa chỉ email rồi nhận về một liên kết đăng nhập tức thì qua hộp thư, không cần nhớ mật khẩu. Đối với người dùng mới, quy trình đăng ký yêu cầu nhập mã OTP xác thực địa chỉ email trước khi kích hoạt tài khoản. Người dùng quên mật khẩu có thể yêu cầu đặt lại qua email: hệ thống gửi mã OTP để xác minh danh tính rồi cho phép nhập mật khẩu mới.
 
 \begin{figure}[!ht]
 \centering
@@ -302,9 +302,9 @@ Toàn bộ các trang đều hỗ trợ song ngữ Việt - Anh, người dùng 
 \end{figure}
 
 \FloatBarrier
-\subsection{Giao diện đáp ứng}
+\subsection{Giao diện tương thích đa thiết bị}
 
-Bố cục tự động điều chỉnh theo kích thước màn hình: trang chủ và trang danh sách tin chuyển sang dạng cuộn dọc một cột (Hình~\ref{fig:responsive-homepage}), menu điều hướng thu gọn vào nút hamburger (Hình~\ref{fig:responsive-homepage}c), còn trang chi tiết và không gian chủ trọ cũng tối ưu riêng cho màn hình nhỏ (Hình~\ref{fig:responsive-detail} và Hình~\ref{fig:responsive-seller}).
+Bố cục tương thích theo kích thước màn hình: trang chủ và trang danh sách tin chuyển sang dạng cuộn dọc một cột (Hình~\ref{fig:responsive-homepage}), menu điều hướng được thu gọn thành nút hamburger (Hình~\ref{fig:responsive-homepage}c), còn trang chi tiết và không gian chủ trọ cũng được tối ưu riêng cho màn hình nhỏ (Hình~\ref{fig:responsive-detail} và Hình~\ref{fig:responsive-seller}).
 
 \begin{figure}[!ht]
 \centering
@@ -312,7 +312,7 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 \imgborder{\includegraphics[height=8cm]{homepage-mobile}}\hspace{0.4cm}
 \imgborder{\includegraphics[height=8cm]{homepage-mobile-navigation}}\\[4pt]
 {\small (a) Trang chủ (máy tính) \quad (b) Trang chủ (điện thoại) \quad (c) Menu điều hướng (điện thoại)}
-\caption{Giao diện đáp ứng của trang chủ trên máy tính và điện thoại}
+\caption{Giao diện tương thích đa thiết bị của trang chủ trên máy tính và điện thoại}
 \label{fig:responsive-homepage}
 \end{figure}
 
@@ -321,7 +321,7 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 \imgborder{\includegraphics[width=0.68\textwidth]{listing-desktop}}\hspace{0.6cm}
 \imgborder{\includegraphics[width=0.18\textwidth]{listing-mobile}}\\[4pt]
 {\small (a) Trang danh sách tin (máy tính) \quad (b) Trang danh sách tin (điện thoại)}
-\caption{Giao diện đáp ứng của trang danh sách tin đăng}
+\caption{Giao diện tương thích đa thiết bị của trang danh sách tin đăng}
 \label{fig:responsive-listing}
 \end{figure}
 
@@ -330,7 +330,7 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 \imgborder{\includegraphics[width=0.68\textwidth]{detailpage-desktop}}\hspace{0.6cm}
 \imgborder{\includegraphics[width=0.18\textwidth]{detailpage-mobile}}\\[4pt]
 {\small (a) Trang chi tiết (máy tính) \quad (b) Trang chi tiết (điện thoại)}
-\caption{Giao diện đáp ứng của trang chi tiết tin đăng}
+\caption{Giao diện tương thích đa thiết bị của trang chi tiết tin đăng}
 \label{fig:responsive-detail}
 \end{figure}
 
@@ -339,7 +339,7 @@ Bố cục tự động điều chỉnh theo kích thước màn hình: trang ch
 \imgborder{\includegraphics[height=8cm]{giao-dien-chu-tro-desktop}}\hspace{0.6cm}
 \imgborder{\includegraphics[height=8cm]{giao-dien-chu-tro-mobile}}\\[4pt]
 {\small (a) Không gian chủ trọ (máy tính) \quad (b) Không gian chủ trọ (điện thoại)}
-\caption{Giao diện đáp ứng của không gian làm việc dành cho chủ trọ}
+\caption{Giao diện tương thích đa thiết bị của không gian làm việc dành cho chủ trọ}
 \label{fig:responsive-seller}
 \end{figure}
 
@@ -836,7 +836,7 @@ Hệ thống gợi ý cá nhân hóa giúp mỗi người dùng nhìn thấy nh�
 \subsection{Kiểm duyệt nội dung tự động}
 \label{sec:ai-moderation}
 
-Để đảm bảo chất lượng thông tin và hạn chế tin giả, spam, hình ảnh không phù hợp, hệ thống tự động kiểm duyệt mỗi tin đăng trước khi hiển thị. AI rà soát cả nội dung văn bản (phát hiện số điện thoại chèn vào mô tả, liên kết lừa đảo, từ ngữ không phù hợp) lẫn hình ảnh (ảnh mờ, ảnh có watermark của sàn khác, ảnh không liên quan), rồi đưa ra điểm rủi ro và phân loại thành an toàn, cảnh báo hoặc vi phạm. Tin an toàn được duyệt tự động, còn tin có dấu hiệu rủi ro được giữ lại kèm ghi chú để quản trị viên xem xét (Hình~\ref{fig:ai-moderation}). Cơ chế này giúp giảm đáng kể thời gian duyệt tin thủ công mà vẫn đảm bảo an toàn cho nền tảng.
+Để đảm bảo chất lượng thông tin và hạn chế tin giả, spam, hình ảnh không phù hợp, hệ thống tự động phân tích mỗi tin đăng trước khi hiển thị. AI rà soát cả nội dung văn bản (phát hiện số điện thoại chèn vào mô tả, liên kết lừa đảo, từ ngữ không phù hợp) lẫn hình ảnh (ảnh mờ, ảnh có watermark của sàn khác, ảnh không liên quan), rồi đưa ra điểm tổng quan, đề xuất xử lý và lý do vi phạm chi tiết. Quản trị viên dựa trên kết quả này để đánh giá và quyết định duyệt hay xử lý tiếp; nhờ vậy quy trình rà soát nhanh hơn mà vẫn giữ vai trò kiểm soát của con người (Hình~\ref{fig:ai-moderation}).
 
 \begin{figure}[!ht]
 \centering
@@ -855,7 +855,7 @@ Sau khi hoàn thiện, hệ thống Thuê Nhà Trọ đã được triển khai 
 
 Hình~\ref{fig:deployment} mô tả cách các thành phần được bố trí khi vận hành. Ứng dụng web cho người dùng cuối được triển khai tách biệt trên nền tảng Vercel và phục vụ tại tên miền chính; phần lõi xử lý chạy trên một máy ảo thuê tại DigitalOcean, do nền tảng triển khai tự lưu trữ Dokploy quản lý. Trên máy ảo này, máy chủ nghiệp vụ, dịch vụ AI và bộ đệm Redis đều chạy dưới dạng container.
 
-Mọi lưu lượng từ Internet đi vào qua Traefik ở vai trò reverse proxy: Traefik tiếp nhận yêu cầu tại cổng 80 và 443, tự động cấp cùng gia hạn chứng chỉ bảo mật để phục vụ HTTPS, rồi định tuyến theo tên miền con tới máy chủ nghiệp vụ (\texttt{api.thuenhatro.net}) hoặc dịch vụ AI (\texttt{ai.thuenhatro.net}). Các thành phần lưu trữ nặng được tách sang những dịch vụ quản lý bên ngoài: cơ sở dữ liệu MySQL, lưu trữ đối tượng Cloudflare R2, cổng truy cập mô hình ngôn ngữ và giám sát (LiteLLM, Langfuse) cùng hai cổng thanh toán. Nhờ vậy máy chủ ứng dụng nhẹ tải, đồng thời mỗi dịch vụ có thể cập nhật hoặc khởi động lại độc lập mà không ảnh hưởng tới dữ liệu.
+Mọi lưu lượng từ Internet đi vào qua Traefik ở vai trò reverse proxy: Traefik tiếp nhận yêu cầu tại cổng 80 và 443, tự động cấp cùng gia hạn chứng chỉ bảo mật để phục vụ HTTPS, rồi định tuyến theo tên miền con tới máy chủ nghiệp vụ (\texttt{api.thuenhatro.net}). Máy chủ nghiệp vụ giao tiếp với dịch vụ AI chạy nội bộ trong cùng hạ tầng network; dịch vụ này không được công khai trực tiếp ra Internet. Các thành phần lưu trữ nặng được tách sang những dịch vụ quản lý bên ngoài: cơ sở dữ liệu MySQL, lưu trữ đối tượng Cloudflare R2, cổng truy cập mô hình ngôn ngữ và giám sát (LiteLLM, Langfuse) cùng hai cổng thanh toán. Nhờ vậy máy chủ ứng dụng nhẹ tải, đồng thời mỗi dịch vụ có thể cập nhật hoặc khởi động lại độc lập mà không ảnh hưởng tới dữ liệu.
 
 \begin{figure}[!ht]
 \centering
@@ -930,9 +930,9 @@ Kết quả cho thấy cả ba khía cạnh đều đạt: mã trạng thái, c�
 \FloatBarrier
 \subsection{Kiểm thử bảo mật}
 
-Kiểm thử bảo mật tập trung vào các cơ chế bảo vệ đã thiết kế ở phần Backend. Các nội dung được rà soát và kiểm thử bao gồm: cơ chế \textit{xác thực} OAuth2 kết hợp JWT và việc làm mới token; \textit{phân quyền} theo vai trò (người thuê, chủ trọ, quản trị viên) bảo đảm mỗi vai trò chỉ truy cập được tài nguyên được phép; bộ lọc bảo mật và cổng chặn truy cập đối với các tuyến cá nhân; \textit{giới hạn tần suất} ở tầng reverse proxy nhằm chống lạm dụng và bảo vệ hạn mức dịch vụ bên ngoài; việc \textit{che dữ liệu nhạy cảm} trong nhật ký và phản hồi; cùng việc bắt buộc HTTPS/TLS cho toàn bộ lưu lượng.
+Kiểm thử bảo mật tập trung vào các cơ chế bảo vệ đã thiết kế ở phần Backend. Các nội dung được rà soát và kiểm thử bao gồm: cơ chế \textit{xác thực} OAuth2 kết hợp JWT và việc làm mới token; \textit{phân quyền} theo vai trò quản trị nội bộ bảo đảm mỗi tài khoản chỉ truy cập được đúng nhóm chức năng được cấp; bộ lọc bảo mật và cổng chặn truy cập đối với các tuyến cá nhân; \textit{giới hạn tần suất} ở tầng reverse proxy nhằm chống lạm dụng và bảo vệ hạn mức dịch vụ bên ngoài; việc \textit{che dữ liệu nhạy cảm} trong nhật ký và phản hồi; cùng việc bắt buộc HTTPS/TLS cho toàn bộ lưu lượng.
 
-Kết quả kiểm thử cho thấy các cơ chế bảo mật hoạt động đúng thiết kế: yêu cầu thiếu hoặc sai token đều bị từ chối; người dùng không thể truy cập tài nguyên vượt quá vai trò được cấp; token bị vô hiệu hóa ngay sau khi đăng xuất; và lưu lượng vượt ngưỡng bị chặn bởi cơ chế giới hạn tần suất ở reverse proxy. Hệ thống cũng không để lộ dữ liệu nhạy cảm và duy trì HTTPS/TLS cho toàn bộ lưu lượng như thiết kế.
+Kết quả kiểm thử cho thấy các cơ chế bảo mật hoạt động đúng thiết kế: yêu cầu thiếu hoặc sai token đều bị từ chối; tài khoản chỉ truy cập được những chức năng đã được cấp; token bị vô hiệu hóa ngay sau khi đăng xuất; và lưu lượng vượt ngưỡng bị chặn bởi cơ chế giới hạn tần suất ở reverse proxy. Hệ thống cũng không để lộ dữ liệu nhạy cảm và duy trì HTTPS/TLS cho toàn bộ lưu lượng như thiết kế.
 
 \FloatBarrier
 \subsection{Đánh giá chức năng AI}
