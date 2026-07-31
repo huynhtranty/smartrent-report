@@ -398,7 +398,7 @@ Cách tổ chức và tích hợp nêu trên mang lại một số ưu điểm c
 \item \textbf{Quan sát thống nhất.} Mọi lượt hội thoại, lời gọi mô hình, bước truy hồi RAG và lời gọi công cụ đều được ghi vết qua Langfuse, giúp theo dõi mức dùng token, phiên bản prompt và lỗi một cách nhất quán.
 \item \textbf{Chọn đúng mô hình cho từng bài toán.} Học máy cổ điển cho xếp hạng gợi ý thời gian thực, LLM có công cụ cho hội thoại, LLM đa phương thức cho kiểm duyệt và mô hình lai cho định giá, cân bằng giữa độ chính xác, độ trễ và chi phí.
 \item \textbf{Khả năng chịu lỗi linh hoạt.} Các phân hệ định giá và kiểm duyệt đều có cơ chế dự phòng dựa trên tập luật khi mô hình không sẵn sàng hoặc vượt hạn mức, giúp tính năng vẫn hoạt động ở mức cơ bản thay vì hỏng hoàn toàn.
-\item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một HTTP client dùng chung, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
+\item \textbf{Một nguồn dữ liệu duy nhất.} Mọi dữ liệu nghiệp vụ thật được lấy từ Backend chính qua một HTTP client duy nhất của ứng dụng, tránh trùng lặp dữ liệu và giữ tính nhất quán toàn hệ thống.
 \end{itemize}
 
 \section{Thiết kế cơ sở dữ liệu}
